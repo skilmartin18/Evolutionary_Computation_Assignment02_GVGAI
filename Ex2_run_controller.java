@@ -13,7 +13,7 @@ public class Ex2_run_controller {
     public static void main(String[] args) {
 
 		// Available tracks:
-		String sampleRandomController = "tracks.singlePlayer.simple.sampleRandom.Agent";
+		String sampleRandomController = "tracks.singlePlayer.simple.simpleRandom.Agent";
 		String sampleOneStepController = "tracks.singlePlayer.simple.sampleonesteplookahead.Agent";
         String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
 	
@@ -38,16 +38,6 @@ public class Ex2_run_controller {
 						// where to record the actions
 						// executed. null if not to save.
 
-		// 4. This plays a single game, in N levels, M times :
-//		String level2 = new String(game).replace(gameName, gameName + "_lvl" + 1);
-//		int M = 10;
-//		for(int i=0; i<games.length; i++){
-//			game = games[i][0];
-//			gameName = games[i][1];
-//			level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
-//			ArcadeMachine.runGames(game, new String[]{level1}, M, sampleMCTSController, null);
-//		}
-
 
 
 		//5. This plays games_played games, in the first L levels, M times each.
@@ -60,15 +50,24 @@ public class Ex2_run_controller {
 
 		for(int i = 0; i < games_played.length; ++i)
 		{
+			
 			// get game and name
 			game = games[ games_played[i] ][ 0 ];
 			gameName = games[ games_played[i] ][1];
+			System.out.println("\n\nPlaying "+gameName);
 			// create list of levels to play
 			for(int j = 0; j < L; ++j){
 				levels[j] = game.replace(gameName, gameName + "_lvl" + j);
 			}
-			ArcadeMachine.runGames(game, levels, M, sampleGAController, null);
+
+			for(int k = 0; k < L; ++k){
+				// runGames must take levels as an string array- so convert levels[k] into one
+				System.out.println("\nLvl_"+k+":");
+				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
+			}
+			
 		}
+
 
 
     }
