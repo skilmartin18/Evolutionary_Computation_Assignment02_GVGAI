@@ -1,0 +1,1 @@
+Results in butterflies_lvl3 - Mean score: 22.6, Std Dev: 1.3498971154210908

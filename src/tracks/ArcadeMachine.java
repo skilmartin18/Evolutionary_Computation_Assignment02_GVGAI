@@ -20,6 +20,9 @@ import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.StatSummary;
 
+// Import file handler for outputs
+import handle_files.handle_files;
+
 /**
  * Created with IntelliJ IDEA. User: Diego Date: 06/11/13 Time: 11:24 This is a
  * Java port from Tom Schaul's VGDL - https://github.com/schaul/py-vgdl
@@ -395,6 +398,9 @@ public class ArcadeMachine {
 	VGDLFactory.GetInstance().init(); // This always first thing to do.
 	VGDLRegistry.GetInstance().init();
 
+
+	String currentLevel = "";
+
 	boolean recordActions = false;
 	if (actionFiles != null) {
 	    recordActions = true;
@@ -415,6 +421,9 @@ public class ArcadeMachine {
 	performance = new StatSummary();
 
 	for (String level_file : level_files) {
+
+		currentLevel = level_file; 
+
 	    for (int i = 0; i < level_times; ++i) {
 		if (VERBOSE)
 		    System.out.println(" ** Playing game " + game_file + ", level " + level_file + " (" + (i + 1) + "/"
@@ -512,11 +521,13 @@ public class ArcadeMachine {
 	//String vict = "";
 	String mean = "";
 	String sd = "";
+	int n = 0; 
 
 	for (int i = 0; i < toPlay.no_players; i++) {
 	    //vict += victories[i].mean();
 	    mean += scores[i].mean();
 		sd += scores[i].sd();
+		n = scores[i].n();
 
 	    if (i != toPlay.no_players - 1) {
 		//vict += ", ";
@@ -524,8 +535,30 @@ public class ArcadeMachine {
 		sd += ",";
 	    }
 	}
-	System.out.println("Results in game " + game_file + " - Mean score: " + mean + ", Std Dev: " + sd);
+
+
+		// System.out.println("Results in game " + game_file + " - Mean score: " + mean + ", Std Dev: " + sd);
 	 	//+ " , " + performance.mean());
+
+		// We want to output the results to a text file 
+		String filename = "";
+		String location = "";
+		String text = "";
+
+		String[] stripped_game_path = currentLevel.split("/");
+		filename = stripped_game_path[2];
+		stripped_game_path = filename.split("\\.");
+		filename = stripped_game_path[0];
+
+		//System.out.println(filename);
+		String num_of_runs = String.valueOf( n );
+
+		location = "results/exercise02/";
+		String newFilename = location + filename + "_" + num_of_runs; 
+		text = "Results in " + filename + " - Mean score: " + mean + ", Std Dev: " + sd;
+
+		handle_files.write_to_file(newFilename, text);
+
     }
 
     /**
