@@ -7,7 +7,7 @@ import tools.ElapsedCpuTimer;
 import tracks.singlePlayer.tools.Heuristics.StateHeuristic;
 import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
 
-import java.util.*;
+import java.util.*;  
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Agent extends AbstractPlayer {

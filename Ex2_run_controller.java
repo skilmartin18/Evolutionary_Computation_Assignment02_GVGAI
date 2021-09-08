@@ -1,5 +1,3 @@
-package tracks.singlePlayer;
-
 import java.util.Random;
 
 import core.logging.Logger;
@@ -10,7 +8,7 @@ import tracks.ArcadeMachine;
  * Created with IntelliJ IDEA. User: Diego Date: 04/10/13 Time: 16:29 This is a
  * Java port from Tom Schaul's VGDL - https://github.com/schaul/py-vgdl
  */
-public class Test {
+public class Ex2_run_controller {
 
     public static void main(String[] args) {
 
@@ -87,3 +85,4 @@ public class Test {
 
     }
 }
+
