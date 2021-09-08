@@ -48,14 +48,11 @@ public class Ex2_run_controller {
 //			ArcadeMachine.runGames(game, new String[]{level1}, M, sampleMCTSController, null);
 //		}
 
-
-
 		//5. This plays games_played games, in the first L levels, M times each.
 		// set games_played- indices are games indexes from all_games_sp.csv
 		int[] games_played = {0,11,13,18}; 
-		int L = 5, M = 10;
+		int L = 1, M = 2;
 
-	
 		String[] levels = new String[L];
 
 		for(int i = 0; i < games_played.length; ++i)
@@ -67,7 +64,7 @@ public class Ex2_run_controller {
 			for(int j = 0; j < L; ++j){
 				levels[j] = game.replace(gameName, gameName + "_lvl" + j);
 			}
-			ArcadeMachine.runGames(game, levels, M, sampleGAController, null);
+			ArcadeMachine.runGames(game, levels, M, sampleRandomController , null);
 		}
 
 
