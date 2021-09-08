@@ -483,7 +483,12 @@ public class ArcadeMachine {
 		// at least 1 in single player.
 		// Get array of scores back.
 		if ((no_players - disqCount) >= toPlay.no_players) {
-		    score = toPlay.runGame(players, randomSeed);
+
+
+		    //score = toPlay.runGame(players, randomSeed);
+			score = toPlay.playGame(players, randomSeed, false, 0);
+
+
 		    //score = toPlay.playGame(players, randomSeed, false, 0);
 		    toPlay.printResult();
 		} else {
