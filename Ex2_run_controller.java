@@ -14,21 +14,16 @@ public class Ex2_run_controller {
 
 		// Available tracks:
 		String sampleRandomController = "tracks.singlePlayer.simple.sampleRandom.Agent";
-		String doNothingController = "tracks.singlePlayer.simple.doNothing.Agent";
 		String sampleOneStepController = "tracks.singlePlayer.simple.sampleonesteplookahead.Agent";
-		String sampleFlatMCTSController = "tracks.singlePlayer.simple.greedyTreeSearch.Agent";
-
-		String sampleMCTSController = "tracks.singlePlayer.advanced.sampleMCTS.Agent";
-        String sampleRSController = "tracks.singlePlayer.advanced.sampleRS.Agent";
-        String sampleRHEAController = "tracks.singlePlayer.advanced.sampleRHEA.Agent";
-		String sampleOLETSController = "tracks.singlePlayer.advanced.olets.Agent";
+        String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
+	
 
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
 		String[][] games = Utils.readGames(spGamesCollection);
 
 		//Game settings
-		boolean visuals = true;
+		boolean visuals = false;
 		int seed = new Random().nextInt();
 
 		// Game and level to play
@@ -38,21 +33,10 @@ public class Ex2_run_controller {
 		String game = games[gameIdx][0];
 		String level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
 
-		String recordActionsFile = null;// "actions_" + games[gameIdx] + "_lvl"
+		//String recordActionsFile = "actions_" + games[gameIdx] + "_lvl"
 						// + levelIdx + "_" + seed + ".txt";
 						// where to record the actions
 						// executed. null if not to save.
-
-		// 1. This starts a game, in a level, played by a human.
-		// ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
-
-		// 2. This plays a game in a level by the controller.
-		ArcadeMachine.runOneGame(game, level1, visuals, sampleRHEAController, recordActionsFile, seed, 0);
-
-
-		// 3. This replays a game from an action file previously recorded
-	//	 String readActionsFile = recordActionsFile;
-	//	 ArcadeMachine.replayGame(game, level1, visuals, readActionsFile);
 
 		// 4. This plays a single game, in N levels, M times :
 //		String level2 = new String(game).replace(gameName, gameName + "_lvl" + 1);
@@ -64,23 +48,27 @@ public class Ex2_run_controller {
 //			ArcadeMachine.runGames(game, new String[]{level1}, M, sampleMCTSController, null);
 //		}
 
-		//5. This plays N games, in the first L levels, M times each. Actions to file optional (set saveActions to true).
-//		int N = games.length, L = 2, M = 1;
-//		boolean saveActions = false;
-//		String[] levels = new String[L];
-//		String[] actionFiles = new String[L*M];
-//		for(int i = 0; i < N; ++i)
-//		{
-//			int actionIdx = 0;
-//			game = games[i][0];
-//			gameName = games[i][1];
-//			for(int j = 0; j < L; ++j){
-//				levels[j] = game.replace(gameName, gameName + "_lvl" + j);
-//				if(saveActions) for(int k = 0; k < M; ++k)
-//				actionFiles[actionIdx++] = "actions_game_" + i + "_level_" + j + "_" + k + ".txt";
-//			}
-//			ArcadeMachine.runGames(game, levels, M, sampleRHEAController, saveActions? actionFiles:null);
-//		}
+
+
+		//5. This plays games_played games, in the first L levels, M times each.
+		// set games_played- indices are games indexes from all_games_sp.csv
+		int[] games_played = {0,11,13,18}; 
+		int L = 5, M = 10;
+
+	
+		String[] levels = new String[L];
+
+		for(int i = 0; i < games_played.length; ++i)
+		{
+			// get game and name
+			game = games[ games_played[i] ][ 0 ];
+			gameName = games[ games_played[i] ][1];
+			// create list of levels to play
+			for(int j = 0; j < L; ++j){
+				levels[j] = game.replace(gameName, gameName + "_lvl" + j);
+			}
+			ArcadeMachine.runGames(game, levels, M, sampleGAController, null);
+		}
 
 
     }
