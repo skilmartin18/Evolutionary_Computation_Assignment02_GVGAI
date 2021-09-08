@@ -1186,7 +1186,7 @@ public abstract class Game {
 		///////				DONT FORGET ITS HEREEEEE !!
 		//////
 
-		//System.out.println("Result (1->win; 0->lose): " + sb1 + sb2 + "timesteps:" + this.getGameTick());
+		System.out.println("Result (1->win; 0->lose): " + sb1 + sb2 + "timesteps:" + this.getGameTick());
 
 
 		// System.out.println("Result (1->win; 0->lose):"+ winner.key() + ",
