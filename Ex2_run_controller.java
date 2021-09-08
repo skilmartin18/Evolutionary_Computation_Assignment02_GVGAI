@@ -50,6 +50,7 @@ public class Ex2_run_controller {
 
 		for(int i = 0; i < games_played.length; ++i)
 		{
+			System.out.println("Outputting game " + i+1 + " to file.\n");
 			
 			// get game and name
 			game = games[ games_played[i] ][ 0 ];
