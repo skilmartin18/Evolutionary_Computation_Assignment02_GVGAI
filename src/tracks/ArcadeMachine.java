@@ -505,16 +505,25 @@ public class ArcadeMachine {
 	    levelIdx++;
 	}
 
-	String vict = "", sc = "";
+	//
+	// Output the mean and SD of the scores for each game and level
+	// The SD is already calculated 
+
+	//String vict = "";
+	String sc = "";
+	String sd = "";
+
 	for (int i = 0; i < toPlay.no_players; i++) {
-	    vict += victories[i].mean();
+	    //vict += victories[i].mean();
 	    sc += scores[i].mean();
+		sd += scores[i].sd();
+
 	    if (i != toPlay.no_players - 1) {
 		vict += ", ";
 		sc += ", ";
 	    }
 	}
-	System.out.println("Results in game " + game_file + ", " + vict + " , " + sc);
+	System.out.println("Results in game " + game_file + " - Mean score: " + sd + ", Std Dev: " + sd);
 	 	//+ " , " + performance.mean());
     }
 
