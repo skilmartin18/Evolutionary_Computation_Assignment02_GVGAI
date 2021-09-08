@@ -44,27 +44,31 @@ public class Ex2_run_controller {
 		//5. This plays games_played games, in the first L levels, M times each.
 		// set games_played- indices are games indexes from all_games_sp.csv
 		int[] games_played = {0,11,13,18}; 
-		int L = 1, M = 2;
+		int L = 5, M = 10;
 
 		String[] levels = new String[L];
 
 		for(int i = 0; i < games_played.length; ++i)
 		{
-			System.out.println("Outputting game " + i+1 + " to file.\n");
 			
 			// get game and name
 			game = games[ games_played[i] ][ 0 ];
 			gameName = games[ games_played[i] ][1];
+
 			System.out.println("\n\nPlaying "+gameName);
 			// create list of levels to play
 			for(int j = 0; j < L; ++j){
 				levels[j] = game.replace(gameName, gameName + "_lvl" + j);
 			}
 
+			//
+			// ARCADEMACHINE.JAVA, LINE 537 IS WHERE OUTPUT FILE IS SPECIFIED
+			//
+
 			for(int k = 0; k < L; ++k){
 				// runGames must take levels as an string array- so convert levels[k] into one
-				System.out.println("\nLvl_"+k+":");
-				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
+				System.out.println("Lvl_"+k+":");
+				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleGAController, null);
 			}
 			
 		}

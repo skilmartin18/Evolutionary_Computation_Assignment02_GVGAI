@@ -521,11 +521,13 @@ public class ArcadeMachine {
 	//String vict = "";
 	String mean = "";
 	String sd = "";
+	int n = 0; 
 
 	for (int i = 0; i < toPlay.no_players; i++) {
 	    //vict += victories[i].mean();
 	    mean += scores[i].mean();
 		sd += scores[i].sd();
+		n = scores[i].n();
 
 	    if (i != toPlay.no_players - 1) {
 		//vict += ", ";
@@ -533,6 +535,7 @@ public class ArcadeMachine {
 		sd += ",";
 	    }
 	}
+
 
 		// System.out.println("Results in game " + game_file + " - Mean score: " + mean + ", Std Dev: " + sd);
 	 	//+ " , " + performance.mean());
@@ -548,12 +551,13 @@ public class ArcadeMachine {
 		filename = stripped_game_path[0];
 
 		//System.out.println(filename);
+		String num_of_runs = String.valueOf( n );
 
 		location = "results/exercise02/";
-		filename = location + filename; 
-		text = "Results in game " + game_file + " - Mean score: " + mean + ", Std Dev: " + sd;
+		String newFilename = location + filename + "_" + num_of_runs; 
+		text = "Results in " + filename + " - Mean score: " + mean + ", Std Dev: " + sd;
 
-		handle_files.write_to_file(filename, text);
+		handle_files.write_to_file(newFilename, text);
 
     }
 
