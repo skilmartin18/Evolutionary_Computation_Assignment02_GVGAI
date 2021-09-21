@@ -18,6 +18,12 @@ import java.util.ArrayList;
  */
 public abstract class Player {
 
+
+    public void FUCKU()
+    {
+        System.out.println("FUCKU");
+    }
+
     /**
      * playerID
      */
