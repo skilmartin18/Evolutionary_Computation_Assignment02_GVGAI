@@ -47,7 +47,11 @@ public class Agent extends AbstractPlayer {
     
     public void set_GA_params(double GA_params[])
     {
-        System.out.println("please bloody work");
+        GAMMA = GA_params[0];
+        SIMULATION_DEPTH = (int)GA_params[1];
+        POPULATION_SIZE = (int)GA_params[2];
+        RECPROB = GA_params[3];
+        MUT = GA_params[4];
         return;
     }
 

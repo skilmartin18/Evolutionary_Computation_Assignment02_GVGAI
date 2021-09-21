@@ -3,7 +3,7 @@ import java.util.Random;
 import tools.Utils;
 import tracks.ArcadeMachine;
 
-class individual
+public class Ex3_optimise_GA 
 {
     public static void main(String[] args) 
     {
@@ -22,6 +22,10 @@ class individual
 
         // seed
         int seed = new Random().nextInt();
+
+        // controller
+
+        String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
 
         /*
             GA STUFF
@@ -43,9 +47,10 @@ class individual
         double parent_score = 0;
         double current_score = 0;
         int mutation_success = 0;
-        int k = 5;
+        int k = 10;
         double p_s = 0;
         double c = 0.8;
+
         /*
             RUN INITIAL PARENT
                                 */
@@ -54,7 +59,7 @@ class individual
         {
             String level1 = game.replace(gameName, gameName+"_lvl"+lvl);
 
-            double temp[] = ArcadeMachine.runOneGame(game, level1, false, sampleRHEAController, null, seed, 0);
+            double temp[] = ArcadeMachine.runOneGame(game, level1, false, sampleGAController, null, seed, 0);
 
             scores[lvl] = temp[1];
             parent_score += scores[lvl];
@@ -84,7 +89,7 @@ class individual
             {
                 String level = game.replace(gameName, gameName+"_lvl"+lvl);
 
-                double temp[] = ArcadeMachine.runOneGame(game, level, false, sampleRHEAController, null, seed, 0);
+                double temp[] = ArcadeMachine.runOneGameGA(game, level, false, sampleGAController, null, seed, 0, child_genotype);
 
                 scores[lvl] = temp[1];
                 current_score += scores[lvl];
@@ -103,7 +108,7 @@ class individual
             current_score = 0;
 
             // 1 in 5 rule
-            if ( (gen%5 == 0) && (gen!=0) )
+            if ( (gen%k == 0) && (gen!=0) )
             {
                 p_s = mutation_success/k;
 
@@ -120,8 +125,6 @@ class individual
 
         }
 
-
-
+        System.out.println(parent_genotype);
     }
-
 }
