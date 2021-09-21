@@ -489,7 +489,6 @@ public class ArcadeMachine {
 			//score = toPlay.playGame(players, randomSeed, false, 0); luke fak u
 
 
-		    //score = toPlay.playGame(players, randomSeed, false, 0);
 		    toPlay.printResult();
 		} else {
 		    // Get the score for the result.
