@@ -41,6 +41,21 @@ public class Agent extends AbstractPlayer {
 
     private int numSimulations;
 
+    /*
+        SEBS CODE HERE
+                        */
+    
+    public void set_GA_params(double GA_params[])
+    {
+        System.out.println("please bloody work");
+        return;
+    }
+
+
+    /*
+        SEBS CODE END
+                        */
+
     /**
      * Public constructor with state observation and time due.
      *

@@ -18,12 +18,19 @@ import java.util.ArrayList;
  */
 public abstract class Player {
 
+    /*
+        SEBS CODE START
+                        */
 
-    public void FUCKU()
+    public void set_GA_params(double GA_params[])
     {
-        System.out.println("FUCKU");
+        return;
     }
 
+    /*
+        SEBS CODE END
+                        */
+   
     /**
      * playerID
      */

@@ -70,7 +70,7 @@ public class ArcadeMachine {
      *            ID of the human player
      */
     public static double[] runOneGameGA(String game_file, String level_file, boolean visuals, String agentNames,
-	    String actionFile, int randomSeed, int playerID) {
+	    String actionFile, int randomSeed, int playerID, double[] GA_params) {
 		VGDLFactory.GetInstance().init(); // This always first thing to do.
 		VGDLRegistry.GetInstance().init();
 
@@ -133,7 +133,9 @@ public class ArcadeMachine {
 			/*
 				PLAYER CREATE HERE???
 									*/
-			players[i].FUCKU;
+			players[i].set_GA_params(GA_params);
+
+			
 
 			if (players[i] == null) {
 			// Something went wrong in the constructor, controller
@@ -171,6 +173,9 @@ public class ArcadeMachine {
 	}
 
 
+	/*
+		SEBS CODE END
+						*/
 					
     /**
      * Reads and launches a game for a human to be played. Graphics always on.
