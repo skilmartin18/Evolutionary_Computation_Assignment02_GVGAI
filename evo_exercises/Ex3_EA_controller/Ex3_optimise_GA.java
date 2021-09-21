@@ -77,12 +77,14 @@ public class Ex3_optimise_GA
         {
             
             // make child
-            for ( int i = 0; i < 5; i++)
+            for ( int i = 0; i < 4; i++)
             {
                 // next gaussian returns number from N(0,1), to make with our stddev multiply by sigma
                 child_genotype[i] = parent_genotype[i] + gaussian.nextGaussian()*sigma;
             }
-
+                // mut is 1/sim_depth
+                child_genotype[4] = 1/parent_genotype[1];
+  
 
             // evaluate child across all levels of a single game
             for(int lvl = 0; lvl < 5; lvl++)
