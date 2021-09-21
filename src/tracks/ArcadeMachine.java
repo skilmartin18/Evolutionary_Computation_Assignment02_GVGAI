@@ -485,8 +485,8 @@ public class ArcadeMachine {
 		if ((no_players - disqCount) >= toPlay.no_players) {
 
 
-		    //score = toPlay.runGame(players, randomSeed);
-			score = toPlay.playGame(players, randomSeed, false, 0);
+		    score = toPlay.runGame(players, randomSeed);
+			//score = toPlay.playGame(players, randomSeed, false, 0); luke fak u
 
 
 		    //score = toPlay.playGame(players, randomSeed, false, 0);
