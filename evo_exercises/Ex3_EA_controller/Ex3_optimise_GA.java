@@ -33,7 +33,7 @@ public class Ex3_optimise_GA
                         */
 
         // genotype as {GAMMA,SIM_DEPTH,POP_SIZE,RECPROB,MUT}
-        double parent_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double parent_genotype[] = new double[]{0.9, 7, 5, 0.1, 0.142};
         //double parent_genotype[] = new double[]{1.1342409097819355, 4.0, 3.0, 0.3738103633107982, 0.25};
         double child_genotype[] = new double[5];
 
@@ -43,13 +43,13 @@ public class Ex3_optimise_GA
 
         // EA variables
         double sigma = 1;
-        int num_gen = 10;
+        int num_gen = 50;
         double scores[] = new double[5];
         Random gaussian = new Random();
         double parent_score = 0;
         double current_score = 0;
         int mutation_success = 0;
-        int k = 10;
+        int k = 5;
         double p_s = 0;
         double c = 0.8;
 
@@ -77,7 +77,9 @@ public class Ex3_optimise_GA
 
         for (int gen = 0; gen < num_gen; gen++) 
         {
-            
+            System.out.print("GENERATION ");
+            System.out.print(gen+1);
+            System.out.print(": \n");
             // make child
                 // next gaussian returns number from N(0,1), to make with our stddev multiply by sigma
 
@@ -107,6 +109,7 @@ public class Ex3_optimise_GA
                 System.out.print(child_genotype[i]);
                 System.out.print(" ");
             }
+            System.out.print("\n");
             
 
             for(int lvl = 0; lvl < 5; lvl++)
@@ -151,6 +154,18 @@ public class Ex3_optimise_GA
 
         }
 
-        System.out.println(parent_genotype);
+        System.out.print("Final parent genotype: ");
+        for (int i=0; i < 5; i++) {
+            System.out.print(parent_genotype[i]);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
+
+        System.out.print("Final child genotype: ");
+        for (int i=0; i < 5; i++) {
+            System.out.print(child_genotype[i]);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
     }
 }
