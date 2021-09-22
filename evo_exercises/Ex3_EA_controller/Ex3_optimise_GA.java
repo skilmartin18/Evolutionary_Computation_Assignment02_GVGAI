@@ -52,7 +52,8 @@ public class Ex3_optimise_GA
         int k = 5;
         double p_s = 0;
         double c = 0.8;
-
+        long initial_time = 0;
+        long current_time = 0;
         /*
             RUN INITIAL PARENT
                                 */
@@ -87,13 +88,30 @@ public class Ex3_optimise_GA
                 child_genotype[0] = Math.abs(parent_genotype[0]  + gaussian.nextGaussian()*sigma);
 
                 // Index 1, SIM DEPTH   
+                initial_time = System.currentTimeMillis();
                 do {
                     child_genotype[1] = Math.floor(Math.abs(parent_genotype[1]  + gaussian.nextGaussian()*sigma));
+
+                    //break this loop if taking too long, honestly dont even need the loop, if it fails just hardcode it...
+                    current_time = System.currentTimeMillis();
+                    if ((current_time-initial_time) > 5000)
+                    {
+                        child_genotype[1] = 1;
+                        break;
+                    }
                 } while (child_genotype[1] < 1);
 
                 // INDEX 2, POP SIZE
+                initial_time = System.currentTimeMillis();
                 do {
                     child_genotype[2] = Math.floor( Math.abs(parent_genotype[2]  + gaussian.nextGaussian()*sigma) );
+                    current_time = System.currentTimeMillis();
+                    // loop break
+                    if ((current_time-initial_time) > 5000)
+                    {
+                        child_genotype[2] = 3;
+                        break;
+                    }
                 } while (child_genotype[2] < 3);
 
                 // Index 3, RECPROB

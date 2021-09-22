@@ -36,7 +36,7 @@ public class multiStepLookAgent extends AbstractPlayer {
      * @param elapsedTimer Timer when the action returned is due.
      * @return An action for the current state
      */
-    public Types.ACTIONS[] act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
+    public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
         Types.ACTIONS[] bestActions = null;
         //Types.ACTIONS bestAction2 = null;
