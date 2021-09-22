@@ -133,9 +133,9 @@ public class ArcadeMachine {
 			/*
 				PLAYER CREATE HERE???
 									*/
-			players[i].set_GA_params(GA_params);
-
-			
+			if (players[i] != null) {
+				players[i].set_GA_params(GA_params);
+			}
 
 			if (players[i] == null) {
 			// Something went wrong in the constructor, controller

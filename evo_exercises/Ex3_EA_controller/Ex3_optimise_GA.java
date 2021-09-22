@@ -2,6 +2,7 @@ package evo_exercises.Ex3_EA_controller;
 import java.util.Random;
 import tools.Utils;
 import tracks.ArcadeMachine;
+import java.lang.*;
 
 public class Ex3_optimise_GA 
 {
@@ -16,7 +17,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params
-        int gameIdx = 11; 
+        int gameIdx = 0; 
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 
@@ -33,6 +34,7 @@ public class Ex3_optimise_GA
 
         // genotype as {GAMMA,SIM_DEPTH,POP_SIZE,RECPROB,MUT}
         double parent_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        //double parent_genotype[] = new double[]{1.1342409097819355, 4.0, 3.0, 0.3738103633107982, 0.25};
         double child_genotype[] = new double[5];
 
         /*
@@ -59,7 +61,7 @@ public class Ex3_optimise_GA
         {
             String level1 = game.replace(gameName, gameName+"_lvl"+lvl);
 
-            double temp[] = ArcadeMachine.runOneGame(game, level1, false, sampleGAController, null, seed, 0);
+            double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
 
             scores[lvl] = temp[1];
             parent_score += scores[lvl];
@@ -77,16 +79,36 @@ public class Ex3_optimise_GA
         {
             
             // make child
-            for ( int i = 0; i < 4; i++)
-            {
                 // next gaussian returns number from N(0,1), to make with our stddev multiply by sigma
-                child_genotype[i] = parent_genotype[i] + gaussian.nextGaussian()*sigma;
-            }
+
+                // Index 0, GAMMA
+                child_genotype[0] = Math.abs(parent_genotype[0]  + gaussian.nextGaussian()*sigma);
+
+                // Index 1, SIM DEPTH   
+                do {
+                    child_genotype[1] = Math.floor(Math.abs(parent_genotype[1]  + gaussian.nextGaussian()*sigma));
+                } while (child_genotype[1] < 1);
+
+                // INDEX 2, POP SIZE
+                do {
+                    child_genotype[2] = Math.floor( Math.abs(parent_genotype[2]  + gaussian.nextGaussian()*sigma) );
+                } while (child_genotype[2] < 3);
+
+                // Index 3, RECPROB
+                child_genotype[3] = Math.abs(parent_genotype[3]  + gaussian.nextGaussian()*sigma);
+                child_genotype[3] = child_genotype[3]%1;
+               
                 // mut is 1/sim_depth
-                child_genotype[4] = 1/parent_genotype[1];
-  
+                child_genotype[4] = 1/child_genotype[1];
 
             // evaluate child across all levels of a single game
+            System.out.print("Curent individual genotype: ");
+            for (int i=0; i < 5; i++) {
+                System.out.print(child_genotype[i]);
+                System.out.print(" ");
+            }
+            
+
             for(int lvl = 0; lvl < 5; lvl++)
             {
                 String level = game.replace(gameName, gameName+"_lvl"+lvl);
@@ -101,10 +123,12 @@ public class Ex3_optimise_GA
 
             if ( current_score > parent_score)
             {
+                System.out.println("Parent being replaced...");
                 parent_genotype = child_genotype;
                 parent_score = current_score;
                 mutation_success++;
-            }
+            } else 
+            System.out.println("Parent not replaced...");
 
 
             current_score = 0;
