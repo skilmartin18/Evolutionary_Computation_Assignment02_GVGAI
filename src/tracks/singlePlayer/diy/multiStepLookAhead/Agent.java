@@ -1,6 +1,7 @@
 package tracks.singlePlayer.diy.multiStepLookAhead;
 
 import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
+import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import ontology.Types;
@@ -44,23 +45,18 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
+        // Initialising variables
         boolean _break = false;
         this.timer = elapsedTimer;
         Types.ACTIONS bestFirstAction[] = {ACTIONS.ACTION_NIL, ACTIONS.ACTION_NIL, ACTIONS.ACTION_NIL};
         Types.ACTIONS bestSecondAction[] = {ACTIONS.ACTION_NIL, ACTIONS.ACTION_NIL, ACTIONS.ACTION_NIL};
         double maxQ = Double.NEGATIVE_INFINITY;
         double Q = 0;
-        SimpleStateHeuristic heuristic =  new SimpleStateHeuristic(stateObs);
-
-        // Reversing first actions array, 
-        //ArrayList<Types.ACTIONS> firstAvailableActions = stateObs.getAvailableActions();
-        // ArrayList<Types.ACTIONS> reversedFirstAvailableActions = new ArrayList<Types.ACTIONS>();
-        // for (int j = firstAvailableActions.size()-1; j > -1; j--){
-        //     reversedFirstAvailableActions.add(firstAvailableActions.get(j));
-        // }
+        WinScoreHeuristic heuristic =  new WinScoreHeuristic(stateObs);
 
         // Check if all first actions are equal in score
-
+        //double initialScore = stateObs.getGameScore();
+        //double finalScore = 0;
 
         // Loop through current possible actions
         for (Types.ACTIONS firstAction : stateObs.getAvailableActions() ){
@@ -72,8 +68,6 @@ public class Agent extends AbstractPlayer {
             // Copy state of first action
             StateObservation stCopy = stateObs.copy();
             stCopy.advance(firstAction);
-            // double Q1 = heuristic.evaluateState(stCopy);
-            // Q1 = Utils.noise(Q1, this.epsilon, this.m_rnd.nextDouble());
     
             // For each first action, loop through the possible second actions
             for (Types.ACTIONS secondAction : stCopy.getAvailableActions()) {
@@ -88,10 +82,8 @@ public class Agent extends AbstractPlayer {
                 StateObservation stCopy2 = stCopy.copy();
                 stCopy2.advance(secondAction);
                 Q = heuristic.evaluateState(stCopy2);
-                System.out.println("Q before noise added: " + Q);
+                //finalScore = Q;
                 Q = Utils.noise(Q, this.epsilon, this.m_rnd.nextDouble());
-
-                //Q = Q1 + Q2; // probably not needed
 
                 // Recording three best first and second actions to take
                 if (Q > maxQ) {
@@ -110,7 +102,7 @@ public class Agent extends AbstractPlayer {
         }
 
         // If no particularly good actions, choose one at random
-        if (maxQ < -1000) {
+        if ( maxQ < -1000 ) {
             ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
             int available_actions = actions.size();
             bestFirstAction[0] = actions.get(m_rnd.nextInt(available_actions));

@@ -6,6 +6,11 @@ import java.util.Random;
 import tools.Utils;
 import tracks.ArcadeMachine;
 import java.lang.*;
+import tools.StatSummary;
+
+// Import file handler for outputs
+import handle_files.handle_files;
+
 
 public class Ex3_optimise_GA 
 {
@@ -13,6 +18,75 @@ public class Ex3_optimise_GA
     {
         optimise_GA2();
         return;
+    }
+
+    //
+    // Test the best genotypes
+    //
+    public static void Ex3_test_GA()
+    {
+        // Set up the 4 best genotypes 
+        double aliens_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double boulderdash_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double butterflies_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double chase_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+
+        // Load available games
+		String spGamesCollection =  "examples/all_games_sp.csv";
+		String[][] games = Utils.readGames(spGamesCollection);
+
+        // set level params **** MAKE SURE GENOTYPE USED IS FOR THE RIGHT GAMEINDEX
+        int gameIdx = 0; 
+		String gameName = games[gameIdx][1];
+		String game = games[gameIdx][0];
+
+        // GA controller
+        String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
+
+        // Set seed
+        int seed = new Random().nextInt();
+        
+        // Number of runs for each game
+        int M = 10; 
+
+        // Text to write to file
+        String text = "";
+        
+        /*
+             Play all 5 levels of the specified game
+                                                        */
+
+        for(int lvl = 0; lvl < 5; lvl++)
+        {
+            // Set up output filename
+            String filename = "results/exercise03/" + gameName + "_" + "lvl" + lvl + "_" + M;
+
+            // Set up level to pass to runOneGameGA
+            String level = game.replace(gameName, gameName+"_lvl"+lvl);
+
+            // Create stat summary object to compute mean and std dev
+            StatSummary scores = new StatSummary(); // set to 1 because we only have one player (the GA)
+
+            // Run each game level M times
+            for (int i=0; i<M; i++) {
+
+                // Run game with given genotype
+                double temp[] = ArcadeMachine.runOneGameGA(game, level, false, sampleGAController, null, seed, 0, aliens_genotype);
+                 
+                // Put score into stat summary running tally
+                scores.add(temp[1]);
+                text += "Score on run " + (i+1) + ": " + temp[1] + "\n";
+            }
+
+            // After running 10 games, get mean and sd for the level
+            double mean = scores.mean(); 
+            double sd = scores.sd();
+
+            // Output values
+            text += "\nMEAN: " + mean;
+            text += ", STD DEV: " + sd;
+            handle_files.write_to_file(filename, text);
+        }
     }
 
     public static void optimise_GA2()
@@ -28,6 +102,7 @@ public class Ex3_optimise_GA
         // set level params
         int gameIdx = 0; 
 		String gameName = games[gameIdx][1];
+        System.out.println("Gamename is " + gameName);
 		String game = games[gameIdx][0];
 
         // seed
@@ -51,10 +126,10 @@ public class Ex3_optimise_GA
                         */
 
         // EA variables
-        double sigmas[] = {0.2, 2, 2, 0.05};
-        double minSigmas[] = {0.2, 2, 2, 0.05};
-        int num_gen = 10;
-        double scores[] = new double[5];
+        double sigmas[] = {0.3, 3, 3, 0.3};
+        double minSigmas[] = {0.15, 3, 3, 0.09};
+        int num_gen = 50;
+        double scores[] = new double[2];
         Random gaussian = new Random();
         double parent_score = 0;
         double current_score = 0;
@@ -65,16 +140,25 @@ public class Ex3_optimise_GA
             RUN INITIAL PARENT
                                 */
         
-        for(int lvl = 0; lvl < 5; lvl++)
-        {
-            String level1 = game.replace(gameName, gameName+"_lvl"+lvl);
+        // for(int lvl = 0; lvl < 5; lvl++)
+        // {
+        //     String level1 = game.replace(gameName, gameName+"_lvl"+lvl);
 
+        //     double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
+
+        //     scores[lvl] = temp[1];
+        //     parent_score += scores[lvl];
+        // }
+        
+        for( int i = 0; i < 2; i++){
+
+            String level1 = game.replace(gameName, gameName+"_lvl1");
             double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
-
-            scores[lvl] = temp[1];
-            parent_score += scores[lvl];
+        
+            scores[i] = temp[1];
+            parent_score += scores[i];
         }
-
+    
         /*
         RUN EA (single pop) 
         based on slide 18 of slide set 3
@@ -82,7 +166,7 @@ public class Ex3_optimise_GA
 
         for (int gen = 0; gen < num_gen; gen++) 
         {
-            
+            System.out.println("GENERATION " + (gen+1) + ":\n");
             // performing calculations of new sigmas and making child with correct parameters
             double N = gaussian.nextGaussian();
             for(int i = 0; i < 3; i++){
@@ -144,16 +228,24 @@ public class Ex3_optimise_GA
                 System.out.print(parent_genotype[i]);
                 System.out.print(" ");
             }
+            System.out.print("\n");
+
+            System.out.print("Curent child genotype: ");
+            for (int i=0; i < 5; i++) {
+                System.out.print(child_genotype[i]);
+                System.out.print(" ");
+            }
+            System.out.print("\n");
             
             // calculates score for child
-            for(int lvl = 0; lvl < 5; lvl++)
+            for(int i = 0; i < 2; i++)
             {
-                String level = game.replace(gameName, gameName+"_lvl"+lvl);
+                String level1 = game.replace(gameName, gameName+"_lvl1");
 
-                double temp[] = ArcadeMachine.runOneGameGA(game, level, false, sampleGAController, null, seed, 0, child_genotype);
+                double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, child_genotype);
 
-                scores[lvl] = temp[1];
-                current_score += scores[lvl];
+                scores[i] = temp[1];
+                current_score += scores[i];
             }
 
             // greedy select
@@ -168,6 +260,20 @@ public class Ex3_optimise_GA
             current_score = 0;
 
         }
+        
+        System.out.print("FINAL parent genotype: ");
+        for (int i=0; i < 5; i++) {
+            System.out.print(parent_genotype[i]);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
+
+        System.out.print("FINAL child genotype: ");
+        for (int i=0; i < 5; i++) {
+            System.out.print(child_genotype[i]);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
     }
 
     public static void optimise_GA()
@@ -344,22 +450,6 @@ public class Ex3_optimise_GA
     }
     
 }
-    // public static void Ex3_test_GA()
-    // {
-    //     // GA controller
-    //     String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
-
-    //     // Set up the 4 game indexes and levels to be played
-        
-    //     // Set up the new GA paramaters for each game (calculated by the EA)
-
-    //     // Run the GA with new parameters 
-    //         // Run each level in eahc game 10 times
-    //         // Get the mean and std deviation of scores
-
-
-    //     double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
-
-    // }
+    
     
     
