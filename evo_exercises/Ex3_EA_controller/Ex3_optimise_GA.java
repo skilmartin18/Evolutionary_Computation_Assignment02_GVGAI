@@ -96,27 +96,28 @@ public class Ex3_optimise_GA
                 }
 
                 // new child
-                child_genotype[i] = parent_genotype[i] + sigmas[i]*Ni;
-
+                
                 /* 
                     Makes sure certain parameters are bounded
                 */
                 
                 // gamma
                 if ( i == 0 ){
+                    child_genotype[i] = parent_genotype[i] + sigmas[i]*Ni;
                     if ( child_genotype[i] < 0 ){
                         child_genotype[i] = 0;
                     }
 
                 // simulation depth
                 }else if ( i == 1 ){
+                    child_genotype[i] = Math.floor(parent_genotype[i] + sigmas[i]*Ni);
                     if ( child_genotype[i] < 1 ){
                         child_genotype[i] = 1;
                     }
 
                 // population size
                 }else if ( i == 2 ){
-
+                    child_genotype[i] = Math.floor(parent_genotype[i] + sigmas[i]*Ni);
                     if ( child_genotype[i] < 3 ){
                         child_genotype[i] = 3;
                     }else if ( child_genotype[i] > 5 ){
@@ -125,7 +126,7 @@ public class Ex3_optimise_GA
 
                 // recprob
                 }else if ( i == 3 ){
-
+                    child_genotype[i] = parent_genotype[i] + sigmas[i]*Ni;
                     if ( child_genotype[i] < 0 ){
                         child_genotype[i] = 0;
                     }else if ( child_genotype[i] >= 1 ){
@@ -343,3 +344,22 @@ public class Ex3_optimise_GA
     }
     
 }
+    // public static void Ex3_test_GA()
+    // {
+    //     // GA controller
+    //     String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
+
+    //     // Set up the 4 game indexes and levels to be played
+        
+    //     // Set up the new GA paramaters for each game (calculated by the EA)
+
+    //     // Run the GA with new parameters 
+    //         // Run each level in eahc game 10 times
+    //         // Get the mean and std deviation of scores
+
+
+    //     double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
+
+    // }
+    
+    
