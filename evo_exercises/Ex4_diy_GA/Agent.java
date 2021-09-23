@@ -83,6 +83,34 @@ public class Agent extends AbstractPlayer {
 
         return score;
     }
+
+    // random index mutation
+    public ArrayList<Types.ACTIONS> random_mutate(ArrayList<Types.ACTIONS> individual){
+
+        return individual;
+    }
+
+    // returns an arrary list of 2 children after parent crossover
+    public ArrayList<ArrayList<Types.ACTIONS>> ordered_crossover(ArrayList<Types.ACTIONS> ind1, ArrayList<Types.ACTIONS> ind2){
+        ArrayList<ArrayList<Types.ACTIONS>> children = new ArrayList<ArrayList<Types.ACTIONS>>();
+
+        return children;
+    }
+
+    // fitness proportionate selection WITHOUT replacement. Returns 2 individuals to be parents
+    public ArrayList<ArrayList<Types.ACTIONS>> fitness_proportionate(ArrayList<ArrayList<Types.ACTIONS>> population){
+        ArrayList<ArrayList<Types.ACTIONS>> parents = new ArrayList<ArrayList<Types.ACTIONS>>();
+
+        return parents;
+    }
+
+    // elitism
+    public ArrayList<ArrayList<Types.ACTIONS>> elitism(ArrayList<ArrayList<Types.ACTIONS>> population, int percentage){
+        ArrayList<ArrayList<Types.ACTIONS>> elites = new ArrayList<ArrayList<Types.ACTIONS>>();
+
+        return elites;
+    }
+
     /**
      *
      * Very simple diy GA
