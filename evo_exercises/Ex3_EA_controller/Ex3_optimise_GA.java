@@ -126,8 +126,8 @@ public class Ex3_optimise_GA
                         */
 
         // EA variables
-        double sigmas[] = {0.6, 5, 5, 0.4};
-        double minSigmas[] = {0.3, 3, 3, 0.1};
+        double sigmas[] = {0.3, 3, 3, 0.3};
+        double minSigmas[] = {0.15, 3, 3, 0.09};
         int num_gen = 50;
         double scores[] = new double[5];
         Random gaussian = new Random();
