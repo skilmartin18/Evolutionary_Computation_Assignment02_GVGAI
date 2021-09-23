@@ -8,7 +8,13 @@ public class Ex3_optimise_GA
 {
     public static void main(String[] args) 
     {
-        /*
+        optimise_GA();
+        return;
+    }
+
+    public static void optimise_GA()
+    {
+          /*
             ARCADE MACHINE STUFF
                                     */
 
@@ -169,6 +175,6 @@ public class Ex3_optimise_GA
 
         }
 
-        System.out.println(parent_genotype);
     }
+    
 }
