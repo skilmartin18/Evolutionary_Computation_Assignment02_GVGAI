@@ -9,6 +9,7 @@ import ontology.*;
 import ontology.Types.ACTIONS;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,13 +21,12 @@ import java.util.Random;
 public class Agent extends AbstractPlayer {
 
     // var decs 
-    public double epsilon = 1e-6;
-    public Random m_rnd;
     public int population_size = 5;
     public int genotype_size = 5;
     public Random rand;
-    public ArrayList<Types.ACTIONS> seed_individual;
-   
+    public individual seed_individual;
+    public ElapsedCpuTimer timer;
+    public long remaining;
     // constructor
     public Agent(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) 
     {
@@ -35,40 +35,27 @@ public class Agent extends AbstractPlayer {
 
         //SimpleStateHeuristic heuristic = new SimpleStateHeuristic(stateObs);
 
+
         // create initial seed individual (at first there is no previous individual so just NIL)
-        seed_individual = new ArrayList<Types.ACTIONS>();
+
+        individual seed_individual = new individual(stateObs,genotype_size);
         for (int i = 0; i < genotype_size; i++)
         {
-            seed_individual.add(ACTIONS.ACTION_NIL);
+            seed_individual.genotype.set(i,ACTIONS.ACTION_NIL);
         }
     }
 
-    // create individual based on stateObs, creates individual of size set at beginning
-    public ArrayList<Types.ACTIONS> create_individual(StateObservation stateObs)
-    {
-        // get available actions (maybe move this out to increase performance)
-        ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
-        int available_actions = actions.size();
-        ArrayList<Types.ACTIONS> individual = new ArrayList<Types.ACTIONS>();
-
-        // add actions from the list of available actions to individual
-        for(int i = 0; i < genotype_size; i++)
-        {
-            individual.add( actions.get(rand.nextInt(available_actions)) );
-        }
-
-        return individual;
-    }
 
     // creates population from stateOBS, is list of action lists, chucks in individual from previous runs
-    public ArrayList<ArrayList<Types.ACTIONS>> create_population(StateObservation stateObs)
+    public ArrayList<individual> create_population(StateObservation stateObs)
     {
-        ArrayList<ArrayList<Types.ACTIONS>> population = new ArrayList<ArrayList<Types.ACTIONS>>();
+        ArrayList<individual> population = new ArrayList<individual>();
 
         // add individuals to population up to popsize-1 members
         for (int i = 0; i < population_size-1; i++)
         {
-            population.add(create_individual(stateObs));
+            individual ind = new individual(stateObs, genotype_size);
+            population.add(ind);
         }
         // last member is best individual from previous run
         population.add(seed_individual);
@@ -86,7 +73,7 @@ public class Agent extends AbstractPlayer {
         {
             stateObsCopy.advance(individual.get(i));
         }
-        
+
         // get score
         double score = heuristic.evaluateState(stateObsCopy);
 
@@ -129,11 +116,8 @@ public class Agent extends AbstractPlayer {
      * @return An action for the current state
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
-
+        
         //
-        
-        
-        
         /*
 
         Make a GA: 
@@ -155,6 +139,35 @@ public class Agent extends AbstractPlayer {
 
         */
 
+        // do admin work:
+        this.timer = elapsedTimer;
+        long avg_time = 0;
+        long time_sum = 0;
+        int gen_count = 0;
+        // create population
+        ArrayList<individual> population = new ArrayList<individual>();
+        population = create_population(stateObs);
+
+        // evolve while we have time remaining
+        remaining = timer.remainingTimeMillis();
+        while(remaining > avg_time && remaining > 10)
+        {
+            gen_count++;
+
+            //crossover 
+
+            //mutation
+
+            //select
+
+
+
+            // check remaining time
+            time_sum += timer.elapsedMillis();
+            avg_time = time_sum/gen_count;
+            remaining = timer.remainingTimeMillis();
+
+        }
 
         return ACTIONS.ACTION_NIL;
 
