@@ -125,8 +125,6 @@ public class Agent extends AbstractPlayer {
 
                 // Copy state of first action and advance
                 StateObservation stCopy3 = stateObs.copy();
-                //System.out.println(bestFirstAction[i]);
-
                 stCopy3.advance(bestFirstAction[i]);
                 stCopy3.advance(bestSecondAction[i]);
 
