@@ -52,18 +52,12 @@ public class Agent extends AbstractPlayer {
 
         selection:
         fitness based -JEFE
-        elitism -SEB/JEFE
+        elitism -JEFE
 
         remember best individual from last run:
         chuck into population -SEB
 
         */
-
-
-
-
-
-
 
 
         return ACTIONS.ACTION_NIL;

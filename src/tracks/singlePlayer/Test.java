@@ -53,8 +53,14 @@ public class Test {
 
 		// 2. This plays a game in a level by the controller.
 		//ArcadeMachine.runOneGame(game, level1, visuals, sampleOneStepController, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, multiStepLookAgent, recordActionsFile, seed, 0);
+		// ArcadeMachine.runOneGame(game, level1, visuals, multiStepLookAgent, recordActionsFile, seed, 0);
 
+		double array[] = {1.6850364614194646, 8.0, 6.0, 0.5764286853264742, 0.125};
+        ArcadeMachine.runOneGameGA(game, level1, visuals, sampleGAController, recordActionsFile, seed, 0, array);
+        ArcadeMachine.runOneGameGA(game, level1, visuals, sampleGAController, recordActionsFile, seed, 0, array);
+        ArcadeMachine.runOneGameGA(game, level1, visuals, sampleGAController, recordActionsFile, seed, 0, array);
+        ArcadeMachine.runOneGameGA(game, level1, visuals, sampleGAController, recordActionsFile, seed, 0, array);
+        ArcadeMachine.runOneGameGA(game, level1, visuals, sampleGAController, recordActionsFile, seed, 0, array);
 
 		// 3. This replays a game from an action file previously recorded
 	//	 String readActionsFile = recordActionsFile;
