@@ -122,9 +122,9 @@ public class Ex3_optimise_GA
                 child_genotype[4] = 1/child_genotype[1];
 
             // evaluate child across all levels of a single game
-            System.out.print("Curent individual genotype: ");
+            System.out.print("Curent parent genotype: ");
             for (int i=0; i < 5; i++) {
-                System.out.print(child_genotype[i]);
+                System.out.print(parent_genotype[i]);
                 System.out.print(" ");
             }
             System.out.print("\n");
@@ -145,7 +145,7 @@ public class Ex3_optimise_GA
             if ( current_score > parent_score)
             {
                 System.out.println("Parent being replaced...");
-                parent_genotype = child_genotype;
+                parent_genotype = child_genotype.clone();
                 parent_score = current_score;
                 mutation_success++;
             } else 
