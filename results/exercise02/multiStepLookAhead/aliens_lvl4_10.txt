@@ -1,1 +1,1 @@
-Results in aliens_lvl4 - Mean score: 50.1, Std Dev: 1.1972189997377634
+Results in aliens_lvl4 - Mean score: 51.4, Std Dev: 3.5962943891363364
