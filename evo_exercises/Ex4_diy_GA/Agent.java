@@ -3,9 +3,10 @@ package evo_exercises.Ex4_diy_GA;
 import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
-import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.Utils;
+import ontology.*;
+import ontology.Types.ACTIONS;
 
 import java.util.Random;
 
@@ -37,29 +38,35 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
-        Types.ACTIONS bestAction = null;
-        double maxQ = Double.NEGATIVE_INFINITY;
-        SimpleStateHeuristic heuristic =  new SimpleStateHeuristic(stateObs);
-        for (Types.ACTIONS action : stateObs.getAvailableActions()) {
+        /*
 
-            StateObservation stCopy = stateObs.copy();
-            stCopy.advance(action);
-            double Q = heuristic.evaluateState(stCopy);
-            Q = Utils.noise(Q, this.epsilon, this.m_rnd.nextDouble());
+        Make a GA: 
 
-            //System.out.println("Action:" + action + " score:" + Q);
-            if (Q > maxQ) {
-                maxQ = Q;
-                bestAction = action;
-            }
+        genotype: list of possible actions-> variable genotype length-> 5:  {NIL,LEFT,RIGHT,NIL,UP} -SEB
+        fitness: SimpleStateHeuristic evaluation score- SEB
+        population size variable:-> population -SEB
+
+        variation operators:
+        mutation-> randomly replace action with different available action- JEFE
+        crossover-> ordered crossover- JEFE
+
+        selection:
+        fitness based -JEFE
+        elitism -SEB/JEFE
+
+        remember best individual from last run:
+        chuck into population -SEB
+
+        */
 
 
-        }
-
-        //System.out.println("======== "  + maxQ + " " + bestAction + "============");
-        return bestAction;
 
 
+
+
+
+
+        return ACTIONS.ACTION_NIL;
 
     }
 
