@@ -7,7 +7,7 @@ import tools.ElapsedCpuTimer;
 import tools.Utils;
 import ontology.*;
 import ontology.Types.ACTIONS;
-
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -22,12 +22,39 @@ public class Agent extends AbstractPlayer {
     // var decs 
     public double epsilon = 1e-6;
     public Random m_rnd;
-
+    public int population_size = 5;
+    public int genotype_size = 5;
+    public Random rand = new Random();
     // constructor
-    public Agent(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
+    public Agent(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) 
+    {
 
     }
 
+    public ArrayList<Types.ACTIONS> create_individual(StateObservation stateObs)
+    {
+        ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
+        int available_actions = actions.size();
+        ArrayList<Types.ACTIONS> individual = new ArrayList<Types.ACTIONS>();
+
+        for(int i = 0; i < genotype_size; i++)
+        {
+            individual.add( actions.get(rand.nextInt(available_actions)) );
+        }
+
+        return individual;
+    }
+
+    public ArrayList<ArrayList<Types.ACTIONS>> create_population(StateObservation stateObs)
+    {
+        ArrayList<ArrayList<Types.ACTIONS>> population = new ArrayList<ArrayList<Types.ACTIONS>>();
+        for (int i = 0; i < population_size; i++)
+        {
+            population.add(create_individual(stateObs));
+        }
+
+        return population;
+    }
     /**
      *
      * Very simple diy GA
@@ -38,6 +65,10 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
+        //
+        
+        
+        
         /*
 
         Make a GA: 
