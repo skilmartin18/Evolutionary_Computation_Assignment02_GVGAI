@@ -49,6 +49,7 @@ public class Ex3_optimise_GA
 
         // EA variables
         double sigma = 1;
+        double sigmas[] = {0.2, 2, 2, 0.05};
         int num_gen = 10;
         double scores[] = new double[5];
         Random gaussian = new Random();
@@ -60,6 +61,7 @@ public class Ex3_optimise_GA
         double c = 0.8;
         long initial_time = 0;
         long current_time = 0;
+
         /*
             RUN INITIAL PARENT
                                 */
@@ -89,12 +91,12 @@ public class Ex3_optimise_GA
                 // next gaussian returns number from N(0,1), to make with our stddev multiply by sigma
 
                 // Index 0, GAMMA
-                child_genotype[0] = Math.abs(parent_genotype[0]  + gaussian.nextGaussian()*sigma);
+                child_genotype[0] = Math.abs(parent_genotype[0]  + gaussian.nextGaussian()*sigmas[0]);
 
                 // Index 1, SIM DEPTH   
                 initial_time = System.currentTimeMillis();
                 do {
-                    child_genotype[1] = Math.floor(Math.abs(parent_genotype[1]  + gaussian.nextGaussian()*sigma));
+                    child_genotype[1] = Math.floor(Math.abs(parent_genotype[1]  + gaussian.nextGaussian()*sigmas[1]));
 
                     //break this loop if taking too long, honestly dont even need the loop, if it fails just hardcode it...
                     current_time = System.currentTimeMillis();
@@ -108,7 +110,7 @@ public class Ex3_optimise_GA
                 // INDEX 2, POP SIZE
                 initial_time = System.currentTimeMillis();
                 do {
-                    child_genotype[2] = Math.floor( Math.abs(parent_genotype[2]  + gaussian.nextGaussian()*sigma) );
+                    child_genotype[2] = Math.floor( Math.abs(parent_genotype[2]  + gaussian.nextGaussian()*sigmas[2]) );
                     current_time = System.currentTimeMillis();
                     // loop break
                     if ((current_time-initial_time) > 5000)
@@ -119,7 +121,7 @@ public class Ex3_optimise_GA
                 } while (child_genotype[2] < 3);
 
                 // Index 3, RECPROB
-                child_genotype[3] = Math.abs(parent_genotype[3]  + gaussian.nextGaussian()*sigma);
+                child_genotype[3] = Math.abs(parent_genotype[3]  + gaussian.nextGaussian()*sigmas[3]);
                 child_genotype[3] = child_genotype[3]%1;
                
                 // mut is 1/sim_depth
@@ -164,11 +166,17 @@ public class Ex3_optimise_GA
 
                 if ( p_s > 0.20 )
                 {
-                    sigma = sigma/c;
+                    sigmas[0] = sigmas[0]/c;
+                    sigmas[1] = sigmas[1]/c;
+                    sigmas[2] = sigmas[2]/c;
+                    sigmas[3] = sigmas[3]/c;
                 }
                 if ( p_s < 0.20)
                 {
-                    sigma = sigma*c;
+                    sigmas[0] = sigmas[0]*c;
+                    sigmas[1] = sigmas[1]*c;
+                    sigmas[2] = sigmas[2]*c;
+                    sigmas[3] = sigmas[3]*c;
                 }
 
             }
