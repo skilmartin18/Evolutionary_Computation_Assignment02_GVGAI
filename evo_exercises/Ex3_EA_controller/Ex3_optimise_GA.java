@@ -8,9 +8,10 @@ public class Ex3_optimise_GA
 {
     public static void main(String[] args) 
     {
+        optimise_GA();
         return;
     }
-    
+
     public static void optimise_GA()
     {
           /*
