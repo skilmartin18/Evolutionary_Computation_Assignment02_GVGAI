@@ -129,7 +129,7 @@ public class Ex3_optimise_GA
         double sigmas[] = {0.6, 5, 5, 0.4};
         double minSigmas[] = {0.3, 3, 3, 0.1};
         int num_gen = 50;
-        double scores[] = new double[5];
+        double scores[] = new double[2];
         Random gaussian = new Random();
         double parent_score = 0;
         double current_score = 0;
@@ -140,16 +140,25 @@ public class Ex3_optimise_GA
             RUN INITIAL PARENT
                                 */
         
-        for(int lvl = 0; lvl < 5; lvl++)
-        {
-            String level1 = game.replace(gameName, gameName+"_lvl"+lvl);
+        // for(int lvl = 0; lvl < 5; lvl++)
+        // {
+        //     String level1 = game.replace(gameName, gameName+"_lvl"+lvl);
 
+        //     double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
+
+        //     scores[lvl] = temp[1];
+        //     parent_score += scores[lvl];
+        // }
+        
+        for( int i = 0; i < 2; i++){
+
+            String level1 = game.replace(gameName, gameName+"_lvl1");
             double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
-
-            scores[lvl] = temp[1];
-            parent_score += scores[lvl];
+        
+            scores[i] = temp[1];
+            parent_score += scores[i];
         }
-
+    
         /*
         RUN EA (single pop) 
         based on slide 18 of slide set 3
@@ -221,14 +230,14 @@ public class Ex3_optimise_GA
             }
             
             // calculates score for child
-            for(int lvl = 0; lvl < 5; lvl++)
+            for(int i = 0; i < 2; i++)
             {
-                String level = game.replace(gameName, gameName+"_lvl"+lvl);
+                String level1 = game.replace(gameName, gameName+"_lvl1");
 
-                double temp[] = ArcadeMachine.runOneGameGA(game, level, false, sampleGAController, null, seed, 0, child_genotype);
+                double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, child_genotype);
 
-                scores[lvl] = temp[1];
-                current_score += scores[lvl];
+                scores[i] = temp[1];
+                current_score += scores[i];
             }
 
             // greedy select
