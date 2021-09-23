@@ -219,6 +219,14 @@ public class Ex3_optimise_GA
                 System.out.print(parent_genotype[i]);
                 System.out.print(" ");
             }
+            System.out.print("\n");
+
+            System.out.print("Curent child genotype: ");
+            for (int i=0; i < 5; i++) {
+                System.out.print(child_genotype[i]);
+                System.out.print(" ");
+            }
+            System.out.print("\n");
             
             // calculates score for child
             for(int lvl = 0; lvl < 5; lvl++)
@@ -243,6 +251,20 @@ public class Ex3_optimise_GA
             current_score = 0;
 
         }
+        
+        System.out.print("FINAL parent genotype: ");
+        for (int i=0; i < 5; i++) {
+            System.out.print(parent_genotype[i]);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
+
+        System.out.print("FINAL child genotype: ");
+        for (int i=0; i < 5; i++) {
+            System.out.print(child_genotype[i]);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
     }
 
     public static void optimise_GA()
