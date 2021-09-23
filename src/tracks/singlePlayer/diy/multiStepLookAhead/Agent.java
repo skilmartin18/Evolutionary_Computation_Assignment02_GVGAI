@@ -53,14 +53,14 @@ public class Agent extends AbstractPlayer {
         SimpleStateHeuristic heuristic =  new SimpleStateHeuristic(stateObs);
 
         // Reversing first actions array, 
-        ArrayList<Types.ACTIONS> firstAvailableActions = stateObs.getAvailableActions();
-        ArrayList<Types.ACTIONS> reversedFirstAvailableActions = new ArrayList<Types.ACTIONS>();
-        for (int j = firstAvailableActions.size()-1; j > -1; j--){
-            reversedFirstAvailableActions.add(firstAvailableActions.get(j));
-        }
+        //ArrayList<Types.ACTIONS> firstAvailableActions = stateObs.getAvailableActions();
+        // ArrayList<Types.ACTIONS> reversedFirstAvailableActions = new ArrayList<Types.ACTIONS>();
+        // for (int j = firstAvailableActions.size()-1; j > -1; j--){
+        //     reversedFirstAvailableActions.add(firstAvailableActions.get(j));
+        // }
 
         // Loop through current possible actions
-        for (Types.ACTIONS firstAction : reversedFirstAvailableActions ){
+        for (Types.ACTIONS firstAction : stateObs.getAvailableActions() ){
             
             if ( _break ){
                 break;
