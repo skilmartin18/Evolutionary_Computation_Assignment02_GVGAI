@@ -6,6 +6,24 @@ import java.lang.*;
 
 public class Ex3_optimise_GA 
 {
+    public static void Ex3_test_GA()
+    {
+        // GA controller
+        String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
+
+        // Set up the 4 game indexes and levels to be played
+        
+        // Set up the new GA paramaters for each game (calculated by the EA)
+
+        // Run the GA with new parameters 
+            // Run each level in eahc game 10 times
+            // Get the mean and std deviation of scores
+
+
+        double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
+
+    }
+    
     public static void main(String[] args) 
     {
         /*
