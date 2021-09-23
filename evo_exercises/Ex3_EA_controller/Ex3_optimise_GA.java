@@ -126,8 +126,8 @@ public class Ex3_optimise_GA
                         */
 
         // EA variables
-        double sigmas[] = {0.6, 5, 5, 0.4};
-        double minSigmas[] = {0.3, 3, 3, 0.1};
+        double sigmas[] = {0.3, 3, 3, 0.3};
+        double minSigmas[] = {0.15, 3, 3, 0.09};
         int num_gen = 50;
         double scores[] = new double[2];
         Random gaussian = new Random();
@@ -228,6 +228,14 @@ public class Ex3_optimise_GA
                 System.out.print(parent_genotype[i]);
                 System.out.print(" ");
             }
+            System.out.print("\n");
+
+            System.out.print("Curent child genotype: ");
+            for (int i=0; i < 5; i++) {
+                System.out.print(child_genotype[i]);
+                System.out.print(" ");
+            }
+            System.out.print("\n");
             
             // calculates score for child
             for(int i = 0; i < 2; i++)
@@ -252,6 +260,20 @@ public class Ex3_optimise_GA
             current_score = 0;
 
         }
+        
+        System.out.print("FINAL parent genotype: ");
+        for (int i=0; i < 5; i++) {
+            System.out.print(parent_genotype[i]);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
+
+        System.out.print("FINAL child genotype: ");
+        for (int i=0; i < 5; i++) {
+            System.out.print(child_genotype[i]);
+            System.out.print(" ");
+        }
+        System.out.print("\n");
     }
 
     public static void optimise_GA()
