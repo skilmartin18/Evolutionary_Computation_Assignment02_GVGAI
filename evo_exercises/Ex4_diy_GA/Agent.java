@@ -43,12 +43,15 @@ public class Agent extends AbstractPlayer {
         }
     }
 
+    // create individual based on stateObs, creates individual of size set at beginning
     public ArrayList<Types.ACTIONS> create_individual(StateObservation stateObs)
     {
+        // get available actions (maybe move this out to increase performance)
         ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
         int available_actions = actions.size();
         ArrayList<Types.ACTIONS> individual = new ArrayList<Types.ACTIONS>();
 
+        // add actions from the list of available actions to individual
         for(int i = 0; i < genotype_size; i++)
         {
             individual.add( actions.get(rand.nextInt(available_actions)) );
@@ -57,32 +60,40 @@ public class Agent extends AbstractPlayer {
         return individual;
     }
 
+    // creates population from stateOBS, is list of action lists, chucks in individual from previous runs
     public ArrayList<ArrayList<Types.ACTIONS>> create_population(StateObservation stateObs)
     {
         ArrayList<ArrayList<Types.ACTIONS>> population = new ArrayList<ArrayList<Types.ACTIONS>>();
+
+        // add individuals to population up to popsize-1 members
         for (int i = 0; i < population_size-1; i++)
         {
             population.add(create_individual(stateObs));
         }
-        
+        // last member is best individual from previous run
         population.add(seed_individual);
 
         return population;
     }
 
+    // apply all actions from a genotype into a stateobs and return score
     public double get_fitness(StateObservation stateObs, ArrayList<Types.ACTIONS> individual, SimpleStateHeuristic heuristic)
     {
         StateObservation stateObsCopy = stateObs.copy();
 
+        // apply moves
         for( int i = 0; i < genotype_size; i++)
         {
             stateObsCopy.advance(individual.get(i));
         }
-
+        
+        // get score
         double score = heuristic.evaluateState(stateObsCopy);
 
         return score;
     }
+
+
     /**
      *
      * Very simple diy GA
