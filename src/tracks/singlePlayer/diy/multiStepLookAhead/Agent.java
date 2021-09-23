@@ -52,10 +52,9 @@ public class Agent extends AbstractPlayer {
         double Q = 0;
         SimpleStateHeuristic heuristic =  new SimpleStateHeuristic(stateObs);
 
-        // Reversing first actions array
+        // Reversing first actions array, 
         ArrayList<Types.ACTIONS> firstAvailableActions = stateObs.getAvailableActions();
         ArrayList<Types.ACTIONS> reversedFirstAvailableActions = new ArrayList<Types.ACTIONS>();
-
         for (int j = firstAvailableActions.size()-1; j > -1; j--){
             reversedFirstAvailableActions.add(firstAvailableActions.get(j));
         }
@@ -88,7 +87,7 @@ public class Agent extends AbstractPlayer {
                 double Q2 = heuristic.evaluateState(stCopy2);
                 Q2 = Utils.noise(Q2, this.epsilon, this.m_rnd.nextDouble());
 
-                Q = Q1 + Q2;
+                Q = Q1 + Q2; // probably not needed
 
                 // Recording three best first and second actions to take
                 if (Q > maxQ) {
@@ -125,8 +124,6 @@ public class Agent extends AbstractPlayer {
 
                 // Copy state of first action and advance
                 StateObservation stCopy3 = stateObs.copy();
-                //System.out.println(bestFirstAction[i]);
-
                 stCopy3.advance(bestFirstAction[i]);
                 stCopy3.advance(bestSecondAction[i]);
 
