@@ -26,13 +26,14 @@ public class Test {
 		String sampleOLETSController = "tracks.singlePlayer.advanced.olets.Agent";
 
 		String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
+		String multiStepLookAgent = "tracks.singlePlayer.diy.multiStepLookAhead.Agent";
 
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
 		String[][] games = Utils.readGames(spGamesCollection);
 
 		//Game settings
-		boolean visuals = true;
+		boolean visuals = false;
 		int seed = new Random().nextInt();
 
 		// Game and level to play
@@ -51,7 +52,8 @@ public class Test {
 		//ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
 
 		// 2. This plays a game in a level by the controller.
-		ArcadeMachine.runOneGame(game, level1, false, sampleGAController, recordActionsFile, seed, 0);
+		//ArcadeMachine.runOneGame(game, level1, visuals, sampleOneStepController, recordActionsFile, seed, 0);
+		ArcadeMachine.runOneGame(game, level1, visuals, multiStepLookAgent, recordActionsFile, seed, 0);
 
 
 		// 3. This replays a game from an action file previously recorded
