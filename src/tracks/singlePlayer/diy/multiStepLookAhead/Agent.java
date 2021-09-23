@@ -55,8 +55,8 @@ public class Agent extends AbstractPlayer {
         WinScoreHeuristic heuristic =  new WinScoreHeuristic(stateObs);
 
         // Check if all first actions are equal in score
-        double initialScore = stateObs.getGameScore();
-        double finalScore = 0;
+        //double initialScore = stateObs.getGameScore();
+        //double finalScore = 0;
 
         // Loop through current possible actions
         for (Types.ACTIONS firstAction : stateObs.getAvailableActions() ){
@@ -82,7 +82,7 @@ public class Agent extends AbstractPlayer {
                 StateObservation stCopy2 = stCopy.copy();
                 stCopy2.advance(secondAction);
                 Q = heuristic.evaluateState(stCopy2);
-                finalScore = Q;
+                //finalScore = Q;
                 Q = Utils.noise(Q, this.epsilon, this.m_rnd.nextDouble());
 
                 // Recording three best first and second actions to take
@@ -102,7 +102,7 @@ public class Agent extends AbstractPlayer {
         }
 
         // If no particularly good actions, choose one at random
-        if (finalScore - initialScore == 0 ) {
+        if ( maxQ < -1000 ) {
             ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
             int available_actions = actions.size();
             bestFirstAction[0] = actions.get(m_rnd.nextInt(available_actions));

@@ -59,8 +59,8 @@ public class Ex2_run_controller {
 				// runGames must take levels as an string array- so convert levels[k] into one
 				System.out.println("Lvl_"+k+":");
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
-				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, multiStepLookAgent, null);
-				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRHEAController, null);
+				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, multiStepLookAgent, null);
+				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRHEAController, null);
 			}
 			
 		}
