@@ -8,6 +8,10 @@ import tracks.ArcadeMachine;
 import java.lang.*;
 import tools.StatSummary;
 
+// Import file handler for outputs
+import handle_files.handle_files;
+
+
 public class Ex3_optimise_GA 
 {
     public static void main(String[] args) 
@@ -16,10 +20,16 @@ public class Ex3_optimise_GA
         return;
     }
 
+    //
+    // Test the best genotypes
+    //
     public static void Ex3_test_GA()
     {
-        // GA controller
-        String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
+        // Set up the 4 best genotypes 
+        double aliens_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double boulderdash_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double butterflies_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double chase_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
 
         // Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
@@ -30,23 +40,28 @@ public class Ex3_optimise_GA
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 
-        // seed
+        // GA controller
+        String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
+
+        // Set seed
         int seed = new Random().nextInt();
-
-        // Set up the 4 game indexes and levels to be played
-        double aliens_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
-        double boulderdash_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
-        double butterflies_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
-        double chase_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
-
+        
         // Number of runs for each game
         int M = 10; 
+
+        // Text to write to file
+        String text = "";
         
-        // Play all 5 levels of a game
+        /*
+             Play all 5 levels of the specified game
+                                                        */
+
         for(int lvl = 0; lvl < 5; lvl++)
         {
-            System.out.println(gameName + " LEVEL " + (lvl+1) + ": ");
+            // Set up output filename
+            String filename = "results/exercise03/" + gameName + "_" + "lvl" + lvl + "_" + M;
 
+            // Set up level to pass to runOneGameGA
             String level = game.replace(gameName, gameName+"_lvl"+lvl);
 
             // Create stat summary object to compute mean and std dev
@@ -60,7 +75,7 @@ public class Ex3_optimise_GA
                  
                 // Put score into stat summary running tally
                 scores.add(temp[1]);
-                System.out.println("Score on run " + (i+1) + ": " + temp[1]);
+                text += "Score on run " + (i+1) + ": " + temp[1] + "\n";
             }
 
             // After running 10 games, get mean and sd for the level
@@ -68,13 +83,10 @@ public class Ex3_optimise_GA
             double sd = scores.sd();
 
             // Output values
-            System.out.println("Mean score: " + mean);
-            System.out.println("Std dev: " + sd);
+            text += "\nMEAN: " + mean;
+            text += ", STD DEV: " + sd;
+            handle_files.write_to_file(filename, text);
         }
-
-        // Run the GA with new parameters 
-            // Run each level in eahc game 10 times
-            // Get the mean and std deviation of scores
     }
 
     public static void optimise_GA2()
@@ -90,6 +102,7 @@ public class Ex3_optimise_GA
         // set level params
         int gameIdx = 0; 
 		String gameName = games[gameIdx][1];
+        System.out.println("Gamename is " + gameName);
 		String game = games[gameIdx][0];
 
         // seed
