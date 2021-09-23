@@ -59,6 +59,9 @@ public class Agent extends AbstractPlayer {
             reversedFirstAvailableActions.add(firstAvailableActions.get(j));
         }
 
+        // Check if all first actions are equal in score
+
+
         // Loop through current possible actions
         for (Types.ACTIONS firstAction : reversedFirstAvailableActions ){
             
@@ -69,8 +72,8 @@ public class Agent extends AbstractPlayer {
             // Copy state of first action
             StateObservation stCopy = stateObs.copy();
             stCopy.advance(firstAction);
-            double Q1 = heuristic.evaluateState(stCopy);
-            Q1 = Utils.noise(Q1, this.epsilon, this.m_rnd.nextDouble());
+            // double Q1 = heuristic.evaluateState(stCopy);
+            // Q1 = Utils.noise(Q1, this.epsilon, this.m_rnd.nextDouble());
     
             // For each first action, loop through the possible second actions
             for (Types.ACTIONS secondAction : stCopy.getAvailableActions()) {
@@ -84,10 +87,11 @@ public class Agent extends AbstractPlayer {
                 
                 StateObservation stCopy2 = stCopy.copy();
                 stCopy2.advance(secondAction);
-                double Q2 = heuristic.evaluateState(stCopy2);
-                Q2 = Utils.noise(Q2, this.epsilon, this.m_rnd.nextDouble());
+                Q = heuristic.evaluateState(stCopy2);
+                System.out.println("Q before noise added: " + Q);
+                Q = Utils.noise(Q, this.epsilon, this.m_rnd.nextDouble());
 
-                Q = Q1 + Q2; // probably not needed
+                //Q = Q1 + Q2; // probably not needed
 
                 // Recording three best first and second actions to take
                 if (Q > maxQ) {
@@ -105,6 +109,12 @@ public class Agent extends AbstractPlayer {
             }
         }
 
+        // If no particularly good actions, choose one at random
+        if (maxQ < -1000) {
+            ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
+            int available_actions = actions.size();
+            bestFirstAction[0] = actions.get(m_rnd.nextInt(available_actions));
+        }
 
         //Setting bestAction just incase not enough time
         Types.ACTIONS bestAction = bestFirstAction[0];
