@@ -33,11 +33,11 @@ public class Test {
 		String[][] games = Utils.readGames(spGamesCollection);
 
 		//Game settings
-		boolean visuals = false;
+		boolean visuals = true;
 		int seed = new Random().nextInt();
 
 		// Game and level to play
-		int gameIdx = 0; 
+		int gameIdx = 13; 
 		int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
@@ -53,7 +53,7 @@ public class Test {
 
 		// 2. This plays a game in a level by the controller.
 		//ArcadeMachine.runOneGame(game, level1, visuals, sampleOneStepController, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, multiStepLookAgent, recordActionsFile, seed, 0);
+		ArcadeMachine.runOneGame(game, level1, visuals, sampleOneStepController, recordActionsFile, seed, 0);
 
 
 		// 3. This replays a game from an action file previously recorded

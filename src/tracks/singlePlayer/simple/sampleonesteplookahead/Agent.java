@@ -47,11 +47,13 @@ public class Agent extends AbstractPlayer {
             StateObservation stCopy = stateObs.copy();
             stCopy.advance(action);
             double Q = heuristic.evaluateState(stCopy);
+            System.out.println("Q before noise added: " + Q);
             Q = Utils.noise(Q, this.epsilon, this.m_rnd.nextDouble());
 
             //System.out.println("Action:" + action + " score:" + Q);
             if (Q > maxQ) {
                 maxQ = Q;
+                System.out.println("Max Q: " + maxQ);
                 bestAction = action;
             }
 
