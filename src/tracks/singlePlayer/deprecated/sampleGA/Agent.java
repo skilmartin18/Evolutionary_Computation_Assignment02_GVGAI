@@ -23,13 +23,13 @@ import tools.Utils;
  */
 public class Agent extends AbstractPlayer {
 
-    private double GAMMA = 0.90;
-    private long BREAK_MS = 5;
-    private int SIMULATION_DEPTH = 7;
-    private int POPULATION_SIZE = 5;
+    static public double GAMMA = 0.90;
+    public long BREAK_MS = 5;
+    public int SIMULATION_DEPTH = 7;
+    public int POPULATION_SIZE = 5;
 
-    private double RECPROB = 0.1;
-    private double MUT = (1.0 / SIMULATION_DEPTH);
+    double RECPROB = 0.1;
+    double MUT = (1.0 / SIMULATION_DEPTH);
     private final int N_ACTIONS;
 
     private ElapsedCpuTimer timer;
@@ -40,6 +40,25 @@ public class Agent extends AbstractPlayer {
     protected Random randomGenerator;
 
     private int numSimulations;
+
+    /*
+        SEBS CODE HERE
+                        */
+    
+    public void set_GA_params(double GA_params[])
+    {
+        GAMMA = GA_params[0];
+        SIMULATION_DEPTH = (int)GA_params[1];
+        POPULATION_SIZE = (int)GA_params[2];
+        RECPROB = GA_params[3];
+        MUT = GA_params[4];
+        return;
+    }
+
+
+    /*
+        SEBS CODE END
+                        */
 
     /**
      * Public constructor with state observation and time due.
