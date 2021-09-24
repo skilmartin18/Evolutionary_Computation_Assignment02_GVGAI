@@ -35,10 +35,7 @@ public class SimplestHeuristic {
         } 
         else if (npcPositions != null)
         {
-            System.out.println("1: ");
-            Observation poop = npcPositions[0].get(0);
-            System.out.println("2: ");
-            closest = poop.sqDist/stateObs.getBlockSize();
+            closest = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
             score += 1/(closest/100);
         }
 
