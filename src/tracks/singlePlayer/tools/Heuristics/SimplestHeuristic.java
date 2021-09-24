@@ -32,6 +32,7 @@ public class SimplestHeuristic {
         {
             closest = resourcePositions[0].get(0).sqDist/stateObs.getBlockSize();
             score += 1/(closest/100);
+            System.out.println(score);
         } 
         else if (npcPositions.length > 0)
         {
