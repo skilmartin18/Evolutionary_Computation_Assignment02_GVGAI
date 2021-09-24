@@ -184,9 +184,33 @@ public class Agent extends AbstractPlayer {
         return parents;
     }
 
-    // elitism
-    public ArrayList<individual> elitism(ArrayList<individual> population, int percentage){
+    // elitism (will only return 2 elites for now). Effectively the same as tournament selection
+    public ArrayList<individual> return_two_elites(ArrayList<individual> population){
+        
+        // initialising return list of elites
         ArrayList<individual> elites = new ArrayList<individual>();
+
+        // finding best and second best individuals from all in population
+        int best_individual_index = 0;
+        int second_individual_index = 0;
+        double best_fitness = Double.NEGATIVE_INFINITY;
+        double second_best_fitness = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < population_size; i++){
+            if ((population.get(i)).fitness >= best_fitness){
+                second_best_fitness = best_fitness;
+                best_fitness = (population.get(i)).fitness;
+                best_individual_index = i;
+                
+            } else if ((population.get(i)).fitness > second_best_fitness){
+                second_best_fitness = (population.get(i)).fitness;
+                second_individual_index = i;
+            }
+        }
+
+        // adding best and second best individuals to return list
+        elites.add(population.get(best_individual_index));
+        elites.add(population.get(second_individual_index));
 
         return elites;
     }
