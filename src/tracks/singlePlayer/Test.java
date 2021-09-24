@@ -28,7 +28,6 @@ public class Test {
 		String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
 		String multiStepLookAgent = "tracks.singlePlayer.diy.multiStepLookAhead.Agent";
 		String diyGA = "evo_exercises.Ex4_diy_GA.Agent";
-
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
 		String[][] games = Utils.readGames(spGamesCollection);

@@ -1,6 +1,7 @@
 package evo_exercises.Ex4_diy_GA;
 
 import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
+import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import tools.ElapsedCpuTimer;
@@ -26,6 +27,7 @@ public class Agent extends AbstractPlayer {
     public individual seed_individual;
     public ElapsedCpuTimer timer;
     public long remaining;
+    ArrayList<individual> population;
     StateObservation stateObs;
     // constructor
     public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
@@ -34,8 +36,10 @@ public class Agent extends AbstractPlayer {
         // init random number generator
         rand = new Random();
 
-        // create initial seed individual (at first there is no previous individual so just NIL)
+        population = new ArrayList<individual>();
+        create_population(_stateObs);
 
+        // create initial seed individual (at first there is no previous individual so just NIL)
         individual seed_individual = new individual(stateObs,genotype_size);
         for (int i = 0; i < genotype_size; i++)
         {
@@ -47,20 +51,16 @@ public class Agent extends AbstractPlayer {
 
 
     // creates population from stateOBS, is list of action lists, chucks in individual from previous runs
-    public ArrayList<individual> create_population(StateObservation stateObs)
+    public void create_population(StateObservation stateObs)
     {
-        ArrayList<individual> population = new ArrayList<individual>();
-
         // add individuals to population up to popsize-1 members
         for (int i = 0; i < population_size; i++)
         {
             individual ind = new individual(stateObs, genotype_size);
-            population.add(ind);
+            this.population.add(ind);
         }
         // last member is best individual from previous run
         //population.add(seed_individual);
-
-        return population;
     }
 
     // apply all actions from a genotype into a stateobs and return score
@@ -103,7 +103,7 @@ public class Agent extends AbstractPlayer {
     // iterates through all individuals 
     public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, WinScoreHeuristic heuristic)
     {
-        for ( int i = 0; i < population_size; i++)
+        for ( int i = 0; i < population.size(); i++)
         {
             calculate_fitness(stateObs, population.get(i), heuristic);
         }
@@ -249,27 +249,6 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
         
-        //
-        /*
-
-        Make a GA: 
-
-        genotype: list of possible actions-> variable genotype length-> 5:  {NIL,LEFT,RIGHT,NIL,UP} -SEB
-        fitness: SimpleStateHeuristic evaluation score- SEB
-        population size variable:-> population -SEB
-
-        variation operators:
-        mutation-> randomly replace action with different available action- JEFE
-        crossover-> ordered crossover- JEFE
-
-        selection:
-        fitness based -JEFE
-        elitism -JEFE
-
-        remember best individual from last run:
-        chuck into population -SEB
-
-        */
 
         // do admin work:
         this.timer = elapsedTimer;
@@ -278,10 +257,8 @@ public class Agent extends AbstractPlayer {
         long time_sum = 0;
         int gen_count = 0;
         // create population
-        ArrayList<individual> population = new ArrayList<individual>();
         ArrayList<individual> new_population = new ArrayList<individual>();
-        population = create_population(stateObs);
-
+        
         // evolve while we have time remaining
         remaining = timer.remainingTimeMillis();
         while((remaining > avg_time) && (remaining > 10))
