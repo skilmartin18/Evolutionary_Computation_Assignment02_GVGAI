@@ -304,7 +304,23 @@ public class Agent extends AbstractPlayer {
 
         }
 
-        return first_move(population);
+        StateObservation stcopy = stateObs.copy();
+        Types.ACTIONS action = first_move(population);
+        stcopy.advance(action);
+
+        if(stcopy.isGameOver())
+        {
+            int num_moves = stcopy.getAvailableActions().size();
+
+            // random class and int generator to find which random move to choose
+            int rand_int1 = rand.nextInt(num_moves);
+
+            // from random index, it searches the list of avaiable moves to specific individual and chooses one
+            action = stcopy.getAvailableActions().get(rand_int1);
+
+        }
+        
+        return action;
 
     }
 
