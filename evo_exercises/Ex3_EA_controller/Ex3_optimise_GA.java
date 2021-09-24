@@ -124,8 +124,8 @@ public class Ex3_optimise_GA
         double sigmas[] = {0.3, 3, 3, 0.3};
         double minSigmas[] = {0.15, 3, 3, 0.09};
         ArrayList<double[]> sigmasList = new ArrayList<double[]>();
-        int num_gen = 100;
-        int population_size = 2;
+        int num_gen = 50;
+        int population_size = 6;
         double scores[] = new double[2];
         Random gaussian = new Random();
         double parent_score = 0;
