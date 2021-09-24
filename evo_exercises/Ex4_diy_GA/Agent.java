@@ -1,6 +1,6 @@
 package evo_exercises.Ex4_diy_GA;
 
-import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
+import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import tools.ElapsedCpuTimer;
@@ -78,7 +78,7 @@ public class Agent extends AbstractPlayer {
         double score = heuristic.evaluateState(stateObsCopy);
 
         _individual.fitness = score;
-        
+
     }
 
     // random index mutation
