@@ -113,8 +113,8 @@ public class Agent extends AbstractPlayer {
         ArrayList<individual> children = new ArrayList<individual>();
 
         // creating children clones
-        individual child1 = new individual(ind1.genotype.clone());
-        individual child2 = new individual(genotype_size);
+        individual child1 = new individual(ind1.genotype);
+        individual child2 = new individual(ind2.genotype);
 
         // initialising a variable to store Types.ACTIONS
         Types.ACTIONS temp;
@@ -123,11 +123,11 @@ public class Agent extends AbstractPlayer {
         Random rand = new Random();
         int rand_int = rand.nextInt(genotype_size);
 
-        // iterates through random index to end of list and creates sublist
+        // iterates through random index to end of list and swaps values
         for (int i = rand_int; i < genotype_size; i++){
-            temp = ind1.genotype.get(i);
-
-
+            temp = child1.genotype.get(i);
+            child1.genotype.set(i, child2.genotype.get(i));
+            child2.genotype.set(i, temp);
         }
 
         // adding children
