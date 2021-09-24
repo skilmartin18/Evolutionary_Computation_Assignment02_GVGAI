@@ -28,7 +28,6 @@ public class SimplestHeuristic {
         // plan to allow this to take different parameters depending on game, may not be possible
         ArrayList<Observation>[] npcPositions = stateObs.getNPCPositions(stateObs.getAvatarPosition());
         ArrayList<Observation>[] resourcePositions = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
-        
         if(!gameOver)
         {
             if ((resourcePositions != null) && (resourcePositions[0].size()>0))
@@ -39,9 +38,11 @@ public class SimplestHeuristic {
             else if (npcPositions != null)
             {
                 closest = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
+                System.out.println(npcPositions[0].get(0).itype);
                 score += Math.ceil(1/(closest/100));
             }
         }
+
         
 
         if(gameOver && win == Types.WINNER.PLAYER_LOSES)
