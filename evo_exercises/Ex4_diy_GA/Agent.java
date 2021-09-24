@@ -20,7 +20,7 @@ import java.util.*;
 public class Agent extends AbstractPlayer {
 
     // var decs 
-    public int population_size = 5;
+    public int population_size = 6;
     public int genotype_size = 5;
     public Random rand;
     public individual seed_individual;
@@ -249,11 +249,13 @@ public class Agent extends AbstractPlayer {
 
         // do admin work:
         this.timer = elapsedTimer;
+        WinScoreHeuristic heuristic = new WinScoreHeuristic(stateObs);
         long avg_time = 0;
         long time_sum = 0;
         int gen_count = 0;
         // create population
         ArrayList<individual> population = new ArrayList<individual>();
+        ArrayList<individual> new_population = new ArrayList<individual>();
         population = create_population(stateObs);
 
         // evolve while we have time remaining
@@ -263,12 +265,36 @@ public class Agent extends AbstractPlayer {
             gen_count++;
 
             //crossover 
+            for(int i = 0; i < (population_size-2)/2; i++)
+            {
+                //select parents
+                ArrayList<individual> temp = tournament_selection(population, 3);
+                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                new_population.add(temp2.get(0));
+                new_population.add(temp2.get(1));
+            }
 
-            //mutation
+            // mutation
+            for(int i = 0; i < new_population.size(); i++)
+            {
+                new_population.set(i,random_mutate(new_population.get(i)));
+            }
 
-            //select
+            // select elites
+            ArrayList<individual> temp3 = return_two_elites(population);
 
+            // calculate fitness
+            calculate_population_fitness(stateObs, temp3, heuristic);
+            calculate_population_fitness(stateObs, new_population, heuristic);
 
+            // fill up pop
+            population.set(0,temp3.get(0));
+            population.set(1,temp3.get(1));
+
+            for(int i =2; i<population_size;i++)
+            {
+                population.set(i,new_population.get(i-2));
+            }
 
             // check remaining time
             time_sum += timer.elapsedMillis();
