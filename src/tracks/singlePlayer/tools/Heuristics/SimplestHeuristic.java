@@ -28,17 +28,19 @@ public class SimplestHeuristic {
         ArrayList<Observation>[] npcPositions = stateObs.getNPCPositions(stateObs.getAvatarPosition());
         ArrayList<Observation>[] resourcePositions = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
         
-        if ((resourcePositions != null) && (resourcePositions[0].size()>0))
+        if(!gameOver)
         {
-            closest = resourcePositions[0].get(0).sqDist/stateObs.getBlockSize();
-            score += 1/(closest/25);
-        } 
-        else if (npcPositions != null)
-        {
-            closest = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
-            score += 1/(closest/100);
+            if ((resourcePositions != null) && (resourcePositions[0].size()>0))
+            {
+                closest = resourcePositions[0].get(0).sqDist/stateObs.getBlockSize();
+                score += 1/(closest/25);
+            } 
+            else if (npcPositions != null)
+            {
+                closest = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
+                score += 1/(closest/100);
+            }
         }
-
         
 
         if(gameOver && win == Types.WINNER.PLAYER_LOSES)
