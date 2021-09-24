@@ -101,9 +101,16 @@ public class Agent extends AbstractPlayer {
     }
 
     // returns an arrary list of 2 children after parent crossover
-    public ArrayList<individual> ordered_crossover(individual ind1, individual ind2){
-        ArrayList<individual> children = new ArrayList<individual>();
+    public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
         
+        // initialising an arraylist of children to return
+        ArrayList<individual> children = new ArrayList<individual>();
+
+        // creating new child and giving it clone list
+        individual child1 = ;
+        child1.genotype = ind1.genotype;
+
+
         return children;
     }
 
