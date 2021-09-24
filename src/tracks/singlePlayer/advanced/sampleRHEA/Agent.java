@@ -13,8 +13,8 @@ import java.util.*;
 public class Agent extends AbstractPlayer {
 
     // Parameters
-    private int POPULATION_SIZE = 10;
-    private int SIMULATION_DEPTH = 10;
+    private int POPULATION_SIZE = 10; 
+    private int SIMULATION_DEPTH = 10; 
     private int CROSSOVER_TYPE = UNIFORM_CROSS;
     private boolean REEVALUATE = false;
     private int MUTATION = 1;

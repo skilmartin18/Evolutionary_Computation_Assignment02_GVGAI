@@ -18,6 +18,7 @@ public class Ex3_optimise_GA
     public static void main(String[] args) 
     {
         optimise_GA2();
+        //Ex3_test_GA();
         return;
     }
 
@@ -27,7 +28,7 @@ public class Ex3_optimise_GA
     public static void Ex3_test_GA()
     {
         // Set up the 4 best genotypes 
-        double aliens_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double aliens_genotype[] = new double[]{ 1.0439779323539744, 6, 3, 0.057498145580283794, 1/6};
         double boulderdash_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
         double butterflies_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
         double chase_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
@@ -37,7 +38,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params **** MAKE SURE GENOTYPE USED IS FOR THE RIGHT GAMEINDEX
-        int gameIdx = 0; 
+        int gameIdx = 0;  
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 
@@ -101,7 +102,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params
-        int gameIdx = 0; 
+        int gameIdx = 13; 
 		String gameName = games[gameIdx][1];
         System.out.println("Gamename is " + gameName);
 		String game = games[gameIdx][0];
@@ -123,11 +124,11 @@ public class Ex3_optimise_GA
         double child_genotype[] = new double[5];
         double sigmas[] = {0.3, 3, 3, 0.3};
         double minSigmas[] = {0.15, 3, 3, 0.09};
-        // ArrayList<double[]> sigmas_parent = new ArrayList<double[]>();
         ArrayList<double[]> sigmasList = new ArrayList<double[]>();
-        int num_gen = 100;
+        int num_gen = 50;
         int population_size = 6;
-        double scores[] = new double[2];
+        int number_levels = 3;
+        double scores[] = new double[number_levels];
         Random gaussian = new Random();
         double parent_score = 0;
         double current_score = 0;
@@ -138,6 +139,7 @@ public class Ex3_optimise_GA
             CREATION OF INITIAL PARENT POPULATION AND STANDARD DEVIATION LISTS
                                 */
 
+        // scores arrays
         double parent_scores[] = new double[population_size];
         double child_scores[] = new double [population_size];
 
@@ -158,7 +160,7 @@ public class Ex3_optimise_GA
         for( int i = 0; i < population_size; i++){
 
             // inside for loop runs an individual parent genotype twice for same level and records score
-            for ( int j = 0; j < 2; j++ ){
+            for ( int j = 0; j < number_levels; j++ ){
                 String level1 = game.replace(gameName, gameName+"_lvl1");
                 double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_pop.get(i));
             
@@ -180,13 +182,26 @@ public class Ex3_optimise_GA
             // prints out generation
             System.out.println("GENERATION " + (gen+1) + ":\n");
 
+            // prints out genotype of each parent
+            System.out.println("PARENT GENOTYPES: ");
+            for ( int i = 0; i < population_size; i++){
+
+                double parent[] = parent_pop.get(i);
+                for ( int j = 0; j < 4; j++){
+                    System.out.print( parent[j] + " ");
+                }
+                System.out.println( parent[4] );
+                
+            }
+            System.out.print("\n");
+
             // prints out parent mean scores
             System.out.println("PARENT MEAN SCORES: ");
             for ( int i = 0; i < population_size - 1; i++){
-                System.out.print(parent_scores[i]/2);
+                System.out.print(parent_scores[i]/number_levels);
                 System.out.print(" ");
             }
-            System.out.print(parent_scores[population_size-1]/2 + "\n");
+            System.out.print(parent_scores[population_size-1]/number_levels + "\n");
         
 
             // performs recombination of parents to produce a child population of the same size as that of the parents
@@ -245,8 +260,8 @@ public class Ex3_optimise_GA
                     // gamma
                     if ( i == 0 ){
                         child_genotype[i] = child_genotype[i] + sigmas[i]*Ni;
-                        if ( child_genotype[i] < 0 ){
-                            child_genotype[i] = 0;
+                        if ( child_genotype[i] <= 0 ){
+                            child_genotype[i] = 0.01;
                         }
 
                     // simulation depth
@@ -254,6 +269,8 @@ public class Ex3_optimise_GA
                         child_genotype[i] = Math.floor(child_genotype[i] + sigmas[i]*Ni);
                         if ( child_genotype[i] < 1 ){
                             child_genotype[i] = 1;
+                        }else if ( child_genotype[i] > 21 ){
+                            child_genotype[i] = 20;
                         }
 
                     // population size
@@ -290,7 +307,7 @@ public class Ex3_optimise_GA
             for( int i = 0; i < population_size; i++){
 
                 // inside for loop runs an individual child genotype twice for same level and records score
-                for ( int j = 0; j < 2; j++ ){
+                for ( int j = 0; j < number_levels; j++ ){
                     String level1 = game.replace(gameName, gameName+"_lvl1");
                     double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, child_pop.get(i));
                 
@@ -305,10 +322,10 @@ public class Ex3_optimise_GA
             // prints out child mean scores
             System.out.println("CHILD MEAN SCORES: ");
             for ( int i = 0; i < population_size - 1; i++){
-                System.out.print(child_scores[i]/2);
+                System.out.print(child_scores[i]/number_levels);
                 System.out.print(" ");
             }
-            System.out.print(child_scores[population_size-1]/2 + "\n");        
+            System.out.println(child_scores[population_size-1]/number_levels);        
 
             // greedy select
             for ( int i = 0; i < population_size; i++){
