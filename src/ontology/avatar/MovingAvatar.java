@@ -138,20 +138,20 @@ public class MovingAvatar extends VGDLSprite {
         if(action == null){
             action = ACTIONS.ACTION_NIL;
         }
+        
+        // if (CompetitionParameters.TIME_CONSTRAINED && ect.exceededMaxTime()) {
+        //     long exceeded = -ect.remainingTimeMillis();
 
-        if (CompetitionParameters.TIME_CONSTRAINED && ect.exceededMaxTime()) {
-            long exceeded = -ect.remainingTimeMillis();
+        //     if (ect.elapsedMillis() > CompetitionParameters.ACTION_TIME_DISQ) {
+        //         //The agent took too long to replay. The game is over and the agent is disqualified
+        //         System.out.println("Too long: " + playerID + "(exceeding " + (exceeded) + "ms): controller disqualified.");
+        //         game.disqualify(playerID);
+        //     } else {
+        //         System.out.println("Overspent: " + playerID + "(exceeding " + (exceeded) + "ms): applying ACTION_NIL.");
+        //     }
 
-            if (ect.elapsedMillis() > CompetitionParameters.ACTION_TIME_DISQ) {
-                //The agent took too long to replay. The game is over and the agent is disqualified
-                System.out.println("Too long: " + playerID + "(exceeding " + (exceeded) + "ms): controller disqualified.");
-                game.disqualify(playerID);
-            } else {
-                System.out.println("Overspent: " + playerID + "(exceeding " + (exceeded) + "ms): applying ACTION_NIL.");
-            }
-
-            action = Types.ACTIONS.ACTION_NIL;
-        }
+        //     action = Types.ACTIONS.ACTION_NIL;
+        // }
 
         if (action.equals(Types.ACTIONS.ACTION_ESCAPE)) {
             game.abort();
