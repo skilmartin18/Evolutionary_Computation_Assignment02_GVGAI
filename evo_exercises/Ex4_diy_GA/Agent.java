@@ -21,8 +21,8 @@ import java.util.*;
 public class Agent extends AbstractPlayer {
 
     // var decs 
-    public int population_size = 6;
-    public int genotype_size = 5;
+    public int population_size = 4;
+    public int genotype_size = 6;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -137,7 +137,11 @@ public class Agent extends AbstractPlayer {
             int rand_int1 = rand.nextInt(num_moves);
             // from random index, it searches the list of avaiable moves to specific individual and chooses one
             Types.ACTIONS rand_move = population.get(i).actions.get(rand_int1);
-            population.get(i).genotype.set(0,rand_move);
+
+            // this should pop the first element
+            population.get(i).genotype.remove(0);
+            // add a new random element to the end
+            population.get(i).genotype.add(rand_move);
         }
     }
 
@@ -276,7 +280,7 @@ public class Agent extends AbstractPlayer {
         
         // evolve while we have time remaining
         remaining = timer.remainingTimeMillis();
-        while((remaining > avg_time) && (remaining > 10))
+        while((remaining > avg_time) && (remaining > 20))
         {
             gen_count++;
 
@@ -284,10 +288,17 @@ public class Agent extends AbstractPlayer {
             for(int i = 0; i < (population_size-2)/2; i++)
             {
                 //select parents
-                ArrayList<individual> temp = tournament_selection(population, 3);
+                ArrayList<individual> temp = tournament_selection(population, 4);
                 ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
                 new_population.add(temp2.get(1));
+            }
+
+            if(population_size%2 == 1)
+            {
+                ArrayList<individual> temp = tournament_selection(population, 2);
+                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                new_population.add(temp2.get(0));
             }
 
             // mutation
@@ -296,9 +307,10 @@ public class Agent extends AbstractPlayer {
                 new_population.set(i,random_mutate(new_population.get(i)));
             }
 
-            // select elites
+            // select elites (changing so only one elite)
             ArrayList<individual> temp3 = return_two_elites(population);
 
+            
             // calculate fitness
             calculate_population_fitness(stateObs, temp3, heuristic);
             calculate_population_fitness(stateObs, new_population, heuristic);
@@ -312,8 +324,6 @@ public class Agent extends AbstractPlayer {
                 population.set(i,new_population.get(i-2));
             }
 
-            action = first_move(population);
-            remove_pop_first_action();
             // check remaining time
             time_sum += timer.elapsedMillis();
             avg_time = time_sum/gen_count;
@@ -321,7 +331,8 @@ public class Agent extends AbstractPlayer {
 
         }
 
-
+        action = first_move(population);
+        remove_pop_first_action();
         // maybe helps with dying due to un-searched actions
         // StateObservation stcopy = stateObs.copy();
         // stcopy.advance(action);
@@ -334,7 +345,7 @@ public class Agent extends AbstractPlayer {
         //     action = stateObs.getAvailableActions().get(rand_int1);
 
         // }
-
+        //System.out.println(gen_count);
         return action;
 
     }
