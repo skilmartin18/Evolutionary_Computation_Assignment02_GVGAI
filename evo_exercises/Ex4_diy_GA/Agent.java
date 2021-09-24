@@ -107,9 +107,9 @@ public class Agent extends AbstractPlayer {
         ArrayList<individual> children = new ArrayList<individual>();
 
         // creating new child and giving it clone list
-        individual child1 = ;
-        child1.genotype = ind1.genotype;
+        individual child1 = new individual(ind1.genotype);
 
+        
 
         return children;
     }
