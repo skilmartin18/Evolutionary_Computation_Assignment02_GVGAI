@@ -1,6 +1,6 @@
 package evo_exercises.Ex4_diy_GA;
 
-import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
+import tracks.singlePlayer.tools.Heuristics.SimplestHeuristic;
 import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
@@ -65,7 +65,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // apply all actions from a genotype into a stateobs and return score
-    public void calculate_fitness(StateObservation stateObs, individual _individual, WinScoreHeuristic heuristic)
+    public void calculate_fitness(StateObservation stateObs, individual _individual, SimplestHeuristic heuristic)
     {
         StateObservation stateObsCopy = stateObs.copy();
 
@@ -102,7 +102,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // iterates through all individuals 
-    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, WinScoreHeuristic heuristic)
+    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, SimplestHeuristic heuristic)
     {
         for ( int i = 0; i < population.size(); i++)
         {
@@ -253,7 +253,7 @@ public class Agent extends AbstractPlayer {
 
         // do admin work:
         this.timer = elapsedTimer;
-        WinScoreHeuristic heuristic = new WinScoreHeuristic(stateObs);
+        SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
         long avg_time = 0;
         long time_sum = 0;
         int gen_count = 0;
@@ -305,18 +305,20 @@ public class Agent extends AbstractPlayer {
 
         }
 
-        StateObservation stcopy = stateObs.copy();
+
+        // maybe helps with dying due to un-searched actions
+        // StateObservation stcopy = stateObs.copy();
         Types.ACTIONS action = first_move(population);
-        stcopy.advance(action);
+        // stcopy.advance(action);
 
-        if(stcopy.isGameOver())
-        {
-            // random class and int generator to find which random move to choose
-            int rand_int1 = rand.nextInt(num_moves);
-            // from random index, it searches the list of avaiable moves to specific individual and chooses one
-            action = stateObs.getAvailableActions().get(rand_int1);
+        // if(stcopy.isGameOver())
+        // {
+        //     // random class and int generator to find which random move to choose
+        //     int rand_int1 = rand.nextInt(num_moves);
+        //     // from random index, it searches the list of avaiable moves to specific individual and chooses one
+        //     action = stateObs.getAvailableActions().get(rand_int1);
 
-        }
+        // }
 
         return action;
 
