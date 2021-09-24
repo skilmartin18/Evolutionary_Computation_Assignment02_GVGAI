@@ -14,9 +14,11 @@ public class SimplestHeuristic {
         boolean gameOver = stateObs.isGameOver();
         Types.WINNER win = stateObs.getGameWinner();
         double rawScore = stateObs.getGameScore();
-
+        stateObs.getNPCPositions();
+        
         if(gameOver && win == Types.WINNER.PLAYER_LOSES)
             return -1000000;
+
 
         return rawScore;
     }
