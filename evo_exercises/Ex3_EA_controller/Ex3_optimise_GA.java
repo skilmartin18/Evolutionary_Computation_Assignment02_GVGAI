@@ -126,7 +126,7 @@ public class Ex3_optimise_GA
         // ArrayList<double[]> sigmas_parent = new ArrayList<double[]>();
         ArrayList<double[]> sigmasList = new ArrayList<double[]>();
         int num_gen = 100;
-        int population_size = 2;
+        int population_size = 6;
         double scores[] = new double[2];
         Random gaussian = new Random();
         double parent_score = 0;
@@ -183,10 +183,10 @@ public class Ex3_optimise_GA
             // prints out parent mean scores
             System.out.println("PARENT MEAN SCORES: ");
             for ( int i = 0; i < population_size - 1; i++){
-                System.out.println(parent_scores[i]/2);
-                System.out.println(" ");
+                System.out.print(parent_scores[i]/2);
+                System.out.print(" ");
             }
-            System.out.println(parent_scores[population_size-1]/2 + "\n");
+            System.out.print(parent_scores[population_size-1]/2 + "\n");
         
 
             // performs recombination of parents to produce a child population of the same size as that of the parents
@@ -286,6 +286,7 @@ public class Ex3_optimise_GA
             }
             
             // outside for loop runs all individual child genotypes 
+            current_score = 0 ;
             for( int i = 0; i < population_size; i++){
 
                 // inside for loop runs an individual child genotype twice for same level and records score
@@ -304,10 +305,10 @@ public class Ex3_optimise_GA
             // prints out child mean scores
             System.out.println("CHILD MEAN SCORES: ");
             for ( int i = 0; i < population_size - 1; i++){
-                System.out.println(child_scores[i]/2);
-                System.out.println(" ");
+                System.out.print(child_scores[i]/2);
+                System.out.print(" ");
             }
-            System.out.println(child_scores[population_size-1]/2 + "\n");        
+            System.out.print(child_scores[population_size-1]/2 + "\n");        
 
             // greedy select
             for ( int i = 0; i < population_size; i++){
