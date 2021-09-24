@@ -139,6 +139,7 @@ public class Ex3_optimise_GA
             CREATION OF INITIAL PARENT POPULATION AND STANDARD DEVIATION LISTS
                                 */
 
+        // scores arrays
         double parent_scores[] = new double[population_size];
         double child_scores[] = new double [population_size];
 
