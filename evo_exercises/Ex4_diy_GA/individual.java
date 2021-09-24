@@ -14,6 +14,9 @@ import core.game.StateObservation;
 public class individual {
 
     ArrayList<Types.ACTIONS> genotype;
+    ArrayList<Types.ACTIONS> actions;
+    int available_actions;
+
     Random rand = new Random();
 
     public individual(StateObservation StateObs, int genotype_size)
@@ -25,8 +28,8 @@ public class individual {
     public ArrayList<Types.ACTIONS> create_individual(StateObservation stateObs, int genotype_size)
     {
         // get available actions (maybe move this out to increase performance)
-        ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
-        int available_actions = actions.size();
+        actions = stateObs.getAvailableActions();
+        available_actions = actions.size();
         ArrayList<Types.ACTIONS> individual = new ArrayList<Types.ACTIONS>();
 
         // add actions from the list of available actions to individual

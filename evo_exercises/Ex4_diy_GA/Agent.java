@@ -81,15 +81,29 @@ public class Agent extends AbstractPlayer {
     }
 
     // random index mutation
-    public ArrayList<Types.ACTIONS> random_mutate(ArrayList<Types.ACTIONS> individual){
+    public individual random_mutate(individual individual){
+
+        // find number of available moves
+        int num_moves = individual.available_actions;
+
+        // random class and int generator to find which random move to choose
+        Random rand = new Random();
+        int rand_int1 = rand.nextInt(num_moves);
+
+        // from random index, it searches the list of avaiable moves to specific individual and chooses one
+        Types.ACTIONS rand_move = individual.actions.get(rand_int1);
+
+        // random int to find where in genotype list to insert new move
+        int rand_int2 = rand.nextInt(genotype_size);
+        individual.genotype.set(rand_int2, rand_move);
 
         return individual;
     }
 
     // returns an arrary list of 2 children after parent crossover
-    public ArrayList<ArrayList<Types.ACTIONS>> ordered_crossover(ArrayList<Types.ACTIONS> ind1, ArrayList<Types.ACTIONS> ind2){
-        ArrayList<ArrayList<Types.ACTIONS>> children = new ArrayList<ArrayList<Types.ACTIONS>>();
-
+    public ArrayList<individual> ordered_crossover(individual ind1, individual ind2){
+        ArrayList<individual> children = new ArrayList<individual>();
+        
         return children;
     }
 
@@ -101,8 +115,8 @@ public class Agent extends AbstractPlayer {
     }
 
     // elitism
-    public ArrayList<ArrayList<Types.ACTIONS>> elitism(ArrayList<ArrayList<Types.ACTIONS>> population, int percentage){
-        ArrayList<ArrayList<Types.ACTIONS>> elites = new ArrayList<ArrayList<Types.ACTIONS>>();
+    public ArrayList<individual> elitism(ArrayList<individual> population, int percentage){
+        ArrayList<individual> elites = new ArrayList<individual>();
 
         return elites;
     }
