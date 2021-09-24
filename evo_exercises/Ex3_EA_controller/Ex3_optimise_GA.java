@@ -17,8 +17,8 @@ public class Ex3_optimise_GA
 {
     public static void main(String[] args) 
     {
-        //optimise_GA2();
-        Ex3_test_GA();
+        optimise_GA2();
+        //Ex3_test_GA();
         return;
     }
 
