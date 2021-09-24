@@ -32,9 +32,6 @@ public class Agent extends AbstractPlayer {
         // init random number generator
         rand = new Random();
 
-        //SimpleStateHeuristic heuristic = new SimpleStateHeuristic(stateObs);
-
-
         // create initial seed individual (at first there is no previous individual so just NIL)
 
         individual seed_individual = new individual(stateObs,genotype_size);
@@ -78,6 +75,15 @@ public class Agent extends AbstractPlayer {
 
         _individual.fitness = score;
 
+    }
+
+    // iterates through all individuals 
+    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, WinScoreHeuristic heuristic)
+    {
+        for ( int i = 0; i < population_size; i++)
+        {
+            calculate_fitness(stateObs, population.get(i), heuristic);
+        }
     }
 
     // random index mutation

@@ -30,6 +30,13 @@ public class individual {
         genotype = _genotype;
     }
     
+    public individual(int genotype_size)
+    {
+        for(int i = 0; i < genotype_size; i++)
+        {
+            genotype.add(ACTIONS.ACTION_NIL);
+        }
+    }
     // create individual based on stateObs, creates individual of size set at beginning
     public ArrayList<Types.ACTIONS> create_individual(StateObservation stateObs, int genotype_size)
     {
