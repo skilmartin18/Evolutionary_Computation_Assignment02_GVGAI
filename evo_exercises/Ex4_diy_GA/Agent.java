@@ -64,20 +64,21 @@ public class Agent extends AbstractPlayer {
     }
 
     // apply all actions from a genotype into a stateobs and return score
-    public double get_fitness(StateObservation stateObs, ArrayList<Types.ACTIONS> individual, SimpleStateHeuristic heuristic)
+    public void calculate_fitness(StateObservation stateObs, individual _individual, WinScoreHeuristic heuristic)
     {
         StateObservation stateObsCopy = stateObs.copy();
 
         // apply moves
         for( int i = 0; i < genotype_size; i++)
         {
-            stateObsCopy.advance(individual.get(i));
+            stateObsCopy.advance(_individual.genotype.get(i));
         }
 
         // get score
         double score = heuristic.evaluateState(stateObsCopy);
 
-        return score;
+        _individual.fitness = score;
+        
     }
 
     // random index mutation
