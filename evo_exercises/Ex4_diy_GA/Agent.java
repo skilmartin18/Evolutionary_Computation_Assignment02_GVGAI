@@ -27,6 +27,7 @@ public class Agent extends AbstractPlayer {
     public individual seed_individual;
     public ElapsedCpuTimer timer;
     public long remaining;
+    public int num_moves;
     ArrayList<individual> population;
     StateObservation stateObs;
     // constructor
@@ -113,7 +114,7 @@ public class Agent extends AbstractPlayer {
     public individual random_mutate(individual individual){
 
         // find number of available moves
-        int num_moves = individual.available_actions;
+        num_moves = individual.available_actions;
 
         // random class and int generator to find which random move to choose
         int rand_int1 = rand.nextInt(num_moves);
@@ -310,16 +311,13 @@ public class Agent extends AbstractPlayer {
 
         if(stcopy.isGameOver())
         {
-            int num_moves = stcopy.getAvailableActions().size();
-
             // random class and int generator to find which random move to choose
             int rand_int1 = rand.nextInt(num_moves);
-
             // from random index, it searches the list of avaiable moves to specific individual and chooses one
-            action = stcopy.getAvailableActions().get(rand_int1);
+            action = stateObs.getAvailableActions().get(rand_int1);
 
         }
-        
+
         return action;
 
     }
