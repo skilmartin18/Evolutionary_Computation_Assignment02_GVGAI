@@ -129,6 +129,18 @@ public class Agent extends AbstractPlayer {
         return individual;
     }
 
+    public void remove_pop_first_action()
+    {
+        for( int i = 0; i < population_size; i++)
+        {
+            // random class and int generator to find which random move to choose
+            int rand_int1 = rand.nextInt(num_moves);
+            // from random index, it searches the list of avaiable moves to specific individual and chooses one
+            Types.ACTIONS rand_move = population.get(i).actions.get(rand_int1);
+            population.get(i).genotype.set(0,rand_move);
+        }
+    }
+
     // returns an arrary list of 2 children after parent crossover
     // IF WE GET BAD RESULTS, CHANGE XOVER TO BE MORE EFFICIENT
     public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
@@ -259,6 +271,8 @@ public class Agent extends AbstractPlayer {
         int gen_count = 0;
         // create population
         ArrayList<individual> new_population = new ArrayList<individual>();
+        // var decs
+        Types.ACTIONS action = ACTIONS.ACTION_NIL;
         
         // evolve while we have time remaining
         remaining = timer.remainingTimeMillis();
@@ -298,6 +312,8 @@ public class Agent extends AbstractPlayer {
                 population.set(i,new_population.get(i-2));
             }
 
+            action = first_move(population);
+            remove_pop_first_action();
             // check remaining time
             time_sum += timer.elapsedMillis();
             avg_time = time_sum/gen_count;
@@ -308,7 +324,6 @@ public class Agent extends AbstractPlayer {
 
         // maybe helps with dying due to un-searched actions
         // StateObservation stcopy = stateObs.copy();
-        Types.ACTIONS action = first_move(population);
         // stcopy.advance(action);
 
         // if(stcopy.isGameOver())
