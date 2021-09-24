@@ -17,7 +17,8 @@ public class Ex3_optimise_GA
 {
     public static void main(String[] args) 
     {
-        optimise_GA2();
+        //optimise_GA2();
+        Ex3_test_GA();
         return;
     }
 
@@ -27,7 +28,7 @@ public class Ex3_optimise_GA
     public static void Ex3_test_GA()
     {
         // Set up the 4 best genotypes 
-        double aliens_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double aliens_genotype[] = new double[]{ 1.0439779323539744, 6, 3, 0.057498145580283794, 1/6};
         double boulderdash_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
         double butterflies_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
         double chase_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
@@ -37,7 +38,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params **** MAKE SURE GENOTYPE USED IS FOR THE RIGHT GAMEINDEX
-        int gameIdx = 0; 
+        int gameIdx = 0;  
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 
@@ -101,7 +102,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params
-        int gameIdx = 0; 
+        int gameIdx = 13; 
 		String gameName = games[gameIdx][1];
         System.out.println("Gamename is " + gameName);
 		String game = games[gameIdx][0];
