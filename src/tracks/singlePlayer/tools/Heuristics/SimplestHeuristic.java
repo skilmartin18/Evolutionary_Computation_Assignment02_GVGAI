@@ -34,7 +34,7 @@ public class SimplestHeuristic {
             if ((resourcePositions != null) && (resourcePositions[0].size()>0))
             {
                 closest = resourcePositions[0].get(0).sqDist/stateObs.getBlockSize();
-                score += 1/(closest/10);
+                score += 1/(closest/25);
             } 
             else if (npcPositions != null)
             {
@@ -42,6 +42,7 @@ public class SimplestHeuristic {
                 score += Math.ceil(1/(closest/100));
             }
         }
+
         
 
         if(gameOver && win == Types.WINNER.PLAYER_LOSES)
