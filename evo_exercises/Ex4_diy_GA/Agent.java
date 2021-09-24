@@ -107,10 +107,15 @@ public class Agent extends AbstractPlayer {
         // initialising an arraylist of children to return
         ArrayList<individual> children = new ArrayList<individual>();
 
-        // creating new child and giving it clone list
+        // creating new children and giving it clone lists of chosen parents
         individual child1 = new individual(ind1.genotype);
-
+        individual child2 = new individual(ind2.genotype);
         
+        // random int to find
+
+        // adding children
+        children.add(child1);
+        children.add(child2);
 
         return children;
     }
