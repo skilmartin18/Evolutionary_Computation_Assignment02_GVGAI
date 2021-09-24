@@ -112,7 +112,11 @@ public class Agent extends AbstractPlayer {
         // initialising an arraylist of children to return
         ArrayList<individual> children = new ArrayList<individual>();
 
-        // initialising a temp list of actions
+        // creating children clones
+        individual child1 = new individual(ind1.genotype.clone());
+        individual child2 = new individual(genotype_size);
+
+        // initialising a variable to store Types.ACTIONS
         Types.ACTIONS temp;
         
         // random int to find crossover point
@@ -122,13 +126,9 @@ public class Agent extends AbstractPlayer {
         // iterates through random index to end of list and creates sublist
         for (int i = rand_int; i < genotype_size; i++){
             temp = ind1.genotype.get(i);
-            
+
 
         }
-
-        // creating new children and giving it clone lists of chosen parents
-        individual child1 = new individual(ind1.genotype);
-        individual child2 = new individual(ind2.genotype);
 
         // adding children
         children.add(child1);
