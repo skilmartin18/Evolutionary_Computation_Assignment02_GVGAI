@@ -22,13 +22,24 @@ public class SimplestHeuristic {
         Types.WINNER win = stateObs.getGameWinner();
         double rawScore = stateObs.getGameScore();
         double score = rawScore; 
-        double closestnpc = Double.POSITIVE_INFINITY;
+        double closest = Double.POSITIVE_INFINITY;
 
         // calculate closest npc, 1/(distance/100) is added to score
         ArrayList<Observation>[] npcPositions = stateObs.getNPCPositions(stateObs.getAvatarPosition());
-        if (npcPositions.length > 0)
-            closestnpc = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
-        score += 1/(closestnpc/100);
+        ArrayList<Observation>[] resourcePositions = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
+        
+        if (resourcePositions.length > 0)
+        {
+            closest = resourcePositions[0].get(0).sqDist/stateObs.getBlockSize();
+            score += 1/(closest/100);
+        } 
+        else if (npcPositions.length > 0)
+        {
+            closest = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
+            score += 1/(closest/100);
+        }
+
+        
 
         if(gameOver && win == Types.WINNER.PLAYER_LOSES)
             return -1000000;
