@@ -127,7 +127,8 @@ public class Ex3_optimise_GA
         ArrayList<double[]> sigmasList = new ArrayList<double[]>();
         int num_gen = 50;
         int population_size = 6;
-        double scores[] = new double[2];
+        int number_levels = 3;
+        double scores[] = new double[number_levels];
         Random gaussian = new Random();
         double parent_score = 0;
         double current_score = 0;
@@ -158,7 +159,7 @@ public class Ex3_optimise_GA
         for( int i = 0; i < population_size; i++){
 
             // inside for loop runs an individual parent genotype twice for same level and records score
-            for ( int j = 0; j < 2; j++ ){
+            for ( int j = 0; j < number_levels; j++ ){
                 String level1 = game.replace(gameName, gameName+"_lvl1");
                 double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_pop.get(i));
             
@@ -196,10 +197,10 @@ public class Ex3_optimise_GA
             // prints out parent mean scores
             System.out.println("PARENT MEAN SCORES: ");
             for ( int i = 0; i < population_size - 1; i++){
-                System.out.print(parent_scores[i]/2);
+                System.out.print(parent_scores[i]/number_levels);
                 System.out.print(" ");
             }
-            System.out.print(parent_scores[population_size-1]/2 + "\n");
+            System.out.print(parent_scores[population_size-1]/number_levels + "\n");
         
 
             // performs recombination of parents to produce a child population of the same size as that of the parents
@@ -258,8 +259,8 @@ public class Ex3_optimise_GA
                     // gamma
                     if ( i == 0 ){
                         child_genotype[i] = child_genotype[i] + sigmas[i]*Ni;
-                        if ( child_genotype[i] < 0 ){
-                            child_genotype[i] = 0;
+                        if ( child_genotype[i] <= 0 ){
+                            child_genotype[i] = 0.01;
                         }
 
                     // simulation depth
@@ -267,6 +268,8 @@ public class Ex3_optimise_GA
                         child_genotype[i] = Math.floor(child_genotype[i] + sigmas[i]*Ni);
                         if ( child_genotype[i] < 1 ){
                             child_genotype[i] = 1;
+                        }else if ( child_genotype[i] > 21 ){
+                            child_genotype[i] = 20;
                         }
 
                     // population size
@@ -303,7 +306,7 @@ public class Ex3_optimise_GA
             for( int i = 0; i < population_size; i++){
 
                 // inside for loop runs an individual child genotype twice for same level and records score
-                for ( int j = 0; j < 2; j++ ){
+                for ( int j = 0; j < number_levels; j++ ){
                     String level1 = game.replace(gameName, gameName+"_lvl1");
                     double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, child_pop.get(i));
                 
@@ -318,10 +321,10 @@ public class Ex3_optimise_GA
             // prints out child mean scores
             System.out.println("CHILD MEAN SCORES: ");
             for ( int i = 0; i < population_size - 1; i++){
-                System.out.print(child_scores[i]/2);
+                System.out.print(child_scores[i]/number_levels);
                 System.out.print(" ");
             }
-            System.out.print(child_scores[population_size-1]/2 + "\n");        
+            System.out.println(child_scores[population_size-1]/number_levels);        
 
             // greedy select
             for ( int i = 0; i < population_size; i++){
