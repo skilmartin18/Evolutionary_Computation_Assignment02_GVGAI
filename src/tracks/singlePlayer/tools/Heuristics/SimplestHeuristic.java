@@ -31,13 +31,13 @@ public class SimplestHeuristic {
         if (resourcePositions.length > 0)
         {
             closest = resourcePositions[0].get(0).sqDist/stateObs.getBlockSize();
-            score += 1/(closest/100);
+            score += 1/(closest/50);
             System.out.println(score);
         } 
         else if (npcPositions.length > 0)
         {
             closest = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
-            score += 1/(closest/100);
+            score += 1/(closest/50);
         }
 
         
