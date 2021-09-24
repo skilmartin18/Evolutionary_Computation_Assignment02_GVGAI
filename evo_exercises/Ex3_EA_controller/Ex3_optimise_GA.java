@@ -123,10 +123,9 @@ public class Ex3_optimise_GA
         double child_genotype[] = new double[5];
         double sigmas[] = {0.3, 3, 3, 0.3};
         double minSigmas[] = {0.15, 3, 3, 0.09};
-        // ArrayList<double[]> sigmas_parent = new ArrayList<double[]>();
         ArrayList<double[]> sigmasList = new ArrayList<double[]>();
         int num_gen = 100;
-        int population_size = 6;
+        int population_size = 2;
         double scores[] = new double[2];
         Random gaussian = new Random();
         double parent_score = 0;
@@ -179,6 +178,19 @@ public class Ex3_optimise_GA
         {
             // prints out generation
             System.out.println("GENERATION " + (gen+1) + ":\n");
+
+            // prints out genotype of each parent
+            System.out.println("PARENT GENOTYPES: ");
+            for ( int i = 0; i < population_size; i++){
+
+                double parent[] = parent_pop.get(i);
+                for ( int j = 0; j < 4; j++){
+                    System.out.print( parent[j] + " ");
+                }
+                System.out.println( parent[4] );
+                
+            }
+            System.out.print("\n");
 
             // prints out parent mean scores
             System.out.println("PARENT MEAN SCORES: ");
