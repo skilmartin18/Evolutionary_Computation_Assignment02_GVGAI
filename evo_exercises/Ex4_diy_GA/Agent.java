@@ -26,9 +26,11 @@ public class Agent extends AbstractPlayer {
     public individual seed_individual;
     public ElapsedCpuTimer timer;
     public long remaining;
+    StateObservation stateObs;
     // constructor
-    public Agent(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) 
+    public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
     {
+        stateObs = _stateObs;
         // init random number generator
         rand = new Random();
 
@@ -39,6 +41,8 @@ public class Agent extends AbstractPlayer {
         {
             seed_individual.genotype.set(i,ACTIONS.ACTION_NIL);
         }
+
+
     }
 
 
@@ -48,13 +52,13 @@ public class Agent extends AbstractPlayer {
         ArrayList<individual> population = new ArrayList<individual>();
 
         // add individuals to population up to popsize-1 members
-        for (int i = 0; i < population_size-1; i++)
+        for (int i = 0; i < population_size; i++)
         {
             individual ind = new individual(stateObs, genotype_size);
             population.add(ind);
         }
         // last member is best individual from previous run
-        population.add(seed_individual);
+        //population.add(seed_individual);
 
         return population;
     }
@@ -112,7 +116,6 @@ public class Agent extends AbstractPlayer {
         int num_moves = individual.available_actions;
 
         // random class and int generator to find which random move to choose
-        Random rand = new Random();
         int rand_int1 = rand.nextInt(num_moves);
 
         // from random index, it searches the list of avaiable moves to specific individual and chooses one
@@ -133,8 +136,8 @@ public class Agent extends AbstractPlayer {
         ArrayList<individual> children = new ArrayList<individual>();
 
         // creating children clones
-        individual child1 = new individual(ind1.genotype);
-        individual child2 = new individual(ind2.genotype);
+        individual child1 = new individual(ind1.genotype,stateObs);
+        individual child2 = new individual(ind2.genotype,stateObs);
 
         // initialising a variable to store Types.ACTIONS
         Types.ACTIONS temp;
@@ -281,7 +284,7 @@ public class Agent extends AbstractPlayer {
 
         // evolve while we have time remaining
         remaining = timer.remainingTimeMillis();
-        while(remaining > avg_time && remaining > 10)
+        while((remaining > avg_time) && (remaining > 10))
         {
             gen_count++;
 
@@ -324,7 +327,7 @@ public class Agent extends AbstractPlayer {
 
         }
 
-        return ACTIONS.ACTION_NIL;
+        return first_move(population);
 
     }
 

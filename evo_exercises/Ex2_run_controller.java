@@ -21,7 +21,7 @@ public class Ex2_run_controller {
 		// Multi mate
 		String multiStepLookAgent = "tracks.singlePlayer.diy.multiStepLookAhead.Agent";
 		String sampleRHEAController = "tracks.singlePlayer.advanced.sampleRHEA.Agent";
-
+		String diyGA = "evo_exercises.Ex4_diy_GA.Agent";
 	
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
@@ -60,7 +60,7 @@ public class Ex2_run_controller {
 				System.out.println("Lvl_"+k+":");
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, multiStepLookAgent, null);
-				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRHEAController, null);
+				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, diyGA, null);
 			}
 			
 		}

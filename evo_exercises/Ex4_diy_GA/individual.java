@@ -22,16 +22,28 @@ public class individual {
 
     public individual(StateObservation StateObs, int genotype_size)
     {
+        // get available actions (maybe move this out to increase performance)
+        actions = StateObs.getAvailableActions();
+        available_actions = actions.size();
+
         genotype = create_individual(StateObs,genotype_size);
     }
 
-    public individual(ArrayList<Types.ACTIONS> _genotype)
+    public individual(ArrayList<Types.ACTIONS> _genotype, StateObservation StateObs)
     {
+        // get available actions (maybe move this out to increase performance)
+        actions = StateObs.getAvailableActions();
+        available_actions = actions.size();
+
         genotype = new ArrayList<Types.ACTIONS>(_genotype);
     }
     
-    public individual(int genotype_size)
+    public individual(int genotype_size, StateObservation StateObs)
     {
+        // get available actions (maybe move this out to increase performance)
+        actions = StateObs.getAvailableActions();
+        available_actions = actions.size();
+        
         for(int i = 0; i < genotype_size; i++)
         {
             genotype.add(ACTIONS.ACTION_NIL);
@@ -41,9 +53,6 @@ public class individual {
     // create individual based on stateObs, creates individual of size set at beginning
     public ArrayList<Types.ACTIONS> create_individual(StateObservation stateObs, int genotype_size)
     {
-        // get available actions (maybe move this out to increase performance)
-        actions = stateObs.getAvailableActions();
-        available_actions = actions.size();
         ArrayList<Types.ACTIONS> individual = new ArrayList<Types.ACTIONS>();
 
         // add actions from the list of available actions to individual
