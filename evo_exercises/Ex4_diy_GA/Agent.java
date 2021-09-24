@@ -77,6 +77,25 @@ public class Agent extends AbstractPlayer {
 
     }
 
+    // find first move of best fitness individual
+    public Types.ACTIONS first_move(ArrayList<individual> population){
+        Types.ACTIONS move;
+
+        int best_individual_index = 0;
+        double best_fitness = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < population_size; i++){
+            if ((population.get(i)).fitness >= best_fitness){
+                best_fitness = (population.get(i)).fitness;
+                best_individual_index = i;
+            }
+        }
+
+        move = (population.get(best_individual_index)).genotype.get(0);
+
+        return move;
+    }
+
     // iterates through all individuals 
     public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, WinScoreHeuristic heuristic)
     {
@@ -107,6 +126,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // returns an arrary list of 2 children after parent crossover
+    // IF WE GET BAD RESULTS, CHANGE XOVER TO BE MORE EFFICIENT
     public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
         
         // initialising an arraylist of children to return
@@ -185,6 +205,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // elitism (will only return 2 elites for now). Effectively the same as tournament selection
+    // MIGHT NEED TO CHANGE TO PERCENTAGE ELITISM
     public ArrayList<individual> return_two_elites(ArrayList<individual> population){
         
         // initialising return list of elites
