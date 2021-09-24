@@ -24,7 +24,8 @@ public class SimplestHeuristic {
         double score = rawScore; 
         double closest = Double.POSITIVE_INFINITY;
 
-        // calculate closest npc, 1/(distance/100) is added to score
+        // calculate closest npc or resource, 1/(distance/100) is added to score
+        // plan to allow this to take different parameters depending on game, may not be possible
         ArrayList<Observation>[] npcPositions = stateObs.getNPCPositions(stateObs.getAvatarPosition());
         ArrayList<Observation>[] resourcePositions = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
         
@@ -33,12 +34,12 @@ public class SimplestHeuristic {
             if ((resourcePositions != null) && (resourcePositions[0].size()>0))
             {
                 closest = resourcePositions[0].get(0).sqDist/stateObs.getBlockSize();
-                score += 1/(closest/25);
+                score += 1/(closest/10);
             } 
             else if (npcPositions != null)
             {
                 closest = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
-                score += 1/(closest/100);
+                score += Math.ceil(1/(closest/100));
             }
         }
         
