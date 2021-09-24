@@ -15,10 +15,16 @@ public class individual {
 
     ArrayList<Types.ACTIONS> genotype;
     Random rand = new Random();
+    double fitness = 0;
 
     public individual(StateObservation StateObs, int genotype_size)
     {
         genotype = create_individual(StateObs,genotype_size);
+    }
+
+    public individual(ArrayList<Types.ACTIONS> _genotype)
+    {
+        genotype = _genotype;
     }
     
     // create individual based on stateObs, creates individual of size set at beginning
