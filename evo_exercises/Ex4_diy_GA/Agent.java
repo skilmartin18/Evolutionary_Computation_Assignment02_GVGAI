@@ -8,8 +8,7 @@ import tools.Utils;
 import ontology.*;
 import ontology.Types.ACTIONS;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -107,11 +106,23 @@ public class Agent extends AbstractPlayer {
         // initialising an arraylist of children to return
         ArrayList<individual> children = new ArrayList<individual>();
 
+        // initialising a temp list of actions
+        Types.ACTIONS temp;
+        
+        // random int to find crossover point
+        Random rand = new Random();
+        int rand_int = rand.nextInt(genotype_size);
+
+        // iterates through random index to end of list and creates sublist
+        for (int i = rand_int; i < genotype_size; i++){
+            temp = ind1.genotype.get(i);
+            
+
+        }
+
         // creating new children and giving it clone lists of chosen parents
         individual child1 = new individual(ind1.genotype);
         individual child2 = new individual(ind2.genotype);
-        
-        // random int to find
 
         // adding children
         children.add(child1);
