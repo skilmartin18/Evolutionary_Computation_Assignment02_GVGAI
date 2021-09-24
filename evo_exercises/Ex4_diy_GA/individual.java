@@ -27,7 +27,7 @@ public class individual {
 
     public individual(ArrayList<Types.ACTIONS> _genotype)
     {
-        genotype = _genotype;
+        genotype = new ArrayList<Types.ACTIONS>(_genotype);
     }
     
     public individual(int genotype_size)
@@ -37,6 +37,7 @@ public class individual {
             genotype.add(ACTIONS.ACTION_NIL);
         }
     }
+
     // create individual based on stateObs, creates individual of size set at beginning
     public ArrayList<Types.ACTIONS> create_individual(StateObservation stateObs, int genotype_size)
     {
