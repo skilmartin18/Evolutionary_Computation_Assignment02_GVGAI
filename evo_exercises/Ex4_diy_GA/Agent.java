@@ -77,7 +77,7 @@ public class Agent extends AbstractPlayer {
         }
 
         // get score
-        double score = heuristic.evaluateState(stateObsCopy);
+        double score = heuristic.evaluateState(stateObsCopy, stateObs);
 
         _individual.fitness = score;
 
