@@ -102,7 +102,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params
-        int gameIdx = 13; 
+        int gameIdx = 11;
 		String gameName = games[gameIdx][1];
         System.out.println("Gamename is " + gameName);
 		String game = games[gameIdx][0];
@@ -522,4 +522,4 @@ public class Ex3_optimise_GA
 }
     
     
-    
+   
