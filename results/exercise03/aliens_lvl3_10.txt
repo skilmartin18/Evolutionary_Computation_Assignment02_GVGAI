@@ -1,0 +1,12 @@
+Score on run 1: 40.0
+Score on run 2: 40.0
+Score on run 3: 40.0
+Score on run 4: 40.0
+Score on run 5: 40.0
+Score on run 6: 40.0
+Score on run 7: 40.0
+Score on run 8: 40.0
+Score on run 9: 40.0
+Score on run 10: 40.0
+
+MEAN: 40.0, STD DEV: 0.0

@@ -31,14 +31,14 @@ public class Ex3_optimise_GA
         double aliens_genotype[] = new double[]{0.7684580278057679, 2.0, 5.0, 0.593744114715972, 0.5}; 
         double boulderdash_genotype[] = new double[]{3.2333020613515053, 1.0, 5.0, 0.99, 1.0}; 
         double chase_genotype[] = new double[]{6.091106410265279, 1.0, 5.0, 0.5777935041605069, 1.0};
-        double butterflies_genotype[] = new double[]{0.01, 10.0, 5.0, 0.5768025313623887, 0.1}; 
+        double butterflies_genotype[] = new double[]{0.01, 7.0, 3.0, 0.8863864166517196, 1/7};
 
         // Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params **** MAKE SURE GENOTYPE USED IS FOR THE RIGHT GAMEINDEX
-        int gameIdx = 0;  
+        int gameIdx = 13;  
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 
@@ -70,11 +70,12 @@ public class Ex3_optimise_GA
             StatSummary scores = new StatSummary(); // set to 1 because we only have one player (the GA)
             text = "";
 
+            
             // Run each game level M times
             for (int i=0; i<M; i++) {
 
                 // Run game with given genotype
-                double temp[] = ArcadeMachine.runOneGameGA(game, level, true, sampleGAController, null, seed, 0, aliens_genotype);
+                double temp[] = ArcadeMachine.runOneGameGA(game, level, false, sampleGAController, null, seed, 0, butterflies_genotype);
                 
                 // Put score into stat summary running tally
                 scores.add(temp[1]);
@@ -85,6 +86,8 @@ public class Ex3_optimise_GA
             double mean = scores.mean(); 
             double sd = scores.sd();
 
+        
+
             // Output values
             text += "\nMEAN: " + mean;
             text += ", STD DEV: " + sd;
@@ -92,6 +95,8 @@ public class Ex3_optimise_GA
             
             
         }
+            
+        
     }
 
     public static void optimise_GA2()
