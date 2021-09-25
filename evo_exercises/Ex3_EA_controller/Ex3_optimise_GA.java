@@ -1,4 +1,5 @@
 package evo_exercises.Ex3_EA_controller;
+import java.util.ArrayList;
 import java.util.Random;
 
 //import org.graalvm.compiler.core.common.type.ArithmeticOpTable.UnaryOp.Sqrt;
@@ -17,6 +18,7 @@ public class Ex3_optimise_GA
     public static void main(String[] args) 
     {
         optimise_GA2();
+        //Ex3_test_GA();
         return;
     }
 
@@ -26,7 +28,7 @@ public class Ex3_optimise_GA
     public static void Ex3_test_GA()
     {
         // Set up the 4 best genotypes 
-        double aliens_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
+        double aliens_genotype[] = new double[]{ 1.0439779323539744, 6, 3, 0.057498145580283794, 1/6};
         double boulderdash_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
         double butterflies_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
         double chase_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
@@ -36,7 +38,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params **** MAKE SURE GENOTYPE USED IS FOR THE RIGHT GAMEINDEX
-        int gameIdx = 0; 
+        int gameIdx = 0;  
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 
@@ -100,7 +102,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params
-        int gameIdx = 0; 
+        int gameIdx = 13; 
 		String gameName = games[gameIdx][1];
         System.out.println("Gamename is " + gameName);
 		String game = games[gameIdx][0];
@@ -113,23 +115,20 @@ public class Ex3_optimise_GA
         String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
 
         /*
-            GA STUFF
-                        */
+            GA/EA STUFF
+                                */
 
         // genotype as {GAMMA,SIM_DEPTH,POP_SIZE,RECPROB,MUT}
-        double parent_genotype[] = new double[]{ 0.9, 7, 5, 0.1, 0.142};
-        //double parent_genotype[] = new double[]{1.1342409097819355, 4.0, 3.0, 0.3738103633107982, 0.25};
+        ArrayList<double[]> parent_pop = new ArrayList<double[]>();
+        ArrayList<double[]> child_pop = new ArrayList<double[]>();
         double child_genotype[] = new double[5];
-
-        /*
-            EA STUFF
-                        */
-
-        // EA variables
         double sigmas[] = {0.3, 3, 3, 0.3};
         double minSigmas[] = {0.15, 3, 3, 0.09};
+        ArrayList<double[]> sigmasList = new ArrayList<double[]>();
         int num_gen = 50;
-        double scores[] = new double[2];
+        int population_size = 6;
+        int number_levels = 3;
+        double scores[] = new double[number_levels];
         Random gaussian = new Random();
         double parent_score = 0;
         double current_score = 0;
@@ -137,26 +136,40 @@ public class Ex3_optimise_GA
         double tau = 1 / ( Math.sqrt(2 * Math.sqrt(4) ) );
 
         /*
-            RUN INITIAL PARENT
+            CREATION OF INITIAL PARENT POPULATION AND STANDARD DEVIATION LISTS
                                 */
-        
-        // for(int lvl = 0; lvl < 5; lvl++)
-        // {
-        //     String level1 = game.replace(gameName, gameName+"_lvl"+lvl);
 
-        //     double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
+        // scores arrays
+        double parent_scores[] = new double[population_size];
+        double child_scores[] = new double [population_size];
 
-        //     scores[lvl] = temp[1];
-        //     parent_score += scores[lvl];
-        // }
-        
-        for( int i = 0; i < 2; i++){
+        double parent_genotype[] = new double[]{0.9, 7, 5, 0.1, 0.142};
+        for ( int j = 0; j < population_size; j++){
+            parent_pop.add(parent_genotype);
+        }
 
-            String level1 = game.replace(gameName, gameName+"_lvl1");
-            double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_genotype);
-        
-            scores[i] = temp[1];
-            parent_score += scores[i];
+        for ( int j = 0; j < population_size; j++){
+            sigmasList.add(sigmas);
+        }
+
+        /*
+            RUNNING PARENT POPULATION TO OBTAIN SCORES
+                                */
+
+        // outside for loop runs all individual parent genotypes 
+        for( int i = 0; i < population_size; i++){
+
+            // inside for loop runs an individual parent genotype twice for same level and records score
+            for ( int j = 0; j < number_levels; j++ ){
+                String level1 = game.replace(gameName, gameName+"_lvl1");
+                double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_pop.get(i));
+            
+                scores[j] = temp[1];
+                parent_score += scores[j];
+            }
+
+            parent_scores[i] = parent_score;
+            parent_score = 0;
         }
     
         /*
@@ -166,114 +179,171 @@ public class Ex3_optimise_GA
 
         for (int gen = 0; gen < num_gen; gen++) 
         {
+            // prints out generation
             System.out.println("GENERATION " + (gen+1) + ":\n");
-            // performing calculations of new sigmas and making child with correct parameters
+
+            // prints out genotype of each parent
+            System.out.println("PARENT GENOTYPES: ");
+            for ( int i = 0; i < population_size; i++){
+
+                double parent[] = parent_pop.get(i);
+                for ( int j = 0; j < 4; j++){
+                    System.out.print( parent[j] + " ");
+                }
+                System.out.println( parent[4] );
+                
+            }
+            System.out.print("\n");
+
+            // prints out parent mean scores
+            System.out.println("PARENT MEAN SCORES: ");
+            for ( int i = 0; i < population_size - 1; i++){
+                System.out.print(parent_scores[i]/number_levels);
+                System.out.print(" ");
+            }
+            System.out.print(parent_scores[population_size-1]/number_levels + "\n");
+        
+
+            // performs recombination of parents to produce a child population of the same size as that of the parents
+            for ( int j = 0; j < population_size; j += 2){
+
+                double parent1[] = parent_pop.get(j);
+                double parent2[] = parent_pop.get(j+1);
+
+                for ( int i = 0; i < 2; i ++){
+
+                    // initialising required variables
+                    double random_num = Math.floor( Math.random() + 0.5 );
+                    double new_child[] = new double[5];
+
+                    // runs through each parent to create child genotype
+                    for ( int k = 0; k < 5; k++){
+
+                        // average parent values
+                        if ( random_num == 0 ){
+                            double average = ( parent1[k] + parent2[k] ) / 2;
+                            new_child[k] = average;
+
+                        // select one of parent values to go in child
+                        }else if ( random_num == 1){
+                            double random_num2 = Math.floor( Math.random() + 0.5 );
+
+                            if ( random_num2 == 0 ) new_child[k] = parent1[k];
+                            else if ( random_num2 == 1 ) new_child[k] = parent2[k];
+                        }
+
+                    }
+
+                    child_pop.add(new_child);
+                }
+            }
+
+            // mutates all children
             double N = gaussian.nextGaussian();
-            for(int i = 0; i < 3; i++){
+            for(int j = 0; j < population_size; j++){
 
-                double Ni = gaussian.nextGaussian();
-                sigmas[i] = sigmas[i] * Math.exp( tauPrime*N + tau*Ni );
-                
-                // if new sigma calculated is below threshold value, the set it to the threshold value
-                if ( sigmas[i] < minSigmas[i] ){
-                    sigmas[i] = minSigmas[i];
+                // setting correct child genotype and sigmas list
+                child_genotype = child_pop.get(j);
+                sigmas = sigmasList.get(j);
+
+                // performing calculations of new sigmas and making child with correct parameters
+                for(int i = 0; i < 4; i++){
+
+                    double Ni = gaussian.nextGaussian();
+                    sigmas[i] = sigmas[i] * Math.exp( tauPrime*N + tau*Ni );
+                    
+                    // if new sigma calculated is below threshold value, the set it to the threshold value
+                    if ( sigmas[i] < minSigmas[i] ){
+                        sigmas[i] = minSigmas[i];
+                    }
+                    
+                    // gamma
+                    if ( i == 0 ){
+                        child_genotype[i] = child_genotype[i] + sigmas[i]*Ni;
+                        if ( child_genotype[i] <= 0 ){
+                            child_genotype[i] = 0.01;
+                        }
+
+                    // simulation depth
+                    }else if ( i == 1 ){
+                        child_genotype[i] = Math.floor(child_genotype[i] + sigmas[i]*Ni);
+                        if ( child_genotype[i] < 1 ){
+                            child_genotype[i] = 1;
+                        }else if ( child_genotype[i] > 21 ){
+                            child_genotype[i] = 20;
+                        }
+
+                    // population size
+                    }else if ( i == 2 ){
+                        child_genotype[i] = Math.floor(child_genotype[i] + sigmas[i]*Ni);
+                        if ( child_genotype[i] < 3 ){
+                            child_genotype[i] = 3;
+                        }else if ( child_genotype[i] > 5 ){
+                            child_genotype[i] = 5;
+                        }
+
+                    // recprob
+                    }else if ( i == 3 ){
+                        child_genotype[i] = child_genotype[i] + sigmas[i]*Ni;
+                        if ( child_genotype[i] < 0 ){
+                            child_genotype[i] = 0;
+                        }else if ( child_genotype[i] >= 1 ){
+                            child_genotype[i] = 0.99;
+                        }
+                    }
                 }
-
-                // new child
                 
-                /* 
-                    Makes sure certain parameters are bounded
-                */
-                
-                // gamma
-                if ( i == 0 ){
-                    child_genotype[i] = parent_genotype[i] + sigmas[i]*Ni;
-                    if ( child_genotype[i] < 0 ){
-                        child_genotype[i] = 0;
-                    }
+                // mut is calculated based off simulation depth
+                child_genotype[4] = 1/child_genotype[1];
 
-                // simulation depth
-                }else if ( i == 1 ){
-                    child_genotype[i] = Math.floor(parent_genotype[i] + sigmas[i]*Ni);
-                    if ( child_genotype[i] < 1 ){
-                        child_genotype[i] = 1;
-                    }
 
-                // population size
-                }else if ( i == 2 ){
-                    child_genotype[i] = Math.floor(parent_genotype[i] + sigmas[i]*Ni);
-                    if ( child_genotype[i] < 3 ){
-                        child_genotype[i] = 3;
-                    }else if ( child_genotype[i] > 5 ){
-                        child_genotype[i] = 5;
-                    }
-
-                // recprob
-                }else if ( i == 3 ){
-                    child_genotype[i] = parent_genotype[i] + sigmas[i]*Ni;
-                    if ( child_genotype[i] < 0 ){
-                        child_genotype[i] = 0;
-                    }else if ( child_genotype[i] >= 1 ){
-                        child_genotype[i] = 0.99;
-                    }
-                }
+                // replacing current child genotype and sigmas lists with mutated versions
+                sigmasList.set(j,sigmas);
+                child_pop.set(j,child_genotype);
             }
             
-            // mut is calculated based off simulation depth
-            child_genotype[4] = 1/child_genotype[1];
+            // outside for loop runs all individual child genotypes 
+            current_score = 0 ;
+            for( int i = 0; i < population_size; i++){
 
-            // evaluate child across all levels of a single game
-            System.out.print("Curent parent genotype: ");
-            for (int i=0; i < 5; i++) {
-                System.out.print(parent_genotype[i]);
+                // inside for loop runs an individual child genotype twice for same level and records score
+                for ( int j = 0; j < number_levels; j++ ){
+                    String level1 = game.replace(gameName, gameName+"_lvl1");
+                    double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, child_pop.get(i));
+                
+                    scores[j] = temp[1];
+                    current_score += scores[j];
+                }
+
+                child_scores[i] = current_score;
+                current_score = 0;
+            }
+
+            // prints out child mean scores
+            System.out.println("CHILD MEAN SCORES: ");
+            for ( int i = 0; i < population_size - 1; i++){
+                System.out.print(child_scores[i]/number_levels);
                 System.out.print(" ");
             }
-            System.out.print("\n");
-
-            System.out.print("Curent child genotype: ");
-            for (int i=0; i < 5; i++) {
-                System.out.print(child_genotype[i]);
-                System.out.print(" ");
-            }
-            System.out.print("\n");
-            
-            // calculates score for child
-            for(int i = 0; i < 2; i++)
-            {
-                String level1 = game.replace(gameName, gameName+"_lvl1");
-
-                double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, child_genotype);
-
-                scores[i] = temp[1];
-                current_score += scores[i];
-            }
+            System.out.println(child_scores[population_size-1]/number_levels);        
 
             // greedy select
-            if ( current_score > parent_score)
-            {
-                System.out.println("Parent being replaced...");
-                parent_genotype = child_genotype.clone();
-                parent_score = current_score;
-            } else 
-            System.out.println("Parent not replaced...");
+            for ( int i = 0; i < population_size; i++){
+                current_score = child_scores[i];
+                parent_score = parent_scores[i];
 
-            current_score = 0;
+                if ( current_score > parent_score)
+                {
+                    parent_pop.set(i,child_pop.get(i));
+                    parent_scores[i] = child_scores[i]; 
+                }
+            }
 
+            // makes child population empty so new one can be made for each generation
+            child_pop.clear();
+           
         }
         
-        System.out.print("FINAL parent genotype: ");
-        for (int i=0; i < 5; i++) {
-            System.out.print(parent_genotype[i]);
-            System.out.print(" ");
-        }
-        System.out.print("\n");
-
-        System.out.print("FINAL child genotype: ");
-        for (int i=0; i < 5; i++) {
-            System.out.print(child_genotype[i]);
-            System.out.print(" ");
-        }
-        System.out.print("\n");
     }
 
     public static void optimise_GA()
