@@ -23,7 +23,7 @@ public class individual {
     public individual(StateObservation StateObs, int genotype_size)
     {
         // get available actions (maybe move this out to increase performance)
-        actions = StateObs.getAvailableActions(true);
+        actions = StateObs.getAvailableActions();
         available_actions = actions.size();
 
         genotype = create_individual(StateObs,genotype_size);
