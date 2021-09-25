@@ -38,7 +38,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params **** MAKE SURE GENOTYPE USED IS FOR THE RIGHT GAMEINDEX
-        int gameIdx = 0;  
+        int gameIdx = 11;  
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 
@@ -88,6 +88,7 @@ public class Ex3_optimise_GA
             text += "\nMEAN: " + mean;
             text += ", STD DEV: " + sd;
             handle_files.write_to_file(filename, text);
+            text = "";
         }
     }
 

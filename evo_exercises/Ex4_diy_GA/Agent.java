@@ -23,7 +23,7 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int population_size = 5;
-    public int genotype_size = 7;
+    public int genotype_size = 5;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -66,7 +66,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // apply all actions from a genotype into a stateobs and return score
-    public void calculate_fitness(StateObservation stateObs, individual _individual, WinScoreHeuristic heuristic)
+    public void calculate_fitness(StateObservation stateObs, individual _individual, SimplestHeuristic heuristic)
     {
         StateObservation stateObsCopy = stateObs.copy();
 
@@ -103,7 +103,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // iterates through all individuals 
-    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, WinScoreHeuristic heuristic)
+    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, SimplestHeuristic heuristic)
     {
         for ( int i = 0; i < population.size(); i++)
         {
@@ -130,6 +130,31 @@ public class Agent extends AbstractPlayer {
         return individual;
     }
 
+    //mutate MORE
+    public individual mutate_more_things(individual individual){
+
+        // find number of available moves
+        num_moves = individual.available_actions;
+
+        // random class and int generator to find which random move to choose
+        int rand_int1 = rand.nextInt(num_moves);
+        int rand_int2 = rand.nextInt(num_moves);
+        int rand_int3 = rand.nextInt(num_moves);
+
+        Types.ACTIONS rand_move1 = individual.actions.get(rand_int1);
+        Types.ACTIONS rand_move2 = individual.actions.get(rand_int2);
+        Types.ACTIONS rand_move3 = individual.actions.get(rand_int3);
+
+        int rand_int4 = rand.nextInt(genotype_size);
+        individual.genotype.set(rand_int4, rand_move1);
+        int rand_int5 = rand.nextInt(genotype_size);
+        individual.genotype.set(rand_int5, rand_move2);
+        int rand_int6 = rand.nextInt(genotype_size);
+        individual.genotype.set(rand_int6, rand_move3);
+
+        return individual;
+    }
+
     public void remove_pop_first_action()
     {
         for( int i = 0; i < population_size; i++)
@@ -147,7 +172,6 @@ public class Agent extends AbstractPlayer {
     }
 
     // returns an arrary list of 2 children after parent crossover
-    // IF WE GET BAD RESULTS, CHANGE XOVER TO BE MORE EFFICIENT
     public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
         
         // initialising an arraylist of children to return
@@ -161,7 +185,7 @@ public class Agent extends AbstractPlayer {
         Types.ACTIONS temp;
         
         // random int to find crossover point
-        Random rand = new Random();
+        rand = new Random();
         int rand_int = rand.nextInt(genotype_size);
 
         // iterates through random index to end of list and swaps values
@@ -266,11 +290,10 @@ public class Agent extends AbstractPlayer {
      * @return An action for the current state
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
-        
 
         // do admin work:
         this.timer = elapsedTimer;
-        WinScoreHeuristic heuristic = new WinScoreHeuristic(stateObs);
+        SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
         long avg_time = 0;
         long time_sum = 0;
         int gen_count = 0;
@@ -305,7 +328,7 @@ public class Agent extends AbstractPlayer {
             // mutation
             for(int i = 0; i < new_population.size(); i++)
             {
-                new_population.set(i,random_mutate(new_population.get(i)));
+                new_population.set(i,mutate_more_things(new_population.get(i)));
             }
 
             // select elites (changing so only one elite)
