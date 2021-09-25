@@ -34,6 +34,7 @@ public class SimplestHeuristic {
         // ArrayList<Observation>[] immovablePositions = stateObs.getImmovablePositions(stateObs.getAvatarPosition());
         Vector2d originalPos = previousObs.getAvatarPosition();
         Vector2d currentPos = stateObs.getAvatarPosition();
+        double speed = stateObs.getAvatarSpeed();
         // boolean isnpc = false;
         // boolean isresource = false;
 
@@ -80,7 +81,7 @@ public class SimplestHeuristic {
         // if(gameOver && (stateObs.getGameTick()<1400))
         //     return -1000000;
 
-        if (currentPos == originalPos)
+        if ((currentPos == originalPos) || (speed == 0))
             return 0;
 
         if(gameOver && win == Types.WINNER.PLAYER_LOSES)
