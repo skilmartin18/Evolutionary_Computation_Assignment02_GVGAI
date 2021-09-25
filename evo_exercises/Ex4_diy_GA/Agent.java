@@ -2,6 +2,7 @@ package evo_exercises.Ex4_diy_GA;
 
 import tracks.singlePlayer.tools.Heuristics.SimplestHeuristic;
 import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
+import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import tools.ElapsedCpuTimer;
@@ -21,8 +22,8 @@ import java.util.*;
 public class Agent extends AbstractPlayer {
 
     // var decs 
-    public int population_size = 4;
-    public int genotype_size = 6;
+    public int population_size = 5;
+    public int genotype_size = 7;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -65,7 +66,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // apply all actions from a genotype into a stateobs and return score
-    public void calculate_fitness(StateObservation stateObs, individual _individual, SimplestHeuristic heuristic)
+    public void calculate_fitness(StateObservation stateObs, individual _individual, WinScoreHeuristic heuristic)
     {
         StateObservation stateObsCopy = stateObs.copy();
 
@@ -102,7 +103,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // iterates through all individuals 
-    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, SimplestHeuristic heuristic)
+    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, WinScoreHeuristic heuristic)
     {
         for ( int i = 0; i < population.size(); i++)
         {
@@ -269,7 +270,7 @@ public class Agent extends AbstractPlayer {
 
         // do admin work:
         this.timer = elapsedTimer;
-        SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
+        WinScoreHeuristic heuristic = new WinScoreHeuristic(stateObs);
         long avg_time = 0;
         long time_sum = 0;
         int gen_count = 0;
@@ -345,7 +346,7 @@ public class Agent extends AbstractPlayer {
         //     action = stateObs.getAvailableActions().get(rand_int1);
 
         // }
-        //System.out.println(gen_count);
+        // System.out.println(gen_count);
         return action;
 
     }
