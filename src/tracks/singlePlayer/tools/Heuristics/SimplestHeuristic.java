@@ -39,15 +39,18 @@ public class SimplestHeuristic {
             else if (npcPositions != null)
             {
                 closest = npcPositions[0].get(0).sqDist/stateObs.getBlockSize();
-                score += Math.ceil(1/(closest/100));
+                score += Math.ceil(1/(closest/80));
             }
         }
 
         
 
-        if(gameOver && win == Types.WINNER.PLAYER_LOSES)
+        // if(gameOver && win == Types.WINNER.PLAYER_LOSES)
+        //     return -1000000;
+        if(gameOver)
+        {
             return -1000000;
-
+        }
 
         return score;
     }
