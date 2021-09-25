@@ -312,7 +312,7 @@ public class Agent extends AbstractPlayer {
             for(int i = 0; i < (population_size-2)/2; i++)
             {
                 //select parents
-                ArrayList<individual> temp = tournament_selection(population, 4);
+                ArrayList<individual> temp = tournament_selection(population, 3);
                 ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
                 new_population.add(temp2.get(1));
@@ -320,7 +320,7 @@ public class Agent extends AbstractPlayer {
 
             if(population_size%2 == 1)
             {
-                ArrayList<individual> temp = tournament_selection(population, 2);
+                ArrayList<individual> temp = tournament_selection(population, 3);
                 ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
             }
