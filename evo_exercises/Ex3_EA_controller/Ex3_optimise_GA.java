@@ -100,7 +100,7 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params
-        int gameIdx = 0; 
+        int gameIdx = 13; 
 		String gameName = games[gameIdx][1];
         System.out.println("Gamename is " + gameName);
 		String game = games[gameIdx][0];
@@ -128,7 +128,7 @@ public class Ex3_optimise_GA
         // EA variables
         double sigmas[] = {0.3, 3, 3, 0.3};
         double minSigmas[] = {0.15, 3, 3, 0.09};
-        int num_gen = 50;
+        int num_gen = 200;
         double scores[] = new double[2];
         Random gaussian = new Random();
         double parent_score = 0;
@@ -169,7 +169,7 @@ public class Ex3_optimise_GA
             System.out.println("GENERATION " + (gen+1) + ":\n");
             // performing calculations of new sigmas and making child with correct parameters
             double N = gaussian.nextGaussian();
-            for(int i = 0; i < 3; i++){
+            for(int i = 0; i < 4; i++){
 
                 double Ni = gaussian.nextGaussian();
                 sigmas[i] = sigmas[i] * Math.exp( tauPrime*N + tau*Ni );
