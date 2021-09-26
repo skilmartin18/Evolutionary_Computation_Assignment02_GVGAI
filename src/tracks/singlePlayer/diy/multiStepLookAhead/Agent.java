@@ -101,13 +101,6 @@ public class Agent extends AbstractPlayer {
             }
         }
 
-        // If no particularly good actions, choose one at random
-        if ( maxQ < -1000 ) {
-            ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
-            int available_actions = actions.size();
-            bestFirstAction[0] = actions.get(m_rnd.nextInt(available_actions));
-        }
-
         //Setting bestAction just incase not enough time
         Types.ACTIONS bestAction = bestFirstAction[0];
         maxQ = Double.NEGATIVE_INFINITY;
