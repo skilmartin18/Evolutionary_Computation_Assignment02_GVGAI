@@ -15,7 +15,7 @@ The code is run through the files located in the evo_exercises directory. Here, 
 subdirectories corresponding to exercises 2,3 and 4. All code is run in vscode, by pressing the 
 automated run button. This button simultaneously compiles and runs the java file. 
 
-    // EX2: 
+    EX2: 
     Ex2_run_controller.java contains strings with the path of the different game controllers.
     To test a desired controller, change the 4th parameter in runGames. 
     L and M correspond to the number of levels, and number of tests to be done, respectively. 
@@ -24,23 +24,26 @@ automated run button. This button simultaneously compiles and runs the java file
     in the "results" directory.
 
 
-    // EX3:
+    EX3:
+    Ex3_optimise_GA.java is run in a similar way to Ex2. 
+    Modify the main function, depending on whether it is desired to optimise GA parameters, 
+    or to test the obtained parameters. Both the optimiser and testing functions are defined 
+    within the same java file. 
+    In the optimise function, initial sigma values are defined as per the file.
+    However, new initial values can be input to alter the outcome of the optimisation.
+    After some trial and error and iteration, the current sigma values were deemed sufficient.
 
 
-    // EX4: 
+    EX4: 
+    The ex4 directory contains an individual class, that defines the genotype, and
+    also contains the Agent.java file that defines how the controller evolved individuals. 
+    Ex4 is not run from within these files. Instead, the path to ex4 is defined in Ex2's java file, 
+    as "diyGA." Tests on this diy controller are run in the same fashion as Ex2. 
 
 
-// Results
-Results are returned in a text file that is made in the results sub-directory
-in the format <Tsplibname>_<GA name>_<test#>_<popsize#>_<generations#>.
-Will display the Generation number (writes every popsize/10 generations), the distances of 
-the population memeber, will show the distance of the best performer (rounded up as int) and
-finally the time elapsed at that point. InvrOvr will also write the amount of inversions at the time of
-reporting.
-
-// Troubleshooting:
-1-  If having a error from reading the TSPlib files can go to line 11 of TSPproblem and follow Instructions
-    there, although shouldn't be an issue unless running an older version wthout access to pathlib. 
-2-  Tests of the same name in the results folder will be overwritten, multiple of the same test i.e 
-    30x(eil51,10 5000) should all be done in a single BenchmarkParameters file to avoid this.
+// Results:
+Results are returned in text files, in the results directory. Relevant subdirectories exists to 
+categorsie the results. The means and standard deviation results are produced using the 
+StatSummary class provided with the GVGAI code database. The StatSummary provides a simple
+way of tracking the scores from multiple game runs and calculating desired results. 
 
