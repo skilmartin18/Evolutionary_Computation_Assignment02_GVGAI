@@ -151,14 +151,12 @@ public class Ex3_optimise_GA
         double current_score = 0;
         double tauPrime = 1 / Math.sqrt(2*4) ; 
         double tau = 1 / ( Math.sqrt(2 * Math.sqrt(4) ) );
-
-        /*
-            CREATION OF INITIAL PARENT POPULATION AND STANDARD DEVIATION LISTS
-                                */
-
-        // scores arrays
         double parent_scores[] = new double[population_size];
         double child_scores[] = new double [population_size];
+
+        /*
+            CREATION OF INITIAL PARENT POPULATION AND STANDARD DEVIATION LIST
+                                */
 
         double parent_genotype[] = new double[]{0.9, 7, 5, 0.1, 0.142};
         for ( int j = 0; j < population_size; j++){
@@ -176,7 +174,7 @@ public class Ex3_optimise_GA
         // outside for loop runs all individual parent genotypes 
         for( int i = 0; i < population_size; i++){
 
-            // inside for loop runs an individual parent genotype twice for same level and records score
+            // inside for loop runs an individual parent genotype three times for same level and records total score
             for ( int j = 0; j < number_levels; j++ ){
                 String level1 = game.replace(gameName, gameName+"_lvl1");
                 double temp[] = ArcadeMachine.runOneGameGA(game, level1, false, sampleGAController, null, seed, 0, parent_pop.get(i));
@@ -190,9 +188,9 @@ public class Ex3_optimise_GA
         }
     
         /*
-        RUN EA (single pop) 
-        based on slide 18 of slide set 3
-                                        */
+            RUN EA
+            based on slide 18 of slide set 3
+                                            */
 
         for (int gen = 0; gen < num_gen; gen++) 
         {
@@ -348,7 +346,7 @@ public class Ex3_optimise_GA
                 System.out.print(child_scores[i]/number_levels);
                 System.out.print(" ");
             }
-            System.out.println(child_scores[population_size-1]/number_levels);        
+            System.out.println(child_scores[population_size-1]/number_levels + "\n");        
 
             // greedy select
             for ( int i = 0; i < population_size; i++){
