@@ -61,7 +61,7 @@ public class Ex2_run_controller {
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, multiStepLookAgent, null);
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, diyGA, null);
-				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRHEAController, null);
+				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, diyGA, null);
 			}
 			
 		}
