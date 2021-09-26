@@ -30,28 +30,17 @@ public class Ex3_optimise_GA
     public static void Ex3_test_GA()
     {
         // Set up the 4 best genotypes 
-<<<<<<< HEAD
-        double aliens_genotype[] = new double[]{0.9, 7.0, 5.0, 0.1, 0.142}; 
-        double boulderdash_genotype[] = new double[]{0.9, 7.0, 5.0, 0.1, 0.142}; 
-        double chase_genotype[] = new double[]{0.9, 7.0, 5.0, 0.1, 0.142};
-        double butterflies_genotype[] = new double[]{0.9, 7.0, 5.0, 0.1, 0.142}; 
-=======
         double aliens_genotype[] = new double[]{0.7684580278057679, 2.0, 5.0, 0.593744114715972, 0.5}; 
         double boulderdash_genotype[] = new double[]{3.2333020613515053, 1.0, 5.0, 0.99, 1.0}; 
         double chase_genotype[] = new double[]{6.091106410265279, 1.0, 5.0, 0.5777935041605069, 1.0};
         double butterflies_genotype[] = new double[]{0.01, 7.0, 3.0, 0.8863864166517196, 1/7};
->>>>>>> 35f71a0972ec0b91c6e4e5aa55fc1807f6eddaa1
 
         // Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params **** MAKE SURE GENOTYPE USED IS FOR THE RIGHT GAMEINDEX
-<<<<<<< HEAD
-        int gameIdx = 18;  
-=======
         int gameIdx = 13;  
->>>>>>> 35f71a0972ec0b91c6e4e5aa55fc1807f6eddaa1
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 
@@ -88,11 +77,7 @@ public class Ex3_optimise_GA
             for (int i=0; i<M; i++) {
 
                 // Run game with given genotype
-<<<<<<< HEAD
-                double temp[] = ArcadeMachine.runOneGameGA(game, level, false, sampleGAController, null, seed, 0, aliens_genotype);
-=======
                 double temp[] = ArcadeMachine.runOneGameGA(game, level, false, sampleGAController, null, seed, 0, butterflies_genotype);
->>>>>>> 35f71a0972ec0b91c6e4e5aa55fc1807f6eddaa1
                 
                 // Put score into stat summary running tally
                 scores.add(temp[1]);
