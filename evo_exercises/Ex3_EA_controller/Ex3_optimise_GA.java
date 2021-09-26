@@ -101,6 +101,10 @@ public class Ex3_optimise_GA
         
     }
 
+
+    //
+    // Obtains optimised parameter settings
+    //
     public static void optimise_GA()
     {
         /*
@@ -135,7 +139,7 @@ public class Ex3_optimise_GA
         double sigmas[] = {0.3, 3, 3, 0.3};
         double minSigmas[] = {0.15, 3, 3, 0.09};
         ArrayList<double[]> sigmasList = new ArrayList<double[]>();
-        int num_gen = 50;
+        int num_gen = 200;
         int population_size = 6;
         int number_levels = 3;
         double scores[] = new double[number_levels];
