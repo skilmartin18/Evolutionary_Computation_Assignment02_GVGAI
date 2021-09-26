@@ -22,8 +22,8 @@ import java.util.*;
 public class Agent extends AbstractPlayer {
 
     // var decs 
-    public int population_size = 5;
-    public int genotype_size = 5;
+    public int population_size = 6;
+    public int genotype_size = 6;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
