@@ -1,0 +1,12 @@
+Score on run 1: 13.0
+Score on run 2: 17.0
+Score on run 3: 9.0
+Score on run 4: 17.0
+Score on run 5: 9.0
+Score on run 6: 9.0
+Score on run 7: 17.0
+Score on run 8: 15.0
+Score on run 9: 15.0
+Score on run 10: 17.0
+
+MEAN: 13.8, STD DEV: 3.5527766918597927
