@@ -131,7 +131,7 @@ public class Agent extends AbstractPlayer {
     }
 
     //mutate MORE
-    public individual mutate_more_things(individual individual){
+    public individual mutate_three_genes(individual individual){
 
         // find number of available moves
         num_moves = individual.available_actions;
@@ -250,7 +250,6 @@ public class Agent extends AbstractPlayer {
     }
 
     // elitism (will only return 2 elites for now). Effectively the same as tournament selection
-    // MIGHT NEED TO CHANGE TO PERCENTAGE ELITISM
     public ArrayList<individual> return_two_elites(ArrayList<individual> population){
         
         // initialising return list of elites
@@ -328,10 +327,10 @@ public class Agent extends AbstractPlayer {
             // mutation
             for(int i = 0; i < new_population.size(); i++)
             {
-                new_population.set(i,mutate_more_things(new_population.get(i)));
+                new_population.set(i,mutate_three_genes(new_population.get(i)));
             }
 
-            // select elites (changing so only one elite)
+            // select elites
             ArrayList<individual> temp3 = return_two_elites(population);
 
             
