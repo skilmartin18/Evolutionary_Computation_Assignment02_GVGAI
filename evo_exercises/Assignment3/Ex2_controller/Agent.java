@@ -380,7 +380,7 @@ public class Agent extends AbstractPlayer {
      * @param elapsedTimer Timer when the action returned is due.
      * @return An action for the current state
      */
-    public Types.ACTIONS act(StateObservation stateObs) {
+    public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
         // do admin work:
         SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
