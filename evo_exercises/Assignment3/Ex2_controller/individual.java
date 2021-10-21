@@ -1,4 +1,4 @@
-package evo_exercises.Ex4_diy_GA;
+package evo_exercises.Assignment3.Ex2_controller;
 
 import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
 import core.game.StateObservation;
