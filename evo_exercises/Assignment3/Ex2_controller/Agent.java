@@ -1,16 +1,16 @@
-package evo_exercises.Assignment3.Ex2_controller;
+package evo_exercises.Ex4_diy_GA;
 
 import tracks.singlePlayer.tools.Heuristics.SimplestHeuristic;
+import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
 import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
-import ontology.Types;
-import ontology.Types.ACTIONS;
 import tools.ElapsedCpuTimer;
 import tools.Utils;
-
+import ontology.*;
+import ontology.Types.ACTIONS;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,23 +21,268 @@ import java.util.Random;
  */
 public class Agent extends AbstractPlayer {
 
-    public double epsilon = 1e-6;
-    public Random m_rnd;
+    // var decs 
+    public int population_size = 6;
+    public int genotype_size = 6;
+    public Random rand;
+    public individual seed_individual;
+    public ElapsedCpuTimer timer;
+    public long remaining;
+    public int num_moves;
+    ArrayList<individual> population;
+    StateObservation stateObs;
+    // constructor
+    public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
+    {
+        stateObs = _stateObs;
+        // init random number generator
+        rand = new Random();
 
-    // Added in timer
-    private ElapsedCpuTimer timer;
-    private long remaining;
+        population = new ArrayList<individual>();
+        create_population(_stateObs);
 
-    public Agent(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
-
-        m_rnd = new Random();
+        // create initial seed individual (at first there is no previous individual so just NIL)
+        individual seed_individual = new individual(stateObs,genotype_size);
+        for (int i = 0; i < genotype_size; i++)
+        {
+            seed_individual.genotype.set(i,ACTIONS.ACTION_NIL);
+        }
 
 
     }
 
+
+    // creates population from stateOBS, is list of action lists, chucks in individual from previous runs
+    public void create_population(StateObservation stateObs)
+    {
+        // add individuals to population up to popsize-1 members
+        for (int i = 0; i < population_size; i++)
+        {
+            individual ind = new individual(stateObs, genotype_size);
+            this.population.add(ind);
+        }
+        // last member is best individual from previous run
+        //population.add(seed_individual);
+    }
+
+    // apply all actions from a genotype into a stateobs and return score
+    public void calculate_fitness(StateObservation stateObs, individual _individual, SimplestHeuristic heuristic)
+    {
+        StateObservation stateObsCopy = stateObs.copy();
+
+        // apply moves
+        for( int i = 0; i < genotype_size; i++)
+        {
+            stateObsCopy.advance(_individual.genotype.get(i));
+        }
+
+        // get score
+        double score = heuristic.evaluateState(stateObsCopy, stateObs);
+
+        _individual.fitness = score;
+
+    }
+
+    // find first move of best fitness individual
+    public Types.ACTIONS first_move(ArrayList<individual> population){
+        Types.ACTIONS move;
+
+        int best_individual_index = 0;
+        double best_fitness = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < population_size; i++){
+            if ((population.get(i)).fitness >= best_fitness){
+                best_fitness = (population.get(i)).fitness;
+                best_individual_index = i;
+            }
+        }
+
+        move = (population.get(best_individual_index)).genotype.get(0);
+
+        return move;
+    }
+
+    // iterates through all individuals 
+    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, SimplestHeuristic heuristic)
+    {
+        for ( int i = 0; i < population.size(); i++)
+        {
+            calculate_fitness(stateObs, population.get(i), heuristic);
+        }
+    }
+
+    // random index mutation
+    public individual random_mutate(individual individual){
+
+        // find number of available moves
+        num_moves = individual.available_actions;
+
+        // random class and int generator to find which random move to choose
+        int rand_int1 = rand.nextInt(num_moves);
+
+        // from random index, it searches the list of avaiable moves to specific individual and chooses one
+        Types.ACTIONS rand_move = individual.actions.get(rand_int1);
+
+        // random int to find where in genotype list to insert new move
+        int rand_int2 = rand.nextInt(genotype_size);
+        individual.genotype.set(rand_int2, rand_move);
+
+        return individual;
+    }
+
+    //mutate MORE
+    public individual mutate_three_genes(individual individual){
+
+        // find number of available moves
+        num_moves = individual.available_actions;
+
+        // random class and int generator to find which random move to choose
+        int rand_int1 = rand.nextInt(num_moves);
+        int rand_int2 = rand.nextInt(num_moves);
+        int rand_int3 = rand.nextInt(num_moves);
+
+        Types.ACTIONS rand_move1 = individual.actions.get(rand_int1);
+        Types.ACTIONS rand_move2 = individual.actions.get(rand_int2);
+        Types.ACTIONS rand_move3 = individual.actions.get(rand_int3);
+
+        int rand_int4 = rand.nextInt(genotype_size);
+        individual.genotype.set(rand_int4, rand_move1);
+        int rand_int5 = rand.nextInt(genotype_size);
+        individual.genotype.set(rand_int5, rand_move2);
+        int rand_int6 = rand.nextInt(genotype_size);
+        individual.genotype.set(rand_int6, rand_move3);
+
+        return individual;
+    }
+
+    public void remove_pop_first_action()
+    {
+        for( int i = 0; i < population_size; i++)
+        {
+            // random class and int generator to find which random move to choose
+            int rand_int1 = rand.nextInt(num_moves);
+            // from random index, it searches the list of avaiable moves to specific individual and chooses one
+            Types.ACTIONS rand_move = population.get(i).actions.get(rand_int1);
+
+            // this should pop the first element
+            population.get(i).genotype.remove(0);
+            // add a new random element to the end
+            population.get(i).genotype.add(rand_move);
+        }
+    }
+
+    // returns an arrary list of 2 children after parent crossover
+    public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
+        
+        // initialising an arraylist of children to return
+        ArrayList<individual> children = new ArrayList<individual>();
+
+        // creating children clones
+        individual child1 = new individual(ind1.genotype,stateObs);
+        individual child2 = new individual(ind2.genotype,stateObs);
+
+        // initialising a variable to store Types.ACTIONS
+        Types.ACTIONS temp;
+        
+        // random int to find crossover point
+        rand = new Random();
+        int rand_int = rand.nextInt(genotype_size);
+
+        // iterates through random index to end of list and swaps values
+        for (int i = rand_int; i < genotype_size; i++){
+            temp = child1.genotype.get(i);
+            child1.genotype.set(i, child2.genotype.get(i));
+            child2.genotype.set(i, temp);
+        }
+
+        // adding children
+        children.add(child1);
+        children.add(child2);
+
+        return children;
+    }
+
+    // tournament selection WITHOUT replacement. Returns 2 individuals to be parents. k = tournament size
+    public ArrayList<individual> tournament_selection(ArrayList<individual> population, int k){
+       
+        // initialising arraylist of 2 parents to return
+        ArrayList<individual> parents = new ArrayList<individual>();
+
+        // initialising arraylist of candidate indices and candidates
+        List<Integer> indices = new ArrayList<Integer>();
+        ArrayList<individual> candidates = new ArrayList<individual>();
+        
+        // fills up a list of indices which is then shuffled, then the first k indices are taken (this prevents duplicates)
+        for (int i = 0; i < population_size; i++){
+            indices.add(i);
+        }
+
+        Collections.shuffle(indices);
+
+        // selecting chosen random candidates from population
+        for (int i = 0; i < k; i++){
+            candidates.add(population.get(indices.get(i)));
+        }
+
+        // finding best and second best individuals from candidates
+        int best_individual_index = 0;
+        int second_individual_index = 0;
+        double best_fitness = Double.NEGATIVE_INFINITY;
+        double second_best_fitness = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < k; i++){
+            if ((candidates.get(i)).fitness >= best_fitness){
+                second_best_fitness = best_fitness;
+                best_fitness = (candidates.get(i)).fitness;
+                best_individual_index = i;
+                
+            } else if ((candidates.get(i)).fitness > second_best_fitness){
+                second_best_fitness = (candidates.get(i)).fitness;
+                second_individual_index = i;
+            }
+        }
+
+        // adding best and second best individuals to return list
+        parents.add(candidates.get(best_individual_index));
+        parents.add(candidates.get(second_individual_index));
+
+        return parents;
+    }
+
+    // elitism (will only return 2 elites for now). Effectively the same as tournament selection
+    public ArrayList<individual> return_two_elites(ArrayList<individual> population){
+        
+        // initialising return list of elites
+        ArrayList<individual> elites = new ArrayList<individual>();
+
+        // finding best and second best individuals from all in population
+        int best_individual_index = 0;
+        int second_individual_index = 0;
+        double best_fitness = Double.NEGATIVE_INFINITY;
+        double second_best_fitness = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < population_size; i++){
+            if ((population.get(i)).fitness >= best_fitness){
+                second_best_fitness = best_fitness;
+                best_fitness = (population.get(i)).fitness;
+                best_individual_index = i;
+                
+            } else if ((population.get(i)).fitness > second_best_fitness){
+                second_best_fitness = (population.get(i)).fitness;
+                second_individual_index = i;
+            }
+        }
+
+        // adding best and second best individuals to return list
+        elites.add(population.get(best_individual_index));
+        elites.add(population.get(second_individual_index));
+
+        return elites;
+    }
+
     /**
      *
-     * Very simple one step lookahead agent.
+     * Very simple diy GA
      *
      * @param stateObs Observation of the current state.
      * @param elapsedTimer Timer when the action returned is due.
@@ -45,120 +290,89 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
-        // Initialising variables
-        boolean _break = false;
+        // do admin work:
         this.timer = elapsedTimer;
-        Types.ACTIONS bestFirstAction[] = {ACTIONS.ACTION_NIL, ACTIONS.ACTION_NIL, ACTIONS.ACTION_NIL};
-        Types.ACTIONS bestSecondAction[] = {ACTIONS.ACTION_NIL, ACTIONS.ACTION_NIL, ACTIONS.ACTION_NIL};
-        double maxQ = Double.NEGATIVE_INFINITY;
-        double Q = 0;
-        WinScoreHeuristic heuristic =  new WinScoreHeuristic(stateObs);
-        //SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
+        SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
+        long avg_time = 0;
+        long time_sum = 0;
+        int gen_count = 0;
+        // create population
+        ArrayList<individual> new_population = new ArrayList<individual>();
+        // var decs
+        Types.ACTIONS action = ACTIONS.ACTION_NIL;
+        
+        // evolve while we have time remaining
+        remaining = timer.remainingTimeMillis();
+        while((remaining > avg_time) && (remaining > 20))
+        {
+            gen_count++;
 
-        // Check if all first actions are equal in score
-        //double initialScore = stateObs.getGameScore();
-        //double finalScore = 0;
+            //crossover 
+            for(int i = 0; i < (population_size-2)/2; i++)
+            {
+                //select parents
+                ArrayList<individual> temp = tournament_selection(population, 3);
+                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                new_population.add(temp2.get(0));
+                new_population.add(temp2.get(1));
+            }
 
-        // Loop through current possible actions
-        for (Types.ACTIONS firstAction : stateObs.getAvailableActions() ){
+            if(population_size%2 == 1)
+            {
+                ArrayList<individual> temp = tournament_selection(population, 3);
+                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                new_population.add(temp2.get(0));
+            }
+
+            // mutation
+            for(int i = 0; i < new_population.size(); i++)
+            {
+                new_population.set(i,mutate_three_genes(new_population.get(i)));
+            }
+
+            // select elites
+            ArrayList<individual> temp3 = return_two_elites(population);
+
             
-            if ( _break ){
-                break;
+            // calculate fitness
+            calculate_population_fitness(stateObs, temp3, heuristic);
+            calculate_population_fitness(stateObs, new_population, heuristic);
+
+            // fill up pop
+            population.set(0,temp3.get(0));
+            population.set(1,temp3.get(1));
+
+            for(int i =2; i<population_size;i++)
+            {
+                population.set(i,new_population.get(i-2));
             }
 
-            // Copy state of first action
-            StateObservation stCopy = stateObs.copy();
-            stCopy.advance(firstAction);
-    
-            // For each first action, loop through the possible second actions
-            for (Types.ACTIONS secondAction : stCopy.getAvailableActions()) {
+            // check remaining time
+            time_sum += timer.elapsedMillis();
+            avg_time = time_sum/gen_count;
+            remaining = timer.remainingTimeMillis();
 
-                // If time remaining is less than ...ms, then exit both for loops
-                remaining = timer.remainingTimeMillis();
-                if ( remaining < 15 ){
-                    _break = true;
-                    break;
-                }
-                
-                StateObservation stCopy2 = stCopy.copy();
-                //StateObservation stCopy5 = stCopy.copy();
-                stCopy2.advance(secondAction);
-                Q = heuristic.evaluateState(stCopy2);
-                //Q = heuristic.evaluateState(stCopy2,stCopy5);
-                //finalScore = Q;
-                Q = Utils.noise(Q, this.epsilon, this.m_rnd.nextDouble());
-
-                // Recording three best first and second actions to take
-                if (Q > maxQ) {
-
-                    maxQ = Q;
-                    bestFirstAction[2] = bestFirstAction[1];
-                    bestFirstAction[1] = bestFirstAction[0];
-                    bestFirstAction[0] = firstAction;
-
-                    bestSecondAction[2] = bestSecondAction[1];
-                    bestSecondAction[1] = bestSecondAction[0];
-                    bestSecondAction[0] = secondAction;
-                }
-
-            }
         }
 
-        // If no particularly good actions, choose one at random
-        if ( maxQ < -1000 ) {
-            ArrayList<Types.ACTIONS> actions = stateObs.getAvailableActions();
-            int available_actions = actions.size();
-            bestFirstAction[0] = actions.get(m_rnd.nextInt(available_actions));
-        }
+        action = first_move(population);
+        remove_pop_first_action();
+        // maybe helps with dying due to un-searched actions
+        // StateObservation stcopy = stateObs.copy();
+        // stcopy.advance(action);
 
-        //Setting bestAction just incase not enough time
-        Types.ACTIONS bestAction = bestFirstAction[0];
-        maxQ = Double.NEGATIVE_INFINITY;
+        // if(stcopy.isGameOver())
+        // {
+        //     // random class and int generator to find which random move to choose
+        //     int rand_int1 = rand.nextInt(num_moves);
+        //     // from random index, it searches the list of avaiable moves to specific individual and chooses one
+        //     action = stateObs.getAvailableActions().get(rand_int1);
 
-        // If time permits look futher ahead
-        if ( !_break ){
-
-            _break = false;
-
-            // Running through the three best actions recorded for first and second actions
-            for ( int i = 0; i < 3; i++){
-
-                if ( _break ){
-                    break;
-                }
-
-                // Copy state of first action and advance
-                StateObservation stCopy3 = stateObs.copy();
-                stCopy3.advance(bestFirstAction[i]);
-                stCopy3.advance(bestSecondAction[i]);
-
-                // For loop runs through third actions to take in conjunction with previous two actions
-                for ( Types.ACTIONS thirdAction : stCopy3.getAvailableActions() ){
-                    
-                    // If time remaining is less than 15ms, then exit both for loops
-                    remaining = timer.remainingTimeMillis();
-                    if ( remaining < 15 ){
-                        _break = true;
-                        break;
-                    }
-                    
-                    StateObservation stCopy4 = stCopy3.copy();
-                    //StateObservation stCopy6 = stCopy3.copy();
-                    stCopy4.advance(thirdAction);
-                    Q = heuristic.evaluateState(stCopy4);
-                    //Q = heuristic.evaluateState(stCopy4,stCopy6);
-                    Q = Utils.noise(Q, this.epsilon, this.m_rnd.nextDouble());
-
-                    if (Q > maxQ) {
-                        maxQ = Q;
-                        bestAction = bestFirstAction[i];
-                    }
-                }
-            }
-        }
-
-        return bestAction;
+        // }
+        // System.out.println(gen_count);
+        return action;
 
     }
 
+
 }
+
