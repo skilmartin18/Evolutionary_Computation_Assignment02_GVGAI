@@ -38,7 +38,11 @@ public class Test {
 		int seed = new Random().nextInt();
 
 		// Game and level to play
+<<<<<<< HEAD
 		int gameIdx = 11; 
+=======
+		int gameIdx =11; 
+>>>>>>> e6cf376c3d1c954e4ff1d0be611da95aaacd61b5
 		int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
@@ -61,7 +65,7 @@ public class Test {
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
 
 
-		// 3. This replays a game from an action file previously recorded
+	// 3. This replays a game from an action file previously recorded
 	//	 String readActionsFile = recordActionsFile;
 	//	 ArcadeMachine.replayGame(game, level1, visuals, readActionsFile);
 

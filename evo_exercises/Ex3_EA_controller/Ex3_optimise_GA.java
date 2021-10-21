@@ -101,6 +101,10 @@ public class Ex3_optimise_GA
         
     }
 
+
+    //
+    // Obtains optimised parameter settings
+    //
     public static void optimise_GA()
     {
         /*
@@ -112,7 +116,11 @@ public class Ex3_optimise_GA
 		String[][] games = Utils.readGames(spGamesCollection);
 
         // set level params
+<<<<<<< HEAD
+        int gameIdx = 13; 
+=======
         int gameIdx = 11;
+>>>>>>> 35f71a0972ec0b91c6e4e5aa55fc1807f6eddaa1
 		String gameName = games[gameIdx][1];
         System.out.println("Gamename is " + gameName);
 		String game = games[gameIdx][0];
@@ -134,11 +142,16 @@ public class Ex3_optimise_GA
         double child_genotype[] = new double[5];
         double sigmas[] = {0.3, 3, 3, 0.3};
         double minSigmas[] = {0.15, 3, 3, 0.09};
+<<<<<<< HEAD
+        int num_gen = 200;
+        double scores[] = new double[2];
+=======
         ArrayList<double[]> sigmasList = new ArrayList<double[]>();
-        int num_gen = 50;
+        int num_gen = 200;
         int population_size = 6;
         int number_levels = 3;
         double scores[] = new double[number_levels];
+>>>>>>> 35f71a0972ec0b91c6e4e5aa55fc1807f6eddaa1
         Random gaussian = new Random();
         double parent_score = 0;
         double current_score = 0;
@@ -189,6 +202,12 @@ public class Ex3_optimise_GA
         {
             // prints out generation
             System.out.println("GENERATION " + (gen+1) + ":\n");
+<<<<<<< HEAD
+            // performing calculations of new sigmas and making child with correct parameters
+            double N = gaussian.nextGaussian();
+            for(int i = 0; i < 4; i++){
+=======
+>>>>>>> 35f71a0972ec0b91c6e4e5aa55fc1807f6eddaa1
 
             // prints out genotype of each parent
             System.out.println("PARENT GENOTYPES: ");
