@@ -22,6 +22,7 @@ import java.util.*;
 public class Agent extends AbstractPlayer {
 
     // var decs 
+    public int advance_count = 0 ;
     public int population_size = 6;
     public int genotype_size = 6;
     public Random rand;
@@ -74,6 +75,7 @@ public class Agent extends AbstractPlayer {
         for( int i = 0; i < genotype_size; i++)
         {
             stateObsCopy.advance(_individual.genotype.get(i));
+            advance_count++ ;
         }
 
         // get score
@@ -288,22 +290,20 @@ public class Agent extends AbstractPlayer {
      * @param elapsedTimer Timer when the action returned is due.
      * @return An action for the current state
      */
-    public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
+    public Types.ACTIONS act(StateObservation stateObs) {
 
         // do admin work:
-        this.timer = elapsedTimer;
         SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
-        long avg_time = 0;
-        long time_sum = 0;
         int gen_count = 0;
+        int max_gens = 500;
         // create population
         ArrayList<individual> new_population = new ArrayList<individual>();
         // var decs
         Types.ACTIONS action = ACTIONS.ACTION_NIL;
         
         // evolve while we have time remaining
-        remaining = timer.remainingTimeMillis();
-        while((remaining > avg_time) && (remaining > 20))
+
+        for ( int j = 0; j < max_gens; j++ )
         {
             gen_count++;
 
@@ -317,7 +317,7 @@ public class Agent extends AbstractPlayer {
                 new_population.add(temp2.get(1));
             }
 
-            if(population_size%2 == 1)
+            if ( (population_size % 2) == 1 )
             {
                 ArrayList<individual> temp = tournament_selection(population, 3);
                 ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
@@ -325,7 +325,7 @@ public class Agent extends AbstractPlayer {
             }
 
             // mutation
-            for(int i = 0; i < new_population.size(); i++)
+            for ( int i = 0; i < new_population.size(); i++ )
             {
                 new_population.set(i,mutate_three_genes(new_population.get(i)));
             }
@@ -333,7 +333,6 @@ public class Agent extends AbstractPlayer {
             // select elites
             ArrayList<individual> temp3 = return_two_elites(population);
 
-            
             // calculate fitness
             calculate_population_fitness(stateObs, temp3, heuristic);
             calculate_population_fitness(stateObs, new_population, heuristic);
@@ -342,15 +341,10 @@ public class Agent extends AbstractPlayer {
             population.set(0,temp3.get(0));
             population.set(1,temp3.get(1));
 
-            for(int i =2; i<population_size;i++)
+            for ( int i = 2; i < population_size; i++ )
             {
                 population.set(i,new_population.get(i-2));
             }
-
-            // check remaining time
-            time_sum += timer.elapsedMillis();
-            avg_time = time_sum/gen_count;
-            remaining = timer.remainingTimeMillis();
 
         }
 
