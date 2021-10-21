@@ -27,6 +27,7 @@ public class Test {
 
 		String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
 		String multiStepLookAgent = "tracks.singlePlayer.diy.multiStepLookAhead.Agent";
+		String gamercool = "evo_exercises.Assignment3.Ex2_controller.Agent";
 		String diyGA = "evo_exercises.Ex4_diy_GA.Agent";
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
@@ -37,11 +38,7 @@ public class Test {
 		int seed = new Random().nextInt();
 
 		// Game and level to play
-<<<<<<< HEAD
-		int gameIdx =13; 
-=======
-		int gameIdx =11; 
->>>>>>> 080d5e1560d0ad4b9d6357fa2c054ff4a0bd0f3f
+		int gameIdx = 11; 
 		int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
@@ -56,12 +53,12 @@ public class Test {
 		// ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
 
 		// 2. This plays a game in a level by the controller.
-		//ArcadeMachine.runOneGame(game, level1, visuals, sampleOneStepController, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
+		ArcadeMachine.runOneGame(game, level1, visuals, gamercool, recordActionsFile, seed, 0);
+		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
+		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
+		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
+		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
+		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
 
 
 		// 3. This replays a game from an action file previously recorded
