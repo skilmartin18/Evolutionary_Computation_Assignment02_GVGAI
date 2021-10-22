@@ -222,13 +222,14 @@ public class Agent extends AbstractPlayer {
         int rand_int = rand.nextInt(genotype_size);
 
         // make sure number of crossover points is acceptable (will likely have to be changed)
-        while ( rand_int < 3 && rand_int > 10 ){
+        while ( rand_int < 2 || rand_int > 5 ){
             rand_int = rand.nextInt(genotype_size);
         }
 
         // generating the actual crossover points
         int crossover_points[] = {};
         boolean acceptable = false;
+        int acceptable_action_amount = 5;
 
         // determining the crossover points
         for (int j = 0; j < rand_int; j++){
@@ -238,19 +239,19 @@ public class Agent extends AbstractPlayer {
             if ( crossover_points.length == 0 ){
                 crossover_points[j] = crossover_point;
 
-            // every crossover point must be 5 moves apart
+            // every other crossover point must be 5 moves apart (allows sequences of actions to be kept in order)
             }else{
 
                 // while loop runs until an acceptable value is obtained for a crossover point
                 boolean exit = false;
                 while ( exit == false ){
 
-                    // if acceptable remains false, then crossover point will be stored in array
+                    // if acceptable remains false, then crossover point will be stored in array as it is acceptable
                     for(int k = 0; k < crossover_points.length; k ++){
 
-                        // testing if the newly generated crossover point is at least 5 moves away from existing points
+                        // testing if the newly generated crossover point is at least 5 spaces away from existing points
                         int diff = Math.abs(crossover_point - crossover_points[k]);
-                        if ( diff < 5 ){
+                        if ( diff < acceptable_action_amount ){
                             acceptable = true;
                         }
                     }
@@ -260,7 +261,7 @@ public class Agent extends AbstractPlayer {
                         exit = true;
                         crossover_points[j] = crossover_point;
 
-                    // if crossover point is not acceptable, 
+                    // if crossover point is not acceptable
                     }else{
                         crossover_point = rand.nextInt(genotype_size);
                         acceptable = false;
@@ -402,7 +403,7 @@ public class Agent extends AbstractPlayer {
             {
                 //select parents
                 ArrayList<individual> temp = tournament_selection(population, 3);
-                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
                 new_population.add(temp2.get(1));
             }
@@ -410,7 +411,7 @@ public class Agent extends AbstractPlayer {
             if ( (population_size % 2) == 1 )
             {
                 ArrayList<individual> temp = tournament_selection(population, 3);
-                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
             }
 
