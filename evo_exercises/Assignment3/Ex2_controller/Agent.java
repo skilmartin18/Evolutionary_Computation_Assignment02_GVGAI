@@ -33,6 +33,11 @@ public class Agent extends AbstractPlayer {
     public int num_moves;
     ArrayList<individual> population;
     StateObservation stateObs;
+
+    public boolean two_hundred_thou = false;
+    public boolean one_million = false;
+    public boolean five_million = false;
+
     // constructor
     public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
     {
@@ -77,6 +82,16 @@ public class Agent extends AbstractPlayer {
         {
             stateObsCopy.advance(_individual.genotype.get(i));
             advance_count++ ;
+
+            if (advance_count == 200000){
+                two_hundred_thou = true;
+            }
+            if (advance_count == 1000000){
+                one_million = true;
+            }
+            if (advance_count == 5000000){
+                five_million = true;
+            }
         }
 
         // advance call is > 200k return the previous individual
@@ -324,12 +339,22 @@ public class Agent extends AbstractPlayer {
         // var decs
         // Types.ACTIONS action = ACTIONS.ACTION_NIL;
         double best_score = 0;
+        String best_score_text = "";
         ArrayList<Types.ACTIONS> best_moves;
         String best_moves_text = "";
+
+        String previous_best_score = "";
+        String previous_best_moves = "";
+
+        // text that is printed at the end of act
+        String text = "";
         
         // evolve while we have time remaining
         for (int j = 0; j < max_gens; j++)
         {
+            previous_best_moves = best_moves_text;
+            previous_best_score = best_score_text;
+
             // crossover 
             for(int i = 0; i < (population_size-2)/2; i++)
             {
@@ -370,11 +395,13 @@ public class Agent extends AbstractPlayer {
                 population.set(i,new_population.get(i-2));
             }
 
-            // insert code to print best ind genotype at certain milestones
+            // insert code to print best_individual genotype and current game score at certain milestones
             best_score = population.get(0).fitness;
-            best_moves = population.get(0).genotype;
+            best_score_text = best_score+"";
 
             // converting ACTIONS to strings
+            best_moves = population.get(0).genotype;
+
             for (int i = 0; i < genotype_size-1; i++)
             {
                 best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
@@ -382,10 +409,28 @@ public class Agent extends AbstractPlayer {
 
             best_moves_text += fromACTIONS(best_moves.get(genotype_size));
 
+            if (two_hundred_thou){
+                text = "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+
+                two_hundred_thou = false;
+            }
+
+            if (one_million){
+                text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+
+                one_million = false;
+            }
+
+            if (five_million){
+                text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+
+                five_million = false;
+            }
+
         }
 
-        // exit game somehow, do not return action
-        // System.exit();
+        // handle printing of "text"
+
 
         // action = first_move(population);
         // remove_pop_first_action();
@@ -402,6 +447,8 @@ public class Agent extends AbstractPlayer {
 
         // }
         // System.out.println(gen_count);
+
+        System.exit(0);
         return ACTIONS.ACTION_NIL;
 
     }
