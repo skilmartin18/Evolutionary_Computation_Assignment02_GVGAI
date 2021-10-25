@@ -22,6 +22,7 @@ public class Ex2_run_controller {
 		String multiStepLookAgent = "tracks.singlePlayer.diy.multiStepLookAhead.Agent";
 		String sampleRHEAController = "tracks.singlePlayer.advanced.sampleRHEA.Agent";
 		String diyGA = "evo_exercises.Ex4_diy_GA.Agent";
+		String gamercool = "evo_exercises.Assignment3.Ex2_controller.Agent";
 	
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
@@ -30,6 +31,7 @@ public class Ex2_run_controller {
 		//Game settings
 		boolean visuals = false;
 		int seed = new Random().nextInt();
+		String recordActionsFile = null;
 
 		// This plays games_played games, in the first L levels, M times each.
 		// set games_played- indices are games indexes from all_games_sp.csv
@@ -61,7 +63,8 @@ public class Ex2_run_controller {
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, multiStepLookAgent, null);
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, diyGA, null);
-				ArcadeMachine.runGames(game, new String[]{levels[k]}, M, diyGA, null);
+				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, diyGA, null);
+				ArcadeMachine.runOneGame(game, levels[k], visuals, gamercool, recordActionsFile, seed, 0);
 			}
 			
 		}
