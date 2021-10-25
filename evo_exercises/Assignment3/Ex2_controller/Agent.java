@@ -397,35 +397,7 @@ public class Agent extends AbstractPlayer {
                 population.set(i,new_population.get(i-2));
             }
 
-<<<<<<< HEAD
             // insert code to print best_individual genotype and current game score at certain milestones
-=======
-            // insert code to print best ind genotype at certain milestones
-<<<<<<< HEAD
-             
-
-            // This is printing code from A2 ex2: 
-
-		    String filename = "";
-		    String location = "results/assignment03/exercise02/";
-		    String text = "";
-
-		    String[] stripped_game_path = currentLevel.split("/");
-		    filename = stripped_game_path[2];
-		    stripped_game_path = filename.split("\\.");
-		    filename = stripped_game_path[0];
-
-		    //System.out.println(filename);
-		    String num_of_runs = String.valueOf( n );
-
-		    
-		    String newFilename = location + filename + "_" + num_of_runs; 
-		    text = "Results in " + filename + " - Mean score: " + mean + ", Std Dev: " + sd;
-
-		    handle_files.write_to_file(newFilename, text);
-        
-=======
->>>>>>> 2e72237802a641c022e4c9f75a3e1f8f61c3430f
             best_score = population.get(0).fitness;
             best_score_text = best_score+"";
 
@@ -438,7 +410,6 @@ public class Agent extends AbstractPlayer {
             }
 
             best_moves_text += fromACTIONS(best_moves.get(genotype_size));
->>>>>>> 2e6c877db95e92190e2c7b6f027fe3d0fe297f7b
 
             if (two_hundred_thou){
                 text = "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
