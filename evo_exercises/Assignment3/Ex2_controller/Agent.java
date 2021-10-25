@@ -92,24 +92,6 @@ public class Agent extends AbstractPlayer {
 
     }
 
-    // find first move of best fitness individual
-    public Types.ACTIONS first_move(ArrayList<individual> population){
-        Types.ACTIONS move;
-
-        int best_individual_index = 0;
-        double best_fitness = Double.NEGATIVE_INFINITY;
-
-        for (int i = 0; i < population_size; i++){
-            if ((population.get(i)).fitness >= best_fitness){
-                best_fitness = (population.get(i)).fitness;
-                best_individual_index = i;
-            }
-        }
-
-        move = (population.get(best_individual_index)).genotype.get(0);
-
-        return move;
-    }
 
     // iterates through all individuals 
     public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population)
@@ -139,46 +121,7 @@ public class Agent extends AbstractPlayer {
         return individual;
     }
 
-    //mutate MORE
-    public individual mutate_three_genes(individual individual){
 
-        // find number of available moves
-        num_moves = individual.available_actions;
-
-        // random class and int generator to find which random move to choose
-        int rand_int1 = rand.nextInt(num_moves);
-        int rand_int2 = rand.nextInt(num_moves);
-        int rand_int3 = rand.nextInt(num_moves);
-
-        Types.ACTIONS rand_move1 = individual.actions.get(rand_int1);
-        Types.ACTIONS rand_move2 = individual.actions.get(rand_int2);
-        Types.ACTIONS rand_move3 = individual.actions.get(rand_int3);
-
-        int rand_int4 = rand.nextInt(genotype_size);
-        individual.genotype.set(rand_int4, rand_move1);
-        int rand_int5 = rand.nextInt(genotype_size);
-        individual.genotype.set(rand_int5, rand_move2);
-        int rand_int6 = rand.nextInt(genotype_size);
-        individual.genotype.set(rand_int6, rand_move3);
-
-        return individual;
-    }
-
-    public void remove_pop_first_action()
-    {
-        for( int i = 0; i < population_size; i++)
-        {
-            // random class and int generator to find which random move to choose
-            int rand_int1 = rand.nextInt(num_moves);
-            // from random index, it searches the list of avaiable moves to specific individual and chooses one
-            Types.ACTIONS rand_move = population.get(i).actions.get(rand_int1);
-
-            // this should pop the first element
-            population.get(i).genotype.remove(0);
-            // add a new random element to the end
-            population.get(i).genotype.add(rand_move);
-        }
-    }
 
     // returns an arrary list of 2 children after parent crossover
     public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
