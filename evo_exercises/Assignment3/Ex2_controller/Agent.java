@@ -23,8 +23,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 6;
-    public int genotype_size = 5;
+    public int population_size = 20;
+    public int genotype_size = 369;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -423,7 +423,7 @@ public class Agent extends AbstractPlayer {
             // mutation
             for ( int i = 0; i < new_population.size(); i++ )
             {
-                new_population.set(i,mutate_three_genes(new_population.get(i)));
+                new_population.set(i,random_mutate(new_population.get(i)));
             }
 
             // select elites
@@ -442,27 +442,15 @@ public class Agent extends AbstractPlayer {
                 population.set(i,new_population.get(i-2));
             }
 
+            // insert code to print best ind genotype at certain milestones
+
         }
+        
+        // exit game somehow, do not return action
 
         action = first_move(population);
-        remove_pop_first_action();
-        // maybe helps with dying due to un-searched actions
-        // StateObservation stcopy = stateObs.copy();
-        // stcopy.advance(action);
-
-        // if(stcopy.isGameOver())
-        // {
-        //     // random class and int generator to find which random move to choose
-        //     int rand_int1 = rand.nextInt(num_moves);
-        //     // from random index, it searches the list of avaiable moves to specific individual and chooses one
-        //     action = stateObs.getAvailableActions().get(rand_int1);
-
-        // }
-        // System.out.println(gen_count);
         return action;
-
     }
-
 
 }
 
