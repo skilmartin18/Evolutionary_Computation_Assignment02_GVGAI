@@ -24,7 +24,7 @@ public class Agent extends AbstractPlayer {
     // var decs 
     public int advance_count = 0 ;
     public int population_size = 6;
-    public int genotype_size = 6;
+    public int genotype_size = 5;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -67,7 +67,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // apply all actions from a genotype into a stateobs and return score
-    public void calculate_fitness(StateObservation stateObs, individual _individual, SimplestHeuristic heuristic)
+    public void calculate_fitness(StateObservation stateObs, individual _individual)
     {
         StateObservation stateObsCopy = stateObs.copy();
 
@@ -79,7 +79,7 @@ public class Agent extends AbstractPlayer {
         }
 
         // get score
-        double score = heuristic.evaluateState(stateObsCopy, stateObs);
+        double score = stateObsCopy.getGameScore();
 
         _individual.fitness = score;
 
@@ -105,11 +105,11 @@ public class Agent extends AbstractPlayer {
     }
 
     // iterates through all individuals 
-    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population, SimplestHeuristic heuristic)
+    public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population)
     {
         for ( int i = 0; i < population.size(); i++)
         {
-            calculate_fitness(stateObs, population.get(i), heuristic);
+            calculate_fitness(stateObs, population.get(i));
         }
     }
 
@@ -384,9 +384,9 @@ public class Agent extends AbstractPlayer {
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
         // do admin work:
-        SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
-        int gen_count = 0;
-        int max_gens = 500;
+        // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
+        // int gen_count = 0;
+        int max_gens = 10;
         // create population
         ArrayList<individual> new_population = new ArrayList<individual>();
         // var decs
@@ -396,14 +396,12 @@ public class Agent extends AbstractPlayer {
 
         for ( int j = 0; j < max_gens; j++ )
         {
-            gen_count++;
-
-            //crossover 
+            // crossover 
             for(int i = 0; i < (population_size-2)/2; i++)
             {
-                //select parents
+                // select parents
                 ArrayList<individual> temp = tournament_selection(population, 3);
-                ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
+                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
                 new_population.add(temp2.get(1));
             }
@@ -411,7 +409,7 @@ public class Agent extends AbstractPlayer {
             if ( (population_size % 2) == 1 )
             {
                 ArrayList<individual> temp = tournament_selection(population, 3);
-                ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
+                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
             }
 
@@ -425,8 +423,8 @@ public class Agent extends AbstractPlayer {
             ArrayList<individual> temp3 = return_two_elites(population);
 
             // calculate fitness
-            calculate_population_fitness(stateObs, temp3, heuristic);
-            calculate_population_fitness(stateObs, new_population, heuristic);
+            calculate_population_fitness(stateObs, temp3);
+            calculate_population_fitness(stateObs, new_population);
 
             // fill up pop
             population.set(0,temp3.get(0));
