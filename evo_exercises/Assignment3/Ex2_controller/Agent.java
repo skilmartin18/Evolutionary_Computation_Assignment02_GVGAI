@@ -354,6 +354,29 @@ public class Agent extends AbstractPlayer {
             }
 
             // insert code to print best ind genotype at certain milestones
+            /* 
+
+            // This is printing code from A2 ex2: 
+
+		    String filename = "";
+		    String location = "";
+		    String text = "";
+
+		    String[] stripped_game_path = currentLevel.split("/");
+		    filename = stripped_game_path[2];
+		    stripped_game_path = filename.split("\\.");
+		    filename = stripped_game_path[0];
+
+		    //System.out.println(filename);
+		    String num_of_runs = String.valueOf( n );
+
+		    location = "results/exercise02/";
+		    String newFilename = location + filename + "_" + num_of_runs; 
+		    text = "Results in " + filename + " - Mean score: " + mean + ", Std Dev: " + sd;
+
+		    handle_files.write_to_file(newFilename, text);
+
+            */
 
         }
         
