@@ -694,7 +694,7 @@ public class ArcadeMachine {
 		String newFilename = location + filename + "_" + num_of_runs; 
 		text = "Results in " + filename + " - Mean score: " + mean + ", Std Dev: " + sd;
 
-		handle_files.write_to_file(newFilename, text);
+		// handle_files.write_to_file(newFilename, text);
 
     }
 
