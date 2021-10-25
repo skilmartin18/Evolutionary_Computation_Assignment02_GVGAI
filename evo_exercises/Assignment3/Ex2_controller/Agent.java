@@ -23,8 +23,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 6;
-    public int genotype_size = 5;
+    public int population_size = 20;
+    public int genotype_size = 369;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -333,7 +333,7 @@ public class Agent extends AbstractPlayer {
             // mutation
             for ( int i = 0; i < new_population.size(); i++ )
             {
-                // for now mutate is run once (can change if need be)
+                // mutation is done once (can change to multiple times if need be)
                 new_population.set(i,random_mutate(new_population.get(i)));
             }
 
@@ -353,7 +353,11 @@ public class Agent extends AbstractPlayer {
                 population.set(i,new_population.get(i-2));
             }
 
+            // insert code to print best ind genotype at certain milestones
+
         }
+        
+        // exit game somehow, do not return action
 
         // action = first_move(population);
         // remove_pop_first_action();
@@ -373,7 +377,6 @@ public class Agent extends AbstractPlayer {
         return ACTIONS.ACTION_NIL;
 
     }
-
 
 }
 
