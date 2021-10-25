@@ -1,4 +1,4 @@
-package evo_exercises.Assignment3.Ex2_controller;
+package evo_exercises.Ex4_diy_GA;
 
 import tracks.singlePlayer.tools.Heuristics.SimplestHeuristic;
 import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
@@ -77,6 +77,13 @@ public class Agent extends AbstractPlayer {
             stateObsCopy.advance(_individual.genotype.get(i));
             advance_count++ ;
         }
+
+        // advance call is > 200k return the previous individual
+        // if = 200k return (write to output) current individual
+
+        // same for 1m, 5m
+
+        // need to keep track of previous individual
 
         // get score
         double score = heuristic.evaluateState(stateObsCopy, stateObs);
