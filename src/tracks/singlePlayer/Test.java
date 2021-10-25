@@ -38,11 +38,7 @@ public class Test {
 		int seed = new Random().nextInt();
 
 		// Game and level to play
-<<<<<<< HEAD
-		int gameIdx =54; 
-=======
 		int gameIdx =18; 
->>>>>>> 79f3619690011965bcb063fbb34bc72045ef5876
 		int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
@@ -54,19 +50,11 @@ public class Test {
 						// executed. null if not to save.
 
 		// 1. This starts a game, in a level, played by a human.
-<<<<<<< HEAD
-		ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
-
-		// 2. This plays a game in a level by the controller.
-		//ArcadeMachine.runOneGame(game, level1, visuals, sampleOneStepController, recordActionsFile, seed, 0);
-		//ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
-=======
 		//ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
 
 		// 2. This plays a game in a level by the controller.
 		//ArcadeMachine.runOneGame(game, level1, visuals, gamercool, recordActionsFile, seed, 0);
 		ArcadeMachine.runOneGame(game, level1, visuals, gamercool, recordActionsFile, seed, 0);
->>>>>>> 79f3619690011965bcb063fbb34bc72045ef5876
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
