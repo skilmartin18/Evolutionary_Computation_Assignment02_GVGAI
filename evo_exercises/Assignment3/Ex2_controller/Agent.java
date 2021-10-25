@@ -11,6 +11,9 @@ import ontology.*;
 import ontology.Types.ACTIONS;
 import java.util.ArrayList;
 import java.util.*;
+import handle_files.handle_files;
+
+import handle_files.handle_files;
 
 /**
  * Created with IntelliJ IDEA.
@@ -290,6 +293,20 @@ public class Agent extends AbstractPlayer {
         return elites;
     }
 
+    public String fromACTIONS(ACTIONS move){
+        String error = "";
+
+        if (move == ACTIONS.ACTION_NIL) return "ACTION_NIL";
+        else if (move == ACTIONS.ACTION_UP) return "ACTION_UP";
+        else if (move == ACTIONS.ACTION_DOWN) return "ACTION_DOWN";
+        else if (move == ACTIONS.ACTION_LEFT) return "ACTION_LEFT";
+        else if (move == ACTIONS.ACTION_RIGHT) return "ACTION_RIGHT";
+        else if (move == ACTIONS.ACTION_USE) return "ACTION_USE";
+        else if (move == ACTIONS.ACTION_ESCAPE) return "ACTION_ESCAPE";
+
+        else return error;
+    }
+
     /**
      *
      * Very simple diy GA
@@ -303,15 +320,17 @@ public class Agent extends AbstractPlayer {
         // do admin work:
         // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
         // int gen_count = 0;
-        int max_gens = 10;
+        int max_gens = 1000;
         // create population
         ArrayList<individual> new_population = new ArrayList<individual>();
         // var decs
-        //Types.ACTIONS action = ACTIONS.ACTION_NIL;
+        // Types.ACTIONS action = ACTIONS.ACTION_NIL;
+        double best_score = 0;
+        ArrayList<Types.ACTIONS> best_moves;
+        String best_moves_text = "";
         
         // evolve while we have time remaining
-
-        for ( int j = 0; j < max_gens; j++ )
+        for (int j = 0; j < max_gens; j++)
         {
             // crossover 
             for(int i = 0; i < (population_size-2)/2; i++)
@@ -354,12 +373,13 @@ public class Agent extends AbstractPlayer {
             }
 
             // insert code to print best ind genotype at certain milestones
-            /* 
+<<<<<<< HEAD
+             
 
             // This is printing code from A2 ex2: 
 
 		    String filename = "";
-		    String location = "";
+		    String location = "results/assignment03/exercise02/";
 		    String text = "";
 
 		    String[] stripped_game_path = currentLevel.split("/");
@@ -370,17 +390,29 @@ public class Agent extends AbstractPlayer {
 		    //System.out.println(filename);
 		    String num_of_runs = String.valueOf( n );
 
-		    location = "results/exercise02/";
+		    
 		    String newFilename = location + filename + "_" + num_of_runs; 
 		    text = "Results in " + filename + " - Mean score: " + mean + ", Std Dev: " + sd;
 
 		    handle_files.write_to_file(newFilename, text);
+        
+=======
+            best_score = population.get(0).fitness;
+            best_moves = population.get(0).genotype;
 
-            */
+            // converting ACTIONS to strings
+            for (int i = 0; i < genotype_size-1; i++)
+            {
+                best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
+            }
+
+            best_moves_text += fromACTIONS(best_moves.get(genotype_size));
+>>>>>>> 2e6c877db95e92190e2c7b6f027fe3d0fe297f7b
 
         }
-        
+
         // exit game somehow, do not return action
+        // System.exit();
 
         // action = first_move(population);
         // remove_pop_first_action();
