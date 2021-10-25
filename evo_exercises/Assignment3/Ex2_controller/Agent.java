@@ -122,39 +122,6 @@ public class Agent extends AbstractPlayer {
         return individual;
     }
 
-
-
-    // returns an arrary list of 2 children after parent crossover
-    public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
-        
-        // initialising an arraylist of children to return
-        ArrayList<individual> children = new ArrayList<individual>();
-
-        // creating children clones
-        individual child1 = new individual(ind1.genotype,stateObs);
-        individual child2 = new individual(ind2.genotype,stateObs);
-
-        // initialising a variable to store Types.ACTIONS
-        Types.ACTIONS temp;
-        
-        // random int to find crossover point
-        rand = new Random();
-        int rand_int = rand.nextInt(genotype_size);
-
-        // iterates through random index to end of list and swaps values
-        for (int i = rand_int; i < genotype_size; i++){
-            temp = child1.genotype.get(i);
-            child1.genotype.set(i, child2.genotype.get(i));
-            child2.genotype.set(i, temp);
-        }
-
-        // adding children
-        children.add(child1);
-        children.add(child2);
-
-        return children;
-    }
-
     // returns an arrary list of 2 children after parent crossover
     public ArrayList<individual> n_point_crossover(individual ind1, individual ind2){
     
@@ -368,7 +335,7 @@ public class Agent extends AbstractPlayer {
             {
                 // select parents
                 ArrayList<individual> temp = tournament_selection(population, 3);
-                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
                 new_population.add(temp2.get(1));
             }
@@ -376,13 +343,14 @@ public class Agent extends AbstractPlayer {
             if ( (population_size % 2) == 1 )
             {
                 ArrayList<individual> temp = tournament_selection(population, 3);
-                ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
                 new_population.add(temp2.get(0));
             }
 
             // mutation
             for ( int i = 0; i < new_population.size(); i++ )
             {
+                // mutation is done once (can change to multiple times if need be)
                 new_population.set(i,random_mutate(new_population.get(i)));
             }
 
@@ -419,7 +387,23 @@ public class Agent extends AbstractPlayer {
         // exit game somehow, do not return action
         // System.exit();
 
+        // action = first_move(population);
+        // remove_pop_first_action();
+        // maybe helps with dying due to un-searched actions
+        // StateObservation stcopy = stateObs.copy();
+        // stcopy.advance(action);
+
+        // if(stcopy.isGameOver())
+        // {
+        //     // random class and int generator to find which random move to choose
+        //     int rand_int1 = rand.nextInt(num_moves);
+        //     // from random index, it searches the list of avaiable moves to specific individual and chooses one
+        //     action = stateObs.getAvailableActions().get(rand_int1);
+
+        // }
+        // System.out.println(gen_count);
         return ACTIONS.ACTION_NIL;
+
     }
 
 }
