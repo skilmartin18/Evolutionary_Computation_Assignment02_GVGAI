@@ -97,34 +97,12 @@ public class Agent extends AbstractPlayer {
             }
         }
 
-        /* 
-            Progress Bar ( "|====>   |" )
-        */
-
-        // initialising variables
-        String progress = "";
-        String spaces = "";
-        int num = 250000;
-        int total = 5000000/num;
-
-        // everytime time the advance count hits a multiple of num, need to add aditonal "="
-        if ( advance_count % num == 0 ){
-            int amount = advance_count/num;
-
-            for ( int j = 0; j < amount; j++){
-                progress = progress + "=";
-            }
-
-            progress = progress + ">";
-            
-            for ( int k = 0; k < (total - amount) - 1; k++){
-                spaces = spaces + " ";
-            }
-
-            double percentage = num/advance_count;
-        
-            System.out.print( "|" + progress + spaces + "|" + " " + Math.round(percentage) + "%" + '\r' );
-        }
+        // progress update
+        float counter = advance_count;
+        float percentage = (counter/5000000)*100;
+        System.out.print( "\rRunning... " + advance_count + "/" + 5000000 + " " + "(" );
+        System.out.printf( "%.1f",percentage );
+        System.out.print( "%" + ")" );
 
         // get score
         double score = stateObsCopy.getGameScore();
@@ -194,7 +172,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // returns an arrary list of 2 children after parent crossover
-    public ArrayList<individual> n_point_crossover(individual ind1, individual ind2){
+    public ArrayList<individual> n_point_crossover(individual ind1, individual ind2, int num){
     
         // initialising an arraylist of children to return
         ArrayList<individual> children = new ArrayList<individual>();
@@ -206,14 +184,8 @@ public class Agent extends AbstractPlayer {
         // initialising a variable to store Types.ACTIONS
         Types.ACTIONS temp;
         
-        // random int to find how many crossover points there will be
+        // rand and rand_int utilised futher on
         rand = new Random();
-        int rand_int = rand.nextInt(genotype_size);
-
-        // make sure number of crossover points is acceptable (will likely have to be changed)
-        while ( rand_int < 2 || rand_int > 3 ){
-            rand_int = rand.nextInt(genotype_size);
-        }
 
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
@@ -221,7 +193,7 @@ public class Agent extends AbstractPlayer {
         int acceptable_action_amount = 4;
 
         // determining the crossover points
-        for (int j = 0; j < rand_int; j++){
+        for (int j = 0; j < num; j++){
             int crossover_point = rand.nextInt(genotype_size);
 
             // first value to be added has no constraints
@@ -488,7 +460,7 @@ public class Agent extends AbstractPlayer {
                     best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
                 }
 
-                best_moves_text += fromACTIONS(best_moves.get(genotype_size));
+                best_moves_text += fromACTIONS(best_moves.get(genotype_size-1));    
 
                 // prints score and genotype of best individual at milestones
                 if (two_hundred_thou){
