@@ -34,6 +34,7 @@ public class Agent extends AbstractPlayer {
     public long remaining;
     public int num_moves;
     public boolean once = false;
+    public int testCounter = 1;
     ArrayList<individual> population;
     StateObservation stateObs;
 
@@ -92,8 +93,15 @@ public class Agent extends AbstractPlayer {
             stateObsCopy.advance(_individual.genotype.get(i));
             advance_count++ ;
 
+            // once advance counter is greater than 5 mil, variables need to be set
             if ( advance_count > 5000000 ){
                 stop = true;
+                testCounter++;
+
+                // moving onto next level
+                if ( testCounter > 10 ){
+                    testCounter = 1;
+                }
             }
 
             // checking if the counter for advance has reached certain values
@@ -112,12 +120,12 @@ public class Agent extends AbstractPlayer {
             Progress Update
         */
 
-        // if past 5 mil don't need progress bar
+        // if past 5 mil don't need progress bar otherwise output updated bar
         if ( stop == false ){
             float counter = advance_count;
             float percentage = (counter/5000000)*100;
 
-            System.out.print( "\rRunning... " + advance_count + "/" + 5000000 + " " + "(" );
+            System.out.print( "\rRunning Test " + testCounter + "... " + advance_count + "/" + 5000000 + " " + "(" );
             System.out.printf( "%.1f",percentage );
             System.out.print( "%" + ")" );
         }else if( stop == true && once == false ){
