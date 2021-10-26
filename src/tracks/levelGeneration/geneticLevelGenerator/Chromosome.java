@@ -552,7 +552,6 @@ public class Chromosome implements Comparable<Chromosome>{
 			calculated = true;
 			StateObservation stateObs = getStateObservation();
 			
-
 			//Play the game using the best agent
 			StepController stepAgent = new StepController(automatedAgent, SharedData.EVALUATION_STEP_TIME);
 			ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();

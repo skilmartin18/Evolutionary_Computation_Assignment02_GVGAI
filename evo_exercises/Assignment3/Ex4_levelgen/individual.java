@@ -2,7 +2,26 @@ package evo_exercises.Assignment3.Ex4_levelgen;
 
 
 
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import core.game.Event;
+import core.game.GameDescription.SpriteData;
+import core.game.GameDescription.TerminationData;
+import core.game.StateObservation;
+import core.player.AbstractPlayer;
+import evo_exercises.Ex4_diy_GA.Agent;
+import tracks.levelGeneration.constraints.CombinedConstraints;
+import ontology.Types;
+import ontology.Types.WINNER;
+import tools.ElapsedCpuTimer;
+import tools.LevelMapping;
+import tools.StepController;
 import java.util.*;
+
+import core.player.AbstractPlayer;
 import handle_files.handle_files;
 
 public class individual {
@@ -25,6 +44,9 @@ public class individual {
     // genotype as 1d array for easy crossover, access via 
     // genotype[x+y*width]
     char[] genotype = new char[(playable_width)*(playable_height)];
+
+    // fitness stuff
+    int fitness = 0;
     
    
     /*   
@@ -212,4 +234,59 @@ public class individual {
         //     }
         // }
     }
+
+    public boolean calc_disqual(AbstractPlayer automatedAgent, StateObservation stateObs)
+    {
+        boolean disqual = false;
+        
+        /* /// EVERYTHING IS PRESENT /// (legacy)
+        // this should be checked by the next part anyway
+        //int choice_count = 0;
+        // // disqualification factor 1-> are all choices present
+        // for(int i = 0; i < genotype.length; i++)
+        // {
+        //     if( (genotype[i] == 'g') || (genotype[i] == '+') || (genotype[i] == 'A') )
+        //     {
+        //         choice_count++;
+        //     }
+        // }
+
+        // if ( choice_count < 3)
+        // {
+        //     disqual = true;
+        // }
+        */
+        
+        ///// LEVEL IS COMPLETEABLE //////
+        /// Play the game using the best agent, copied from SampleGA
+
+        StepController stepAgent = new StepController(automatedAgent, 40);
+        ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();
+        elapsedTimer.setMaxTimeMillis(40);
+        stepAgent.playGame(stateObs.copy(), elapsedTimer);
+        
+        // gets end state of game
+        StateObservation bestState = stepAgent.getFinalState();
+        // ArrayList<Types.ACTIONS> bestSol = stepAgent.getSolution();
+
+        // if the player doesnt win i.e loses or cannot win
+        if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) || (bestState.getGameWinner() == Types.WINNER.NO_WINNER) )
+        {
+            disqual = true;
+        }
+
+        return disqual;
+    }
+
+    public void calc_fitness(AbstractPlayer automatedAgent, StateObservation stateObs)
+    {
+        if(!calc_disqual(automatedAgent, stateObs))
+        {
+            System.out.println("i can play the level yay");
+        }
+
+    }
+
+
+
 }
