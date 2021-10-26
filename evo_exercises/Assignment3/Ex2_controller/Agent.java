@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 3;
-    public int genotype_size = 3;
+    public int population_size = 20;
+    public int genotype_size = 800;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -452,6 +452,8 @@ public class Agent extends AbstractPlayer {
                 previous_best_score = best_score_text;
                 previous_best_score_double = best_score;
 
+                best_moves_text = "";
+
                 // crossover 
                 for(int i = 0; i < (population_size-2)/2; i++)
                 {
@@ -506,7 +508,7 @@ public class Agent extends AbstractPlayer {
                     best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
                 }
 
-                best_moves_text += fromACTIONS(best_moves.get(genotype_size-1));    
+                best_moves_text += fromACTIONS(best_moves.get(genotype_size-1));
 
                 // prints score and genotype of best individual at milestones
                 if (two_hundred_thou){
@@ -590,7 +592,7 @@ public class Agent extends AbstractPlayer {
         // }
         // System.out.println(gen_count);
 
-        System.exit(0);
+        // System.exit(0);
         return ACTIONS.ACTION_NIL;
     }
 }
