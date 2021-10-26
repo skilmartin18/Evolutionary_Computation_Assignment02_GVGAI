@@ -16,9 +16,7 @@ public class TestLevelGeneration {
 		String physicsGamesPath = "examples/contphysics/";
 		String generateLevelPath = gamesPath;
 
-
 		String games[] = new String[] { "zelda"}; 
-
 
 		String recordActionsFile = null;// "actions_" + games[gameIdx] + "_lvl"
 										// + levelIdx + "_" + seed + ".txt";

@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 20;
-    public int genotype_size = 20;
+    public int population_size = 3;
+    public int genotype_size = 3;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -40,10 +40,15 @@ public class Agent extends AbstractPlayer {
     public boolean one_million = false;
     public boolean five_million = false;
 
+    // public static int calls_to_act;                /// Maybe remove this (if it doesnt work)
+    // public String[] games = {"Bomber", "Boulderchase", "Chase", "Garbagecollector"};
+
     // constructor
     public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
     {
         stateObs = _stateObs;
+        // calls_to_act = 0;                       ///// Maybe remove this
+        
         // init random number generator
         rand = new Random();
 
@@ -361,6 +366,9 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
+        // Increment calls to act
+        // calls_to_act++; 
+
         // do admin work:
         // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
         // int gen_count = 0;
@@ -401,6 +409,9 @@ public class Agent extends AbstractPlayer {
             // text that is printed at the end of act
             String text = "";
             String index = "";
+
+            // resetting advance count
+            advance_count = 0;
             
             // evolve while we have time remaining
             for (int j = 0; (j < max_gens || advance_count < 5000001); j++)
@@ -415,8 +426,8 @@ public class Agent extends AbstractPlayer {
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 3);
                     ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
-                    new_population.add(temp.get(0));
-                    new_population.add(temp.get(1));
+                    new_population.add(temp2.get(0));
+                    new_population.add(temp2.get(1));
                 }
 
                 if ( (population_size % 2) == 1 )
@@ -508,7 +519,28 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignmento3/exercise02/Test", final_text);
+        // Set the filename to current game based on how many calls to act have been made
+        // String filename = "";
+        // if (calls_to_act <= 5)
+        // {
+        //     filename = games[0]; 
+        // } else if (calls_to_act > 5 && calls_to_act <= 10)
+        // {
+        //     filename = games[1];
+        // } else if (calls_to_act > 10 && calls_to_act <= 15)
+        // {
+        //     filename = games[2]; 
+        // } else if (calls_to_act > 15)
+        // {
+        //     filename = games[3]; 
+        // }
+
+        // Set current level
+        // String level = "";
+        // int current_level_num = (calls_to_act - 1)%5; 
+        // level = current_level_num+"";
+
+        handle_files.write_to_file("results/assignment03/exercise02/Test", final_text);
 
         // action = first_move(population);
         // remove_pop_first_action();
