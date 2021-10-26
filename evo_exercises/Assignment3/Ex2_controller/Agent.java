@@ -439,7 +439,7 @@ public class Agent extends AbstractPlayer {
             testCounter++;
 
             // moving onto next level (may not actually be needed depending on how testing is done)
-            if ( testCounter > 10 ){
+            if ( testCounter > 9 ){
                 testCounter = 0;
             }
 
