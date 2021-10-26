@@ -40,10 +40,15 @@ public class Agent extends AbstractPlayer {
     public boolean one_million = false;
     public boolean five_million = false;
 
+    public static int calls_to_act;                /// Maybe remove this (if it doesnt work)
+    public String[] games = {"Bomber", "Boulderchase", "Chase", "Garbagecollector"};
+
     // constructor
     public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
     {
         stateObs = _stateObs;
+        calls_to_act = 0;                       ///// Maybe remove this
+        
         // init random number generator
         rand = new Random();
 
@@ -85,6 +90,7 @@ public class Agent extends AbstractPlayer {
             stateObsCopy.advance(_individual.genotype.get(i));
             advance_count++ ;
 
+            // checking if the counter for advance has reached certain values
             if (advance_count == 200000){
                 two_hundred_thou = true;
             }
@@ -96,12 +102,12 @@ public class Agent extends AbstractPlayer {
             }
         }
 
-        // advance call is > 200k return the previous individual
-        // if = 200k return (write to output) current individual
-
-        // same for 1m, 5m
-
-        // need to keep track of previous individual
+        // progress update
+        float counter = advance_count;
+        float percentage = (counter/5000000)*100;
+        System.out.print( "\rRunning... " + advance_count + "/" + 5000000 + " " + "(" );
+        System.out.printf( "%.1f",percentage );
+        System.out.print( "%" + ")" );
 
         // get score
         double score = stateObsCopy.getGameScore();
@@ -140,7 +146,7 @@ public class Agent extends AbstractPlayer {
     }
 
     // returns an arrary list of 2 children after parent crossover
-    public ArrayList<individual> n_point_crossover(individual ind1, individual ind2){
+    public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
     
         // initialising an arraylist of children to return
         ArrayList<individual> children = new ArrayList<individual>();
@@ -152,39 +158,64 @@ public class Agent extends AbstractPlayer {
         // initialising a variable to store Types.ACTIONS
         Types.ACTIONS temp;
         
-        // random int to find how many crossover points there will be
+        // random int to find crossover point
         rand = new Random();
         int rand_int = rand.nextInt(genotype_size);
 
-        // make sure number of crossover points is acceptable (will likely have to be changed)
-        while ( rand_int < 2 || rand_int > 5 ){
-            rand_int = rand.nextInt(genotype_size);
+        // iterates through random index to end of list and swaps values
+        for (int i = rand_int; i < genotype_size; i++){
+            temp = child1.genotype.get(i);
+            child1.genotype.set(i, child2.genotype.get(i));
+            child2.genotype.set(i, temp);
         }
+
+        // adding children
+        children.add(child1);
+        children.add(child2);
+
+        return children;
+    }
+
+    // returns an arrary list of 2 children after parent crossover
+    public ArrayList<individual> n_point_crossover(individual ind1, individual ind2, int num){
+    
+        // initialising an arraylist of children to return
+        ArrayList<individual> children = new ArrayList<individual>();
+
+        // creating children clones
+        individual child1 = new individual(ind1.genotype,stateObs);
+        individual child2 = new individual(ind2.genotype,stateObs);
+
+        // initialising a variable to store Types.ACTIONS
+        Types.ACTIONS temp;
+        
+        // rand and rand_int utilised futher on
+        rand = new Random();
 
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 5;
+        int acceptable_action_amount = 4;
 
         // determining the crossover points
-        for (int j = 0; j < rand_int; j++){
+        for (int j = 0; j < num; j++){
             int crossover_point = rand.nextInt(genotype_size);
 
             // first value to be added has no constraints
             if ( crossover_points.size() == 0 ){
                 crossover_points.add(crossover_point);
 
-            // every other crossover point must be 5 moves apart (allows sequences of actions to be kept in order)
+            // every other crossover point must be 4 moves apart (allows sequences of actions to be kept in order)
             }else{
 
                 // while loop runs until an acceptable value is obtained for a crossover point
                 boolean exit = false;
                 while ( exit == false ){
 
-                    // if acceptable remains false, then crossover point will be stored in array as it is acceptable
+                    // if acceptable remains false, then crossover point will be stored in list as it is acceptable
                     for(int k = 0; k < crossover_points.size(); k ++){
 
-                        // testing if the newly generated crossover point is at least 5 spaces away from existing points
+                        // testing if the newly generated crossover point is at least 4 spaces away from existing points
                         int diff = Math.abs(crossover_point - crossover_points.get(k));
                         if ( diff < acceptable_action_amount ){
                             acceptable = true;
@@ -208,11 +239,14 @@ public class Agent extends AbstractPlayer {
         // iterates through crossover points to end of list and swaps values
         int count = 0;
         Collections.sort(crossover_points);
+    
         for ( int i = 0; i < genotype_size; i++ ){
 
             // checks for crossover points
-            if ( i == crossover_points.get(count) ){
-                count++;
+            if ( count <= crossover_points.size() - 1 ){
+                if ( i == crossover_points.get(count) ){
+                    count++;
+                }
             }
 
             // performs crossover if necessary
@@ -332,6 +366,9 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
+        // Increment calls to act
+        calls_to_act++; 
+
         // do admin work:
         // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
         // int gen_count = 0;
@@ -385,7 +422,7 @@ public class Agent extends AbstractPlayer {
                 {
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 3);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
+                    ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
@@ -393,7 +430,7 @@ public class Agent extends AbstractPlayer {
                 if ( (population_size % 2) == 1 )
                 {
                     ArrayList<individual> temp = tournament_selection(population, 3);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
+                    ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
                     new_population.add(temp2.get(0));
                 }
 
@@ -434,7 +471,7 @@ public class Agent extends AbstractPlayer {
                     best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
                 }
 
-                best_moves_text += fromACTIONS(best_moves.get(genotype_size));
+                best_moves_text += fromACTIONS(best_moves.get(genotype_size-1));    
 
                 // prints score and genotype of best individual at milestones
                 if (two_hundred_thou){
@@ -479,7 +516,28 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignmento3/exercise02/Test", final_text);
+        // Set the filename to current game based on how many calls to act have been made
+        string filename = "";
+        if (calls_to_act <= 5)
+        {
+            filename = games[0]; 
+        } else if (calls_to_act > 5 && calls_to_act <= 10)
+        {
+            filename = games[1];
+        } else if (calls_to_act > 10 && calls_to_act <= 15)
+        {
+            filename = games[2]; 
+        } else if (calls_to_act > 15)
+        {
+            filename = games[3]; 
+        }
+
+        // Set current level
+        String level = "";
+        int current_level_num = (calls_to_act - 1)%5; 
+        level = current_level_num+"";
+
+        handle_files.write_to_file("results/assignment03/exercise02/" + filename + "_" + level, final_text);
 
         // action = first_move(population);
         // remove_pop_first_action();
