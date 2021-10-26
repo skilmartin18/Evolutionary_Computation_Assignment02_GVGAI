@@ -123,6 +123,8 @@ public class Agent extends AbstractPlayer {
             System.out.printf( "%.1f",percentage );
             System.out.print( "%" + ")" );
         }else if( stop == true && once == false ){
+            System.out.print( "\rRunning Test " + testCounter + "... " + 5000000 + "/" + 5000000 + " " + "(" );
+            System.out.print( "100" );
             System.out.print('\n');
             once = true;
         }
