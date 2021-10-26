@@ -372,7 +372,7 @@ public class Agent extends AbstractPlayer {
         // do admin work:
         // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
         // int gen_count = 0;
-        int max_gens = 1000;
+        int max_gens = 100;
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
