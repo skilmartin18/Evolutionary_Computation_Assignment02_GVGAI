@@ -54,10 +54,19 @@ public class individual {
     // however that is making this too similar to a level generator 
     // in and of itself, the GA would be useless
     int maximum_wall_length = 6; // unused currently
-    int average_wall_number = 8;
+    int average_wall_number = 12;
     double wall_prob = 0.5;
     double horizontal_wall_chance = 0.5; // unused currently
 
+
+    /*   
+         CONSTRUCTOR FROM EXISTING GENOTYPE
+                                             */
+    
+    public individual(char[] _genotype)
+    {
+        genotype = _genotype.clone();
+    }
 
     /*   
          CONSTRUCTOR NO INPUTS
@@ -140,7 +149,7 @@ public class individual {
 
         ////// LEGACY LONG WALL CODE //////
 
-        
+
         // // add walls in contiguous chunks
         // for ( int i = 0; i < average_wall_number*(1/wall_prob); i++)
         // {
