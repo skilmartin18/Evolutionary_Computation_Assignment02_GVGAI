@@ -97,9 +97,13 @@ public class Agent extends AbstractPlayer {
             }
         }
 
-        // progress update
+        /* 
+            Progress Update
+        */
+
         float counter = advance_count;
         float percentage = (counter/5000000)*100;
+
         System.out.print( "\rRunning... " + advance_count + "/" + 5000000 + " " + "(" );
         System.out.printf( "%.1f",percentage );
         System.out.print( "%" + ")" );
