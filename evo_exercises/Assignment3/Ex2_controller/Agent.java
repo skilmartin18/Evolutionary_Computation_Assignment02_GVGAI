@@ -34,7 +34,7 @@ public class Agent extends AbstractPlayer {
     public long remaining;
     public int num_moves;
     public boolean once = false;
-    public int testCounter = 0;
+    public int testCounter = -1;
     ArrayList<individual> population;
     StateObservation stateObs;
 
@@ -431,6 +431,7 @@ public class Agent extends AbstractPlayer {
             // text that is printed at the end of act
             String text = "";
             String index = "";
+            index = k+"";
 
             // resetting advance count and once variable (michaels dumb idea)
             advance_count = 0;
@@ -439,11 +440,11 @@ public class Agent extends AbstractPlayer {
 
             // moving onto next level (may not actually be needed depending on how testing is done)
             if ( testCounter > 10 ){
-                testCounter = 1;
+                testCounter = 0;
             }
 
             // evolve while we have time remaining
-            while ( advance_count < 200001 )
+            while ( advance_count < 5000001 )
             {
                 previous_best_moves = best_moves_text;
                 previous_best_score = best_score_text;
@@ -495,7 +496,6 @@ public class Agent extends AbstractPlayer {
                 best_score = population.get(0).fitness;
 
                 best_score_text = best_score+"";
-                index = k+"";
 
                 // converting ACTIONS to strings
                 best_moves = population.get(0).genotype;
