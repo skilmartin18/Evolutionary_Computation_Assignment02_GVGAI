@@ -33,6 +33,8 @@ public class Agent extends AbstractPlayer {
     public ElapsedCpuTimer timer;
     public long remaining;
     public int num_moves;
+    public boolean once = false;
+    public int testCounter = 0;
     ArrayList<individual> population;
     StateObservation stateObs;
 
@@ -83,12 +85,18 @@ public class Agent extends AbstractPlayer {
     public void calculate_fitness(StateObservation stateObs, individual _individual)
     {
         StateObservation stateObsCopy = stateObs.copy();
+        boolean stop = false;
 
         // apply moves
         for( int i = 0; i < genotype_size; i++)
         {
             stateObsCopy.advance(_individual.genotype.get(i));
             advance_count++ ;
+
+            // once advance counter is greater than 5 mil, variables need to be set
+            if ( advance_count > 5000000 ){
+                stop = true; 
+            }
 
             // checking if the counter for advance has reached certain values
             if (advance_count == 200000){
@@ -102,13 +110,27 @@ public class Agent extends AbstractPlayer {
             }
         }
 
-        // progress update
-        float counter = advance_count;
-        float percentage = (counter/5000000)*100;
-        System.out.print( "\rRunning... " + advance_count + "/" + 5000000 + " " + "(" );
-        System.out.printf( "%.1f",percentage );
-        System.out.print( "%" + ")" );
+        /* 
+            Progress Update
+        */
 
+        // if past 5 mil don't need progress bar otherwise output updated bar
+        if ( stop == false ){
+            float counter = advance_count;
+            float percentage = (counter/5000000)*100;
+
+            System.out.print( "\rRunning Test " + testCounter + "... " + advance_count + "/" + 5000000 + " " + "(" );
+            System.out.printf( "%.1f",percentage );
+            System.out.print( "%" + ")" );
+        }else if( stop == true && once == false ){
+            float percentage = 100;
+            
+            System.out.print( "\rRunning Test " + testCounter + "... " + 5000000 + "/" + 5000000 + " " + "(" );
+            System.out.printf( "%.1f",percentage );
+            System.out.print( "%" + ")\n" );
+            once = true;
+        }
+    
         // get score
         double score = stateObsCopy.getGameScore();
 
@@ -371,8 +393,8 @@ public class Agent extends AbstractPlayer {
 
         // do admin work:
         // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
-        // int gen_count = 0;
-        int max_gens = 100;
+        int gen_count = 0;
+        //int max_gens = 1000;
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -410,12 +432,22 @@ public class Agent extends AbstractPlayer {
             String text = "";
             String index = "";
 
-            // resetting advance count
+            // resetting advance count and once variable (michaels dumb idea)
             advance_count = 0;
+            once = false;
+            testCounter++;
+
+            // moving onto next level (may not actually be needed depending on how testing is done)
+            if ( testCounter > 10 ){
+                testCounter = 1;
+            }
+
+            gen_count = 0;
             
             // evolve while we have time remaining
-            for (int j = 0; (j < max_gens || advance_count < 5000001); j++)
+            while ( advance_count < 5000001 )
             {
+                gen_count++;
                 previous_best_moves = best_moves_text;
                 previous_best_score = best_score_text;
                 previous_best_score_double = best_score;

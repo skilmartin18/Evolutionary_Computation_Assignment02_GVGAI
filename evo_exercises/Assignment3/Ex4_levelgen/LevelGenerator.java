@@ -1,9 +1,7 @@
 package evo_exercises.Assignment3.Ex4_levelgen;
 
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
+import java.lang.reflect.Constructor;
 import java.security.DrbgParameters.NextBytes;
 import java.util.*;
 
@@ -12,6 +10,16 @@ import core.game.GameDescription.SpriteData;
 import core.generator.AbstractLevelGenerator;
 import tools.ElapsedCpuTimer;
 import tools.GameAnalyzer;
+
+import core.game.Event;
+import core.game.GameDescription.TerminationData;
+import core.game.StateObservation;
+import core.player.AbstractPlayer;
+import tracks.levelGeneration.constraints.CombinedConstraints;
+import ontology.Types;
+import ontology.Types.WINNER;
+import tools.LevelMapping;
+import tools.StepController;
 
 import evo_exercises.Assignment3.Ex4_levelgen.individual;
 import handle_files.handle_files;
@@ -23,14 +31,18 @@ import ontology.effects.binary.WallStop;
 public class LevelGenerator extends AbstractLevelGenerator{
 
     Random rand;
+    GameDescription game;
+    AbstractPlayer automatedAgent;
+    
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
 
     ////// REQUIRED CONSTRUCTOR //////
-	public LevelGenerator(GameDescription game, ElapsedCpuTimer elapsedTimer)
+	public LevelGenerator(GameDescription _game, ElapsedCpuTimer elapsedTimer)
     {
 		rand = new Random();
+        game = _game;
 	}
 
 
@@ -41,6 +53,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 		
         individual _ind = new individual();
         String result = convert_genotype_to_map(_ind);
+        calculate_individual_fitness(_ind);
 		return result;
 	}
 
@@ -48,6 +61,26 @@ public class LevelGenerator extends AbstractLevelGenerator{
     /*   
         EA SUPPORT FUNCTIONS
                               */
+
+    ////// FITNESS //////
+
+    public void calculate_individual_fitness(individual ind)
+    {
+        // this should initialise the best agent 
+        try
+        {
+        Class agentClass = Class.forName("tracks.singlePlayer.tools.repeatOLETS.Agent");
+		Constructor agentConst = agentClass.getConstructor(new Class[]{StateObservation.class, ElapsedCpuTimer.class});
+		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation().copy(), null);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        ind.calc_fitness(automatedAgent, getStateObservation().copy());
+
+    }
 
     ////// SELECTION METHODS //////
 
@@ -183,5 +216,64 @@ public class LevelGenerator extends AbstractLevelGenerator{
     }
 	
 	
+    /* 
+        BORROWED FUNCTIONS FOR RUNNING AN AGENT
+                                                */
+
+    /**
+	 * current level described by the chromosome
+	 */
+	ArrayList<String>[][] level;
+    StateObservation stateObs;
+
+    /**
+	 * get game state observation for the current level
+	 * @return	StateObservation for the current level
+	 */
+	private StateObservation getStateObservation(){
+		if(stateObs != null){
+			return stateObs;
+		}
+
+        LevelMapping levelMapping = new LevelMapping(game);
+		levelMapping.clearLevelMapping();
+		char c = 'a';
+		for(int y = 0; y < level.length; y++){
+			for(int x = 0; x < level[y].length; x++){
+				if(levelMapping.getCharacter(level[y][x]) == null){
+					levelMapping.addCharacterMapping(c, level[y][x]);
+					c += 1;
+				}
+			}
+		}
+		
+		String levelString = getLevelString(levelMapping);
+		stateObs = game.testLevel(levelString, levelMapping.getCharMapping());
+		return stateObs;
+	}
+
+	/**
+	 * get the current level string
+	 * @param levelMapping	level mapping object to help constructing the string
+	 * @return				string of letters defined in the level mapping 
+	 * 						that represent the level
+	 */
+	public String getLevelString(LevelMapping levelMapping){
+		String levelString = "";
+		for(int y = 0; y < level.length; y++){
+			for(int x = 0; x < level[y].length; x++){
+				levelString += levelMapping.getCharacter(level[y][x]);
+			}
+			levelString += "\n";
+		}
+		
+		levelString = levelString.substring(0, levelString.length() - 1);
+		
+		return levelString;
+	}
+
+    
+	
+
 }
 
