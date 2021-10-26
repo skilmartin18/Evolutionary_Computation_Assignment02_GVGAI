@@ -7,14 +7,18 @@ import handle_files.handle_files;
 
 public class individual {
 
-    // random var decs
+    /*   
+         VAR DECS
+                     */
+
     // premade map length is 14w*11h
     int playable_width = 18-2;
     int playable_height = 12-2;
-    // right now lock and keys dont really work
-    // so dont place em
+
+    // placing optionals i.e optional locks or enemies
     double optional_chance = 0.5;
-    double max_optionals = 3;
+    double average_optionals = 3;
+
     // random generator
     public Random rand = new Random();
 
@@ -23,6 +27,9 @@ public class individual {
     char[] genotype = new char[(playable_width)*(playable_height)];
     
    
+    /*   
+         LEVEL MAPPINGS
+                          */
 
     // placeables, choices must be unique and present to play the game
     // optional are optional, chosen for an individual via the
@@ -37,6 +44,11 @@ public class individual {
     char[] optional = {'1','2','3'};
     
 
+
+    /*   
+        WALL GEN
+                    */
+
     // random wall placing param, to start with good individuals
     // can place sections of wall rather than single walls 
     // however that is making this too similar to a level generator 
@@ -47,6 +59,10 @@ public class individual {
     double horizontal_wall_chance = 0.5; // unused currently
 
 
+    /*   
+         CONSTRUCTOR NO INPUTS
+                                 */
+
     public individual()
     {
         // create random genotype
@@ -55,6 +71,9 @@ public class individual {
         {
             genotype[i] = '.';
         }
+
+
+        ////// PLACE UNIQUE OBJECTS //////
 
         // place unique objects i.e choices 
         for( char choice:choices)
@@ -74,9 +93,14 @@ public class individual {
             genotype[x_rand+y_rand*playable_width] = choice;     
         }
 
-        for(int i = 0; i < max_optionals; i++)
+
+        ////// PLACE OPTIONALS //////
+
+        // try to place average_optional*1/optional_chance optionals, should average at 
+        // average_optional, with optionally double that, or none.
+        for(int i = 0; i < average_optionals*(1/optional_chance); i++)
         {
-            // place optionals (if rand>optional_chance)
+            // place random optional from list (if rand>optional_chance)
             if(rand.nextDouble()>optional_chance)
             {
                     int x_rand = rand.nextInt(playable_width-1);
@@ -90,9 +114,11 @@ public class individual {
 
                     genotype[x_rand+y_rand*playable_width] = optional[rand.nextInt(optional.length)];  
                 
-                // implement "locked rooms" here maybe if time permitting
             }
         }
+
+
+        ////// WALL GEN //////
 
         // add random single walls 
         for ( int i = 0; i < average_wall_number*(1/wall_prob); i++)
@@ -100,11 +126,11 @@ public class individual {
             // place wall?
             if ( rand.nextDouble() > wall_prob )
             {
-                     // wall start
+                    // wall start
                     int x_rand = rand.nextInt(playable_width-1);
                     int y_rand = rand.nextInt(playable_height-1);
 
-                    //place the wall
+                    //place the wall (if something else there, dont place)
                     if(genotype[x_rand+y_rand*playable_width]=='.')
                     {
                         genotype[x_rand+y_rand*playable_width] = 'w';
@@ -112,6 +138,9 @@ public class individual {
             }
         }
 
+        ////// LEGACY LONG WALL CODE //////
+
+        
         // // add walls in contiguous chunks
         // for ( int i = 0; i < average_wall_number*(1/wall_prob); i++)
         // {
