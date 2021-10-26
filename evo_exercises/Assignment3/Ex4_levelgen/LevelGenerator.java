@@ -19,14 +19,18 @@ import handle_files.handle_files;
 
 public class LevelGenerator extends AbstractLevelGenerator{
 
+
+    /*   
+        MAIN REQUIRED GENERATION FUNCTIONS
+                                             */
+
+    ////// REQUIRED CONSTRUCTOR //////
 	public LevelGenerator(GameDescription game, ElapsedCpuTimer elapsedTimer){
 		
 	}
-	/**
-	 * Generate a level string randomly contains only one avatar, 80% free space, and 20% of random sprites
-	 * @param game			Abstract game description object. This object contains all needed information about the current game.
-	 * @param elapsedTimer	Timer to define the maximum amount of time for the level generation.
-	 */
+
+
+	////// LEVEL GEN //////
 	@Override
 	public String generateLevel(GameDescription game, ElapsedCpuTimer elapsedTimer) {
 		
@@ -35,6 +39,16 @@ public class LevelGenerator extends AbstractLevelGenerator{
 		return result;
 	}
 
+
+    /*   
+        EA SUPPORT FUNCTIONS
+                              */
+
+    ////// N-POINT CROSSOVER //////
+    
+
+
+    ////// 1D->2D CONVERSION //////
     // converts genotype which is a 1d char array to a walled map as
     // a string
     static public String convert_genotype_to_map(individual _ind)
