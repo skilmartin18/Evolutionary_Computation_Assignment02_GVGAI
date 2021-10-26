@@ -239,11 +239,14 @@ public class Agent extends AbstractPlayer {
         // iterates through crossover points to end of list and swaps values
         int count = 0;
         Collections.sort(crossover_points);
+    
         for ( int i = 0; i < genotype_size; i++ ){
 
             // checks for crossover points
-            if ( i == crossover_points.get(count) ){
-                count++;
+            if ( count <= crossover_points.size() - 1 ){
+                if ( i == crossover_points.get(count) ){
+                    count++;
+                }
             }
 
             // performs crossover if necessary
