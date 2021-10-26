@@ -443,7 +443,7 @@ public class Agent extends AbstractPlayer {
             }
 
             // evolve while we have time remaining
-            while ( advance_count < 5000001 )
+            while ( advance_count < 200001 )
             {
                 previous_best_moves = best_moves_text;
                 previous_best_score = best_score_text;
