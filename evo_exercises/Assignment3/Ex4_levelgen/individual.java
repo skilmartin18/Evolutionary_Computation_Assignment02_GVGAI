@@ -60,6 +60,15 @@ public class individual {
 
 
     /*   
+         CONSTRUCTOR FROM EXISTING GENOTYPE
+                                             */
+    
+    public individual(char[] _genotype)
+    {
+        genotype = _genotype.clone();
+    }
+
+    /*   
          CONSTRUCTOR NO INPUTS
                                  */
 
