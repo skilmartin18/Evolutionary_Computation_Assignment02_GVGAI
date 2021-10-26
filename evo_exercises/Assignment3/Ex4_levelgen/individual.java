@@ -11,7 +11,11 @@ public class individual {
     // premade map length is 14w*11h
     int playable_width = 18-2;
     int playable_height = 12-2;
-    double optional_chance = 0.8;
+    // right now lock and keys dont really work
+    // so dont place em
+    double optional_chance = 0.5;
+    double max_optionals = 3;
+    // random generator
     public Random rand = new Random();
 
     // genotype as 1d array for easy crossover, access via 
@@ -20,27 +24,33 @@ public class individual {
     
    
 
-    // placeables, choices must be unique and present
+    // placeables, choices must be unique and present to play the game
     // optional are optional, chosen for an individual via the
-    // 'optional chance' var
-    char[] choices = {'b','p','o','t','A'};
-    char[] optional = {'k','l'};
-    char [] tiles = {'w','.'};
+    // 'optional chance' var- different sections for different games
+
+    // cookmepasta
+    // char[] choices = {'b','p','o','t','A'};
+    // char[] optional = {'k','l'};
+
+    //zelda
+    char[] choices = {'g','+','A'};
+    char[] optional = {'1','2','3'};
+    
 
     // random wall placing param, to start with good individuals
-    // will place sections of wall rather than single walls 
-    int maximum_wall_length = 6;
-    int average_wall_number = 14;
+    // can place sections of wall rather than single walls 
+    // however that is making this too similar to a level generator 
+    // in and of itself, the GA would be useless
+    int maximum_wall_length = 6; // unused currently
+    int average_wall_number = 8;
     double wall_prob = 0.5;
-    double horizontal_wall_chance = 0.5;
+    double horizontal_wall_chance = 0.5; // unused currently
 
 
     public individual()
     {
-        //create random genotype
-
-        
-        // initialise genotype all floors
+        // create random genotype
+        // initialise genotype as all floors
         for(int i = 0; i < genotype.length; i++)
         {
             genotype[i] = '.';
@@ -49,47 +59,42 @@ public class individual {
         // place unique objects i.e choices 
         for( char choice:choices)
         {
-            System.out.println(choice);
             int x_rand = rand.nextInt(playable_width-1);
             int y_rand = rand.nextInt(playable_height-1);
 
+            // dont place unique objects on themselves
             while(genotype[x_rand+y_rand*playable_width] != '.' )
             {
-                x_rand = rand.nextInt(playable_width-1);
+                // (zero referenced array so x/y start at 0)
+                x_rand = rand.nextInt(playable_width-1); 
                 y_rand = rand.nextInt(playable_height-1);
             }
 
-            genotype[x_rand+y_rand*playable_width] = choice;  
-            System.out.println(choice);
+            // place the element
+            genotype[x_rand+y_rand*playable_width] = choice;     
         }
 
-       
-        // place optionals (if rand>optional_chance)
-
-        if(rand.nextDouble()>optional_chance)
+        for(int i = 0; i < max_optionals; i++)
         {
-            
-            // place optionals
-            for( char option:optional)
+            // place optionals (if rand>optional_chance)
+            if(rand.nextDouble()>optional_chance)
             {
-                int x_rand = rand.nextInt(playable_width-1);
-                int y_rand = rand.nextInt(playable_height-1);
+                    int x_rand = rand.nextInt(playable_width-1);
+                    int y_rand = rand.nextInt(playable_height-1);
 
-                while(genotype[x_rand+y_rand*playable_width] != '.' )
-                {
-                    x_rand = rand.nextInt(playable_width-1);
-                    y_rand = rand.nextInt(playable_height-1);
-                }
+                    while(genotype[x_rand+y_rand*playable_width] != '.' )
+                    {
+                        x_rand = rand.nextInt(playable_width-1);
+                        y_rand = rand.nextInt(playable_height-1);
+                    }
 
-                genotype[x_rand+y_rand*playable_width] = option;  
+                    genotype[x_rand+y_rand*playable_width] = optional[rand.nextInt(optional.length)];  
+                
+                // implement "locked rooms" here maybe if time permitting
             }
-
-            // implement "locked rooms" here maybe if time permitting
-
         }
 
         // add random single walls 
-
         for ( int i = 0; i < average_wall_number*(1/wall_prob); i++)
         {
             // place wall?
@@ -104,7 +109,6 @@ public class individual {
                     {
                         genotype[x_rand+y_rand*playable_width] = 'w';
                     }
-
             }
         }
 
