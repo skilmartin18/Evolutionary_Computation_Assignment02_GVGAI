@@ -49,11 +49,25 @@ public class LevelGenerator extends AbstractLevelGenerator{
         EA SUPPORT FUNCTIONS
                               */
 
+    ////// SELECTION METHODS //////
 
-    ////// CREATE TILE //////
+
+    /// MODIFIED TRUNCATION SELECT ///
+    // Luke do this-- removes all population members below a certain fitness
+    // population as and arraylist of individuals probably?
+
+
+
+
+
+    
+    ////// MUTATIONS AND CROSSOVER //////
+
+
+    /// CREATE TILE ///
     // tile chance, either places a wall or random optional
     // currently able to overwrite required tiles, i.e doors, locks and avatars
-    double wall_chance = 0.8;
+    double wall_chance = 0.95;
 
     public void create_tile(individual ind)
     {
@@ -69,14 +83,14 @@ public class LevelGenerator extends AbstractLevelGenerator{
         }   
     }
 
-    ////// DESTROY TILE //////
+    /// DESTROY TILE ///
     // replace a random tile with a floor tile i.e "destroy" it
     public void destroy_tile(individual ind)
     {
         ind.genotype[rand.nextInt(ind.genotype.length)] = '.';
     }
 
-    ////// N-POINT CROSSOVER //////
+    /// N-POINT CROSSOVER ///
     // returns an arrary list of 2 children individual objects after n-point parent crossover
     // takes in individual genotypes, not individuals
     public ArrayList<individual> n_point_crossover(char[] ind1, char[] ind2, int num_cross)
@@ -110,6 +124,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
             // checks for crossover points
             if ( i == crossover_points.get(count) ){
                 count++;
+
+                if ( count >= crossover_points.size())
+                {
+                    count --;
+                }
+
             }
 
             // performs crossover if necessary
@@ -128,7 +148,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         return children;
     }
 
-    ////// 1D->2D CONVERSION //////
+    /// 1D->2D CONVERSION ///
     // converts genotype which is a 1d char array to a walled map as
     // a string
     static public String convert_genotype_to_map(individual _ind)
