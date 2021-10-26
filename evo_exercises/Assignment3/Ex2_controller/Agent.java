@@ -124,7 +124,7 @@ public class Agent extends AbstractPlayer {
             System.out.print( "%" + ")" );
         }else if( stop == true && once == false ){
             float percentage = 100;
-            
+
             System.out.print( "\rRunning Test " + testCounter + "... " + 5000000 + "/" + 5000000 + " " + "(" );
             System.out.printf( "%.1f",percentage );
             System.out.print( "%" + ")\n" );
@@ -393,7 +393,7 @@ public class Agent extends AbstractPlayer {
 
         // do admin work:
         // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
-        int gen_count = 0;
+        //int gen_count = 0;
         //int max_gens = 1000;
 
         // initialising arrays to keep track of scores
@@ -442,12 +442,9 @@ public class Agent extends AbstractPlayer {
                 testCounter = 1;
             }
 
-            gen_count = 0;
-            
             // evolve while we have time remaining
             while ( advance_count < 5000001 )
             {
-                gen_count++;
                 previous_best_moves = best_moves_text;
                 previous_best_score = best_score_text;
                 previous_best_score_double = best_score;
