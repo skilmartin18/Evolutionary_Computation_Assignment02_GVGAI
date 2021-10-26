@@ -386,8 +386,8 @@ public class Agent extends AbstractPlayer {
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 3);
                     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
-                    new_population.add(temp.get(0));
-                    new_population.add(temp.get(1));
+                    new_population.add(temp2.get(0));
+                    new_population.add(temp2.get(1));
                 }
 
                 if ( (population_size % 2) == 1 )
