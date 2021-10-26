@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 20;
-    public int genotype_size = 20;
+    public int population_size = 3;
+    public int genotype_size = 3;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
