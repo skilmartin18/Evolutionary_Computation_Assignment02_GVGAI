@@ -11,6 +11,9 @@ import ontology.*;
 import ontology.Types.ACTIONS;
 import java.util.ArrayList;
 import java.util.*;
+import handle_files.handle_files;
+
+import tools.StatSummary;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,6 +35,11 @@ public class Agent extends AbstractPlayer {
     public int num_moves;
     ArrayList<individual> population;
     StateObservation stateObs;
+
+    public boolean two_hundred_thou = false;
+    public boolean one_million = false;
+    public boolean five_million = false;
+
     // constructor
     public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
     {
@@ -76,6 +84,16 @@ public class Agent extends AbstractPlayer {
         {
             stateObsCopy.advance(_individual.genotype.get(i));
             advance_count++ ;
+
+            if (advance_count == 200000){
+                two_hundred_thou = true;
+            }
+            if (advance_count == 1000000){
+                one_million = true;
+            }
+            if (advance_count == 5000000){
+                five_million = true;
+            }
         }
 
         // advance call is > 200k return the previous individual
@@ -290,6 +308,20 @@ public class Agent extends AbstractPlayer {
         return elites;
     }
 
+    public String fromACTIONS(ACTIONS move){
+        String error = "";
+
+        if (move == ACTIONS.ACTION_NIL) return "ACTION_NIL";
+        else if (move == ACTIONS.ACTION_UP) return "ACTION_UP";
+        else if (move == ACTIONS.ACTION_DOWN) return "ACTION_DOWN";
+        else if (move == ACTIONS.ACTION_LEFT) return "ACTION_LEFT";
+        else if (move == ACTIONS.ACTION_RIGHT) return "ACTION_RIGHT";
+        else if (move == ACTIONS.ACTION_USE) return "ACTION_USE";
+        else if (move == ACTIONS.ACTION_ESCAPE) return "ACTION_ESCAPE";
+
+        else return error;
+    }
+
     /**
      *
      * Very simple diy GA
@@ -303,61 +335,151 @@ public class Agent extends AbstractPlayer {
         // do admin work:
         // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
         // int gen_count = 0;
-        int max_gens = 10;
-        // create population
-        ArrayList<individual> new_population = new ArrayList<individual>();
-        // var decs
-        //Types.ACTIONS action = ACTIONS.ACTION_NIL;
-        
-        // evolve while we have time remaining
+        int max_gens = 1000;
 
-        for ( int j = 0; j < max_gens; j++ )
+        // initialising arrays to keep track of scores
+        StatSummary scores200k = new StatSummary();
+        StatSummary scores1mill = new StatSummary();
+        StatSummary scores5mill = new StatSummary();
+
+        // string to keep track of final text to print to fil
+        String final_text = "";
+
+        // strings that keep track of mean and std dev
+        String mean200k = "";
+	    String sd200k = "";
+        String mean1mill= "";
+	    String sd1mill = "";
+        String mean5mill = "";
+	    String sd5mill = "";
+
+        for (int k = 0; k < 10; k++)
         {
-            // crossover 
-            for(int i = 0; i < (population_size-2)/2; i++)
+            // create population
+            ArrayList<individual> new_population = new ArrayList<individual>();
+            // var decs
+            // Types.ACTIONS action = ACTIONS.ACTION_NIL;
+            double best_score = 0;
+            String best_score_text = "";
+            ArrayList<Types.ACTIONS> best_moves;
+            String best_moves_text = "";
+
+            // keeps track of previous scores just in case
+            String previous_best_score = "";
+            String previous_best_moves = "";
+            double previous_best_score_double = 0;
+
+            // text that is printed at the end of act
+            String text = "";
+            String index = "";
+            
+            // evolve while we have time remaining
+            for (int j = 0; (j < max_gens || advance_count < 5000001); j++)
             {
-                // select parents
-                ArrayList<individual> temp = tournament_selection(population, 3);
-                ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
-                new_population.add(temp2.get(0));
-                new_population.add(temp2.get(1));
+                previous_best_moves = best_moves_text;
+                previous_best_score = best_score_text;
+                previous_best_score_double = best_score;
+
+                // crossover 
+                for(int i = 0; i < (population_size-2)/2; i++)
+                {
+                    // select parents
+                    ArrayList<individual> temp = tournament_selection(population, 3);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
+                    new_population.add(temp2.get(0));
+                    new_population.add(temp2.get(1));
+                }
+
+                if ( (population_size % 2) == 1 )
+                {
+                    ArrayList<individual> temp = tournament_selection(population, 3);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
+                    new_population.add(temp2.get(0));
+                }
+
+                // mutation
+                for ( int i = 0; i < new_population.size(); i++ )
+                {
+                    // mutation is done once (can change to multiple times if need be)
+                    new_population.set(i,random_mutate(new_population.get(i)));
+                }
+
+                // select elites
+                ArrayList<individual> temp3 = return_two_elites(population);
+
+                // calculate fitness
+                calculate_population_fitness(stateObs, temp3);
+                calculate_population_fitness(stateObs, new_population);
+
+                // fill up pop
+                population.set(0,temp3.get(0));
+                population.set(1,temp3.get(1));
+
+                for ( int i = 2; i < population_size; i++ )
+                {
+                    population.set(i,new_population.get(i-2));
+                }
+
+                // gets score from best individual and converts to string
+                best_score = population.get(0).fitness;
+
+                best_score_text = best_score+"";
+                index = k+"";
+
+                // converting ACTIONS to strings
+                best_moves = population.get(0).genotype;
+
+                for (int i = 0; i < genotype_size-1; i++)
+                {
+                    best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
+                }
+
+                best_moves_text += fromACTIONS(best_moves.get(genotype_size));
+
+                // prints score and genotype of best individual at milestones
+                if (two_hundred_thou){
+                    scores200k.add(previous_best_score_double);
+
+                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+
+                    two_hundred_thou = false;
+                }
+
+                if (one_million) {
+                    scores1mill.add(previous_best_score_double);
+
+                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+
+                    one_million = false;
+                }
+
+                if (five_million){
+                    scores5mill.add(previous_best_score_double);
+
+                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+
+                    five_million = false;
+                }
             }
 
-            if ( (population_size % 2) == 1 )
-            {
-                ArrayList<individual> temp = tournament_selection(population, 3);
-                ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1));
-                new_population.add(temp2.get(0));
-            }
-
-            // mutation
-            for ( int i = 0; i < new_population.size(); i++ )
-            {
-                // mutation is done once (can change to multiple times if need be)
-                new_population.set(i,random_mutate(new_population.get(i)));
-            }
-
-            // select elites
-            ArrayList<individual> temp3 = return_two_elites(population);
-
-            // calculate fitness
-            calculate_population_fitness(stateObs, temp3);
-            calculate_population_fitness(stateObs, new_population);
-
-            // fill up pop
-            population.set(0,temp3.get(0));
-            population.set(1,temp3.get(1));
-
-            for ( int i = 2; i < population_size; i++ )
-            {
-                population.set(i,new_population.get(i-2));
-            }
-
-            // insert code to print best ind genotype at certain milestones
-
+            final_text = final_text + "\n\n\n" + text;
         }
-        
-        // exit game somehow, do not return action
+
+        // calculating mean and std dev for each milestone
+        mean200k += scores200k.mean();
+        sd200k += scores200k.sd();
+
+        mean1mill += scores1mill.mean();
+        sd1mill += scores1mill.sd();
+
+        mean5mill += scores5mill.mean();
+        sd5mill += scores5mill.sd();
+
+        // handle printing of "text" to assignment03/exercise02 results folder
+        final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
+        + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
+
+        handle_files.write_to_file("results/assignmento3/exercise02/Test", final_text);
 
         // action = first_move(population);
         // remove_pop_first_action();
@@ -374,9 +496,9 @@ public class Agent extends AbstractPlayer {
 
         // }
         // System.out.println(gen_count);
+
+        System.exit(0);
         return ACTIONS.ACTION_NIL;
-
     }
-
 }
 
