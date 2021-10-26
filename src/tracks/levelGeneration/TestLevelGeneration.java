@@ -17,7 +17,7 @@ public class TestLevelGeneration {
 		String generateLevelPath = gamesPath;
 
 
-		String games[] = new String[] { "cookmepasta"}; 
+		String games[] = new String[] { "zelda"}; 
 
 
 		String recordActionsFile = null;// "actions_" + games[gameIdx] + "_lvl"
