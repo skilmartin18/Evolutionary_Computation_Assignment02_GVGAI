@@ -34,7 +34,7 @@ public class Agent extends AbstractPlayer {
     public long remaining;
     public int num_moves;
     public boolean once = false;
-    public int testCounter = 1;
+    public int testCounter = 0;
     ArrayList<individual> population;
     StateObservation stateObs;
 
@@ -95,13 +95,7 @@ public class Agent extends AbstractPlayer {
 
             // once advance counter is greater than 5 mil, variables need to be set
             if ( advance_count > 5000000 ){
-                stop = true;
-                testCounter++;
-
-                // moving onto next level
-                if ( testCounter > 10 ){
-                    testCounter = 1;
-                }
+                stop = true; 
             }
 
             // checking if the counter for advance has reached certain values
@@ -437,6 +431,13 @@ public class Agent extends AbstractPlayer {
             // resetting advance count and once variable (michaels dumb idea)
             advance_count = 0;
             once = false;
+            testCounter++;
+
+            // moving onto next level (may not actually be needed depending on how testing is done)
+            if ( testCounter > 10 ){
+                testCounter = 1;
+            }
+
             gen_count = 0;
             
             // evolve while we have time remaining
