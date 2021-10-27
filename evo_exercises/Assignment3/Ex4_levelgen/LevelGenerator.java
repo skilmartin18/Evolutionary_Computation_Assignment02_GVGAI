@@ -96,7 +96,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     // Or, I think it'd be better if it selects the top proportion of individuals
     // since we don't know what fitness values we're gonna get
 
-    public ArrayList<individual> modified_truncation_selection(ArrayList<individual> population, double selectionProportion)
+    public ArrayList<individual> modified_truncation_selection(ArrayList<individual> population, double fitnessThreshold)
     {
         // Initialise an array list to return
         ArrayList<individual> selectedIndividuals = new ArrayList<individual>(); 
@@ -108,14 +108,14 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // Sort population by fitness, and then reverse to get from highest -> lowest fitness
         Collections.sort(competingIndividuals, Comparator.comparingInt(individual :: get_fitness));
         Collections.reverse(competingIndividuals);
-
-        // Use selection proportion to find the top individuals
-        int amountSelected = (int) selectionProportion * competingIndividuals.size();
     
-        // Fill the new population with only the top individuals
-        for (int i=0; i<amountSelected; i++)
+        // Fill the new population with only the individuals above the threshold value
+        // Essentially, removing individuals below that value
+        int i = 0; 
+        while (competingIndividuals.get(i).fitness > fitnessThreshold )
         {
-            selectedIndividuals.add(competingIndividuals.get(i));
+            selectedIndividuals.add(competingIndividuals.get(i)); 
+            i++; 
         }
 
         return selectedIndividuals; 
