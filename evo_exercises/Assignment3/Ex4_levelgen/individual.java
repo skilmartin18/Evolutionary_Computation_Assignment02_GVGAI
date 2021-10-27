@@ -47,6 +47,11 @@ public class individual {
 
     // fitness stuff
     int fitness = 0;
+
+    int get_fitness()
+    {
+        return fitness; 
+    }
     
    
     /*   
