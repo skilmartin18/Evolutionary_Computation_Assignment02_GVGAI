@@ -245,7 +245,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 4;
+        int acceptable_action_amount = 6;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -392,6 +392,29 @@ public class Agent extends AbstractPlayer {
         return elites;
     }
 
+    // More Elitism 
+    // Returns a variable number of elites, depending on input
+    public ArrayList<individual> get_elites(ArrayList<individual> population, int numElites){
+        
+        // initialising return list of elites
+        ArrayList<individual> elites = new ArrayList<individual>();
+
+        // Make copy of population 
+        ArrayList<individual> populationCopy = new ArrayList<individual>(population);  
+
+        // Sort population by fitness, and then reverse to get from highest -> lowest fitness
+        Collections.sort(populationCopy, Comparator.comparingDouble(individual :: get_fitness));
+        Collections.reverse(populationCopy);
+
+        // finding elites based on number specified in function call
+        for (int i=0; i<numElites; i++)
+        {
+            elites.add(populationCopy.get(i));
+        }
+
+        return elites;
+    }
+
     public String fromACTIONS(ACTIONS move){
         String error = "";
 
@@ -415,6 +438,9 @@ public class Agent extends AbstractPlayer {
      * @return An action for the current state
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
+
+        //setting number of elites
+        int numElites = 20;
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -475,23 +501,23 @@ public class Agent extends AbstractPlayer {
                 best_moves_text = "";
 
                 // crossover 
-                for(int i = 0; i < (population_size-2)/2; i++)
+                for(int i = 0; i < (population_size-numElites)/2; i++)
                 {   
                     // gen_count++;
 
                     // select parents
-                    ArrayList<individual> temp = tournament_selection(population, 20);
+                    ArrayList<individual> temp = tournament_selection(population, 15);
                     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
 
-                if ( (population_size % 2) == 1 )
-                {
-                    ArrayList<individual> temp = tournament_selection(population, 20);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
-                    new_population.add(temp2.get(0));
-                }
+                // if ( (population_size % 2) == 1 )
+                // {
+                //     ArrayList<individual> temp = tournament_selection(population, 20);
+                //     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
+                //     new_population.add(temp2.get(0));
+                // }
 
                 // mutation
                 for ( int i = 0; i < new_population.size(); i++ )
@@ -500,16 +526,18 @@ public class Agent extends AbstractPlayer {
                     new_population.set(i,random_mutate(new_population.get(i),0.5,10));
                 }
 
-                // select elites (should return 10% of population)
-                ArrayList<individual> temp3 = return_two_elites(population);
+                // select elites (should return n_Elites of population, this is set at the start of act())
+                ArrayList<individual> temp3 = get_elites(population, numElites);
 
                 // fill up pop
-                population.set(0,temp3.get(0));
-                population.set(1,temp3.get(1));
-
-                for ( int i = 2; i < population_size; i++ )
+                for ( int i = 0; i < numElites; i++ )
                 {
-                    population.set(i,new_population.get(i-2));
+                    population.set(i,temp3.get(i));
+                }
+
+                for ( int i = numElites; i < population_size; i++ )
+                {
+                    population.set(i,new_population.get(i-numElites));
                 }
 
                 // calculate fitness
@@ -535,7 +563,7 @@ public class Agent extends AbstractPlayer {
                 if (two_hundred_thou){
                     scores200k.add(previous_best_score_double);
 
-                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
 
                     two_hundred_thou = false;
                 }
@@ -543,7 +571,7 @@ public class Agent extends AbstractPlayer {
                 if (one_million) {
                     scores1mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
 
                     one_million = false;
                 }
