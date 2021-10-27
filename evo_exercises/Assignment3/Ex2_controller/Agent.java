@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 50;
-    public int genotype_size = 2000;
+    public int population_size = 100;
+    public int genotype_size = 1000;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -38,9 +38,14 @@ public class Agent extends AbstractPlayer {
     ArrayList<individual> population;
     StateObservation stateObs;
 
+    // keeps track of milestones and if gameState is finished
     public boolean two_hundred_thou = false;
     public boolean one_million = false;
     public boolean five_million = false;
+    public boolean finished = false;
+
+    // this will keep track of the move that ends the game in advance. That way, we don't print unnecessary moves
+    public int move_cutoff = 0; 
 
     // public static int calls_to_act;                /// Maybe remove this (if it doesnt work)
     // public String[] games = {"Bomber", "Boulderchase", "Chase", "Garbagecollector"};
@@ -82,16 +87,29 @@ public class Agent extends AbstractPlayer {
     }
 
     // apply all actions from a genotype into a stateobs and return score
-    public void calculate_fitness(StateObservation stateObs, individual _individual)
+    public void calculate_fitness(StateObservation stateObs, individual _individual, int individual_counter)
     {
         StateObservation stateObsCopy = stateObs.copy();
         boolean stop = false;
+        finished = false;
 
         // apply moves
-        for( int i = 0; i < genotype_size; i++)
+        for( int i = 0; (i < genotype_size && !finished); i++)
         {
             stateObsCopy.advance(_individual.genotype.get(i));
             advance_count++ ;
+
+            // if game is over, then finished becomes true, which will become NOT(true) within the loop condition
+            finished = stateObsCopy.isGameOver();
+
+            /* if individual_counter == 0 (we are calculating the fitness of the 1st ind in a population), and the game is finished
+            it will keep track of the index of the move that ended the game. This way, when we save the moves of the best individual
+            to a string, it won't print everything single move in its genotype, only the relevant ones*/
+
+            if (individual_counter == 0 && finished)
+            {
+                move_cutoff = i;
+            }
 
             // once advance counter is greater than 5 mil, variables need to be set
             if ( advance_count > 5000000 ){
@@ -144,7 +162,7 @@ public class Agent extends AbstractPlayer {
     {
         for ( int i = 0; i < population.size(); i++)
         {
-            calculate_fitness(stateObs, population.get(i));
+            calculate_fitness(stateObs, population.get(i), i);
         }
     }
 
@@ -456,16 +474,16 @@ public class Agent extends AbstractPlayer {
                 for(int i = 0; i < (population_size-2)/2; i++)
                 {
                     // select parents
-                    ArrayList<individual> temp = tournament_selection(population, 3);
-                    ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                    ArrayList<individual> temp = tournament_selection(population, 20);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
 
                 if ( (population_size % 2) == 1 )
                 {
-                    ArrayList<individual> temp = tournament_selection(population, 3);
-                    ArrayList<individual> temp2 = one_point_crossover(temp.get(0), temp.get(1));
+                    ArrayList<individual> temp = tournament_selection(population, 20);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
                     new_population.add(temp2.get(0));
                 }
 
@@ -476,12 +494,8 @@ public class Agent extends AbstractPlayer {
                     new_population.set(i,random_mutate(new_population.get(i)));
                 }
 
-                // select elites
+                // select elites (should return 10% of population)
                 ArrayList<individual> temp3 = return_two_elites(population);
-
-                // calculate fitness
-                calculate_population_fitness(stateObs, temp3);
-                calculate_population_fitness(stateObs, new_population);
 
                 // fill up pop
                 population.set(0,temp3.get(0));
@@ -492,6 +506,9 @@ public class Agent extends AbstractPlayer {
                     population.set(i,new_population.get(i-2));
                 }
 
+                // calculate fitness
+                calculate_population_fitness(stateObs, population);
+
                 // gets score from best individual and converts to string
                 best_score = population.get(0).fitness;
 
@@ -500,14 +517,15 @@ public class Agent extends AbstractPlayer {
                 // converting ACTIONS to strings
                 best_moves = population.get(0).genotype;
 
-                for (int i = 0; i < genotype_size-1; i++)
+                for (int i = 0; i < move_cutoff; i++)
                 {
                     best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
                 }
 
-                best_moves_text += fromACTIONS(best_moves.get(genotype_size-1));
+                best_moves_text += fromACTIONS(best_moves.get(move_cutoff));
 
                 // prints score and genotype of best individual at milestones
+                // not necessary as Assignment only asks for final mean and std dev of scores at milestones. Can comment out if needed
                 if (two_hundred_thou){
                     scores200k.add(previous_best_score_double);
 
