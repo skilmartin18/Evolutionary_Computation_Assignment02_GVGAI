@@ -20,6 +20,11 @@ public class individual {
     Random rand = new Random();
     double fitness = 0;
 
+    public double get_fitness()
+    {
+        return fitness;
+    }
+
     public individual(StateObservation StateObs, int genotype_size)
     {
         // get available actions (maybe move this out to increase performance)

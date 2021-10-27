@@ -33,7 +33,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     Random rand;
     GameDescription game;
     AbstractPlayer automatedAgent;
-    
+    HashMap<Character, ArrayList<String>> lmap;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -43,6 +43,11 @@ public class LevelGenerator extends AbstractLevelGenerator{
     {
 		rand = new Random();
         game = _game;
+
+        // lets generate the level mapping in here
+        // trying to use inbuild function here
+        // ok? this creates an empty level map, fuck you GVGAI
+        lmap = game.getLevelMapping();
 	}
 
 
@@ -71,14 +76,14 @@ public class LevelGenerator extends AbstractLevelGenerator{
         {
         Class agentClass = Class.forName("tracks.singlePlayer.tools.repeatOLETS.Agent");
 		Constructor agentConst = agentClass.getConstructor(new Class[]{StateObservation.class, ElapsedCpuTimer.class});
-		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation().copy(), null);
+		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation(ind).copy(), null);
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
 
-        ind.calc_fitness(automatedAgent, getStateObservation().copy());
+        ind.calc_fitness(automatedAgent, getStateObservation(ind).copy());
 
     }
 
@@ -280,7 +285,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     /// 1D->2D CONVERSION ///
     // converts genotype which is a 1d char array to a walled map as
-    // a string
+    // a string- this can be passed to getStateObservation().
     static public String convert_genotype_to_map(individual _ind)
     {
         String result = "";
@@ -336,6 +341,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
         BORROWED FUNCTIONS FOR RUNNING AN AGENT
                                                 */
 
+    /// DO: Fix state observation- we have level as string- just need level mapping
+
     /**
 	 * current level described by the chromosome
 	 */
@@ -346,53 +353,17 @@ public class LevelGenerator extends AbstractLevelGenerator{
 	 * get game state observation for the current level
 	 * @return	StateObservation for the current level
 	 */
-	private StateObservation getStateObservation(){
-		if(stateObs != null){
-			return stateObs;
-		}
+	private StateObservation getStateObservation(individual ind){
 
-        LevelMapping levelMapping = new LevelMapping(game);
-		levelMapping.clearLevelMapping();
-		char c = 'a';
-		for(int y = 0; y < level.length; y++){
-			for(int x = 0; x < level[y].length; x++){
-				if(levelMapping.getCharacter(level[y][x]) == null){
-					levelMapping.addCharacterMapping(c, level[y][x]);
-					c += 1;
-				}
-			}
-		}
-		
-		String levelString = getLevelString(levelMapping);
-		stateObs = game.testLevel(levelString, levelMapping.getCharMapping());
+		// get the level map as a string
+		String levelString = convert_genotype_to_map(ind);
+
+        // start a game with these parameters- this is different from how
+        // the given sampleGAGenerator does it, but matches the function signature so might work
+		stateObs = game.testLevel(levelString, lmap);
 		return stateObs;
 	}
 
-	/**
-	 * get the current level string
-	 * @param levelMapping	level mapping object to help constructing the string
-	 * @return				string of letters defined in the level mapping 
-	 * 						that represent the level
-	 */
-	public String getLevelString(LevelMapping levelMapping){
-		String levelString = "";
-		for(int y = 0; y < level.length; y++){
-			for(int x = 0; x < level[y].length; x++){
-				levelString += levelMapping.getCharacter(level[y][x]);
-			}
-			levelString += "\n";
-		}
-		
-		levelString = levelString.substring(0, levelString.length() - 1);
-		
-		return levelString;
-	}
-
-
-    
-
-    
-	
 
 }
 
