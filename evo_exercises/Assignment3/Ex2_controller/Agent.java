@@ -167,20 +167,30 @@ public class Agent extends AbstractPlayer {
     }
 
     // random index mutation
-    public individual random_mutate(individual individual){
+    public individual random_mutate(individual individual, double prob, int trials){
 
         // find number of available moves
         num_moves = individual.available_actions;
 
-        // random class and int generator to find which random move to choose
-        int rand_int1 = rand.nextInt(num_moves);
+        for ( int i = 0; i < trials; i++ ){
 
-        // from random index, it searches the list of avaiable moves to specific individual and chooses one
-        Types.ACTIONS rand_move = individual.actions.get(rand_int1);
+            // random class and int generator to find which random move to choose
+            int rand_int1 = rand.nextInt(num_moves);
 
-        // random int to find where in genotype list to insert new move
-        int rand_int2 = rand.nextInt(genotype_size);
-        individual.genotype.set(rand_int2, rand_move);
+            // from random index, it searches the list of avaiable moves to specific individual and chooses one
+            Types.ACTIONS rand_move = individual.actions.get(rand_int1);
+
+            // random int to find where in genotype list to insert new move
+            int rand_int2 = rand.nextInt(genotype_size);
+
+            // generating random number from random generator
+            double prob2 = rand.nextDouble();
+
+            // probability of mutating taken into account
+            if ( prob2 <= prob ){
+                individual.genotype.set(rand_int2, rand_move);
+            }
+        }
 
         return individual;
     }
@@ -487,7 +497,7 @@ public class Agent extends AbstractPlayer {
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
                     // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i)));
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,10));
                 }
 
                 // select elites (should return 10% of population)
