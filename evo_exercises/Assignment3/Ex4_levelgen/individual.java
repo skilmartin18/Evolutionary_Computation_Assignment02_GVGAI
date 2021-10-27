@@ -235,6 +235,16 @@ public class individual {
         // }
     }
 
+
+    /*
+        FITNESS CALCULATIONS
+                              */
+
+
+    ////// CALC DISQUAL //////
+    // will return a boolean whether this current individual is completely infeasible,
+    // due to either not containing all relevant tiles- i.e avatar and choices
+    // or due to the best player not being able to complete the level.
     public boolean calc_disqual(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
         boolean disqual = false;
@@ -278,13 +288,142 @@ public class individual {
         return disqual;
     }
 
+    ////// WALL BASED FITNESS //////
+    // Testing a fitness method which promotes long chains of walls,
+    // hopefully this can lead to complex levels with long walls that need
+    // to be traversed, or even rooms
+    public int calc_wall_fitness()
+    {
+        int score = 0;
+        int x,y, adjacent_walls;
+        // iterate through the level to look at all tiles-
+        // iteration in terms of x and y
+        for ( y = 0; y < playable_height; y++)
+        {
+            for ( x = 0; x < playable_width; x++ )
+
+                // have we encountered a wall?
+                // addressing the genotype with the x+y*width method- need to check
+                if ( genotype[x+y*playable_width] == 'w')
+                {
+                    adjacent_walls = 0;
+
+                    // now we are looking at a wall, to promote wall growth
+                    // extra fitness given to walls with adjacent walls- however dont want 'blobs'
+                    // thus for no adjacent walls zero fitness, from there fitness shall be inversely
+                    // proportional to adjacent wall count (we want only one adjacent wall)
+                    
+                    /// CHECK FOR ADJACENT WALLS
+                    // need to have checks for edge cases
+
+                    // above
+                    if (y != 0) // not the top row
+                    {
+                        if( genotype[x+(y-1)*playable_height] == 'w')
+                        {
+                            adjacent_walls++;
+                        }
+                    }
+
+                    // below 
+                    if (y != (playable_height-1)) // not the bottom row
+                    {
+                        if( genotype[x+(y+1)*playable_height] == 'w')
+                        {
+                            adjacent_walls++;
+                        }
+                    }
+
+                    // left
+                    if (x != 0) // not left most
+                    {
+                        if( genotype[x-1+(y)*playable_height] == 'w')
+                        {
+                            adjacent_walls++;
+                        }
+                    }
+
+                    // right
+                    if (x != (playable_width-1)) // not rightmost
+                    {
+                        if( genotype[x+1+(y)*playable_height] == 'w')
+                        {
+                            adjacent_walls++;
+                        }
+
+                    }
+
+
+                    /// CONVERT AMOUNT OF ADJACENT WALLS INTO A SCORE
+                    /// scores can be changed at a later date to confer more or less fitness
+                    switch (adjacent_walls) {
+                        case 0: 
+                            score += 0;                           
+                            break;
+                        case 1: 
+                            score += 5;                           
+                            break;
+                        case 2:           
+                            score += 3;                 
+                            break;
+                        case 3:     
+                            score += 2;                       
+                            break;
+                        case 4:     
+                            score += 0;                       
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+        }
+
+        return score;
+    }
+
+    ////// COVERAGE BASED FITNESS //////
+    // this is a potential objective that competes with having lots of walls 
+    // coverage is only based on the prescence of walls- not enemies keys or doors
+    public int calc_coverage_fitness()
+    {
+        int score = 0;
+        int wall_count = 0;
+        int playspace = playable_height*playable_width;
+        /// CALCULATE WALL COVERAGE
+        // just iterate through, count number of walls, and divide by 
+        // total play space
+        for (int i = 0; i < genotype.length; i++)
+        {
+            if(genotype[i]=='w')
+            {
+                wall_count++;
+            }
+        }
+
+        float coverage = wall_count/playspace;
+
+        /// CONVERT THE AMOUNT OF COVERAGE INTO A SCORE
+
+        return score;
+    }
+
+    ///// CALC FITNESS //////
+    /// somehow come up with an equation to combine the different fitness elements calculated as well as 
+    /// requireing the level to be feasible
     public void calc_fitness(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
+        // testing running of automated agent
         if(!calc_disqual(automatedAgent, stateObs))
         {
             System.out.println("i can play the level yay");
         }
 
+    }
+
+    public int get_fitness()
+    {
+        return fitness;
     }
 
 
