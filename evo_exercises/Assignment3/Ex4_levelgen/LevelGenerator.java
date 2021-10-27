@@ -311,7 +311,26 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
         return result;
     }
+    
+
+
+    /*   
+        GA TO FIND BEST GAME LEVELS
+                                        */
+
+    public ArrayList<individual> bi_Objective_GA(ArrayList<individual> population)
+    {
+        // Create return array
+        ArrayList<individual> paretoFront = new ArrayList<individual>();
+
+        // Do some fun stuff...
+
+        // Return best individuals
+        return paretoFront;
+    }
+
 	
+
 	
     /* 
         BORROWED FUNCTIONS FOR RUNNING AN AGENT
@@ -368,6 +387,9 @@ public class LevelGenerator extends AbstractLevelGenerator{
 		
 		return levelString;
 	}
+
+
+    
 
     
 	
