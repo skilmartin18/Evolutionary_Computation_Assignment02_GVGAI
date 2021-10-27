@@ -33,7 +33,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     Random rand;
     GameDescription game;
     AbstractPlayer automatedAgent;
-    
+    LevelMapping lmap;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -43,6 +43,11 @@ public class LevelGenerator extends AbstractLevelGenerator{
     {
 		rand = new Random();
         game = _game;
+
+        // lets generate the level mapping in here
+        // trying to use inbuild function here
+        // ok? this creates an empty level map, fuck you GVGAI
+        lmap = new LevelMapping(game);
 	}
 
 
@@ -336,7 +341,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         BORROWED FUNCTIONS FOR RUNNING AN AGENT
                                                 */
 
-    /// TODO: Fix state observation- we have level as string- just need level mapping
+    /// DO: Fix state observation- we have level as string- just need level mapping
 
     /**
 	 * current level described by the chromosome
@@ -350,48 +355,15 @@ public class LevelGenerator extends AbstractLevelGenerator{
 	 */
 	private StateObservation getStateObservation(individual ind){
 
-        LevelMapping levelMapping = new LevelMapping(game);
-		levelMapping.clearLevelMapping();
-		char c = 'a';
-		for(int y = 0; y < level.length; y++){
-			for(int x = 0; x < level[y].length; x++){
-				if(levelMapping.getCharacter(level[y][x]) == null){
-					levelMapping.addCharacterMapping(c, level[y][x]);
-					c += 1;
-				}
-			}
-		}
-		
-		String levelString = getLevelString(levelMapping);
-		stateObs = game.testLevel(levelString, levelMapping.getCharMapping());
+		// get the level map as a string
+		String levelString = convert_genotype_to_map(ind);
+
+        // start a game with these parameters- this is different from how
+        // the given sampleGAGenerator does it, but matches the function signature so might work
+		stateObs = game.testLevel(levelString, lmap.getCharMapping());
 		return stateObs;
 	}
 
-	/**
-	 * get the current level string
-	 * @param levelMapping	level mapping object to help constructing the string
-	 * @return				string of letters defined in the level mapping 
-	 * 						that represent the level
-	 */
-	public String getLevelString(LevelMapping levelMapping){
-		String levelString = "";
-		for(int y = 0; y < level.length; y++){
-			for(int x = 0; x < level[y].length; x++){
-				levelString += levelMapping.getCharacter(level[y][x]);
-			}
-			levelString += "\n";
-		}
-		
-		levelString = levelString.substring(0, levelString.length() - 1);
-		
-		return levelString;
-	}
-
-
-    
-
-    
-	
 
 }
 
