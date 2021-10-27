@@ -33,7 +33,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     Random rand;
     GameDescription game;
     AbstractPlayer automatedAgent;
-    LevelMapping lmap;
+    HashMap<Character, ArrayList<String>> lmap;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -47,7 +47,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // lets generate the level mapping in here
         // trying to use inbuild function here
         // ok? this creates an empty level map, fuck you GVGAI
-        lmap = new LevelMapping(game);
+        lmap = game.getLevelMapping();
 	}
 
 
@@ -360,7 +360,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
         // start a game with these parameters- this is different from how
         // the given sampleGAGenerator does it, but matches the function signature so might work
-		stateObs = game.testLevel(levelString, lmap.getCharMapping());
+		stateObs = game.testLevel(levelString, lmap);
 		return stateObs;
 	}
 

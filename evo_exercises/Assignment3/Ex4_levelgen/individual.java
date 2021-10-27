@@ -276,14 +276,15 @@ public class individual {
         stepAgent.playGame(stateObs.copy(), elapsedTimer);
         
         // gets end state of game
-        // StateObservation bestState = stepAgent.getFinalState();
+        StateObservation bestState = stepAgent.getFinalState();
         // ArrayList<Types.ACTIONS> bestSol = stepAgent.getSolution();
 
         // if the player doesnt win i.e loses or cannot win
-        // if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) || (bestState.getGameWinner() == Types.WINNER.NO_WINNER) )
-        // {
-        //     disqual = true;
-        // }
+        if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) )//|| (bestState.getGameWinner() == Types.WINNER.NO_WINNER) )
+        {
+            System.out.println("i cannot win this level");
+            disqual = true;
+        }
 
         return disqual;
     }
