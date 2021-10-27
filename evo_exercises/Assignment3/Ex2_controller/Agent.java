@@ -406,14 +406,6 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
-        // Increment calls to act
-        // calls_to_act++; 
-
-        // do admin work:
-        // SimplestHeuristic heuristic = new SimplestHeuristic(stateObs);
-        //int gen_count = 0;
-        //int max_gens = 1000;
-
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
         StatSummary scores1mill = new StatSummary();
@@ -451,6 +443,8 @@ public class Agent extends AbstractPlayer {
             String index = "";
             index = k+"";
 
+            int gen_count = 0;
+
             // resetting advance count and once variable (michaels dumb idea)
             advance_count = 0;
             once = false;
@@ -472,7 +466,9 @@ public class Agent extends AbstractPlayer {
 
                 // crossover 
                 for(int i = 0; i < (population_size-2)/2; i++)
-                {
+                {   
+                    gen_count++;
+
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 20);
                     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
@@ -552,6 +548,7 @@ public class Agent extends AbstractPlayer {
             }
 
             final_text = final_text + "\n\n\n" + text;
+            System.out.print(" Generations: "+gen_count);       // this prints no. of gens at the end of a Test
         }
 
         // calculating mean and std dev for each milestone
@@ -568,46 +565,10 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        // Set the filename to current game based on how many calls to act have been made
-        // String filename = "";
-        // if (calls_to_act <= 5)
-        // {
-        //     filename = games[0]; 
-        // } else if (calls_to_act > 5 && calls_to_act <= 10)
-        // {
-        //     filename = games[1];
-        // } else if (calls_to_act > 10 && calls_to_act <= 15)
-        // {
-        //     filename = games[2]; 
-        // } else if (calls_to_act > 15)
-        // {
-        //     filename = games[3]; 
-        // }
-
-        // Set current level
-        // String level = "";
-        // int current_level_num = (calls_to_act - 1)%5; 
-        // level = current_level_num+"";
-
         handle_files.write_to_file("results/assignment03/exercise02/Test", final_text);
 
-        // action = first_move(population);
-        // remove_pop_first_action();
-        // maybe helps with dying due to un-searched actions
-        // StateObservation stcopy = stateObs.copy();
-        // stcopy.advance(action);
-
-        // if(stcopy.isGameOver())
-        // {
-        //     // random class and int generator to find which random move to choose
-        //     int rand_int1 = rand.nextInt(num_moves);
-        //     // from random index, it searches the list of avaiable moves to specific individual and chooses one
-        //     action = stateObs.getAvailableActions().get(rand_int1);
-
-        // }
-        // System.out.println(gen_count);
-
-        // System.exit(0);
+        /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
+        (which is fine as we only care about calls to advance) */
         return ACTIONS.ACTION_NIL;
     }
 }
