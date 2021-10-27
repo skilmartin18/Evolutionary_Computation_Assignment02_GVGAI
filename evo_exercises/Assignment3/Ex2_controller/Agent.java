@@ -34,7 +34,7 @@ public class Agent extends AbstractPlayer {
     public long remaining;
     public int num_moves;
     public boolean once = false;
-    public int testCounter = -1;
+    public int test_counter = -1;
     ArrayList<individual> population;
     StateObservation stateObs;
 
@@ -136,14 +136,14 @@ public class Agent extends AbstractPlayer {
         if ( stop == false ){
             float counter = advance_count;
             float percentage = (counter/5000000)*100;
-
-            System.out.print( "\rRunning Test " + testCounter + "... " + advance_count + "/" + 5000000 + " " + "(" );
+    
+            System.out.print( "\rRunning Test " + test_counter + "... " + advance_count + "/" + 5000000 + " " + "(" );
             System.out.printf( "%.1f",percentage );
             System.out.print( "%" + ")" );
         }else if( stop == true && once == false ){
             float percentage = 100;
 
-            System.out.print( "\rRunning Test " + testCounter + "... " + 5000000 + "/" + 5000000 + " " + "(" );
+            System.out.print( "\rFinished running Test " + test_counter + " " + 5000000 + "/" + 5000000 + " " + "(" );
             System.out.printf( "%.1f",percentage );
             System.out.print( "%" + ")\n" );
             once = true;
@@ -454,11 +454,11 @@ public class Agent extends AbstractPlayer {
             // resetting advance count and once variable (michaels dumb idea)
             advance_count = 0;
             once = false;
-            testCounter++;
+            test_counter++;
 
             // moving onto next level (may not actually be needed depending on how testing is done)
-            if ( testCounter > 9 ){
-                testCounter = 0;
+            if ( test_counter > 9 ){
+                test_counter = 0;
             }
 
             // evolve while we have time remaining
