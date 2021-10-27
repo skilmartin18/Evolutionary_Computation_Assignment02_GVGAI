@@ -443,7 +443,7 @@ public class Agent extends AbstractPlayer {
             String index = "";
             index = k+"";
 
-            int gen_count = 0;
+            // int gen_count = 0;
 
             // resetting advance count and once variable (michaels dumb idea)
             advance_count = 0;
@@ -467,7 +467,7 @@ public class Agent extends AbstractPlayer {
                 // crossover 
                 for(int i = 0; i < (population_size-2)/2; i++)
                 {   
-                    gen_count++;
+                    // gen_count++;
 
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 20);
@@ -548,7 +548,7 @@ public class Agent extends AbstractPlayer {
             }
 
             final_text = final_text + "\n\n\n" + text;
-            System.out.print(" Generations: "+gen_count);       // this prints no. of gens at the end of a Test
+            // System.out.print(" Generations: "+gen_count);       // this prints no. of gens at the end of a Test
         }
 
         // calculating mean and std dev for each milestone
