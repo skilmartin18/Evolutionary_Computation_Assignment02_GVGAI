@@ -71,14 +71,14 @@ public class LevelGenerator extends AbstractLevelGenerator{
         {
         Class agentClass = Class.forName("tracks.singlePlayer.tools.repeatOLETS.Agent");
 		Constructor agentConst = agentClass.getConstructor(new Class[]{StateObservation.class, ElapsedCpuTimer.class});
-		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation().copy(), null);
+		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation(ind).copy(), null);
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
 
-        ind.calc_fitness(automatedAgent, getStateObservation().copy());
+        ind.calc_fitness(automatedAgent, getStateObservation(ind).copy());
 
     }
 
@@ -183,7 +183,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     /// 1D->2D CONVERSION ///
     // converts genotype which is a 1d char array to a walled map as
-    // a string
+    // a string- this can be passed to getStateObservation().
     static public String convert_genotype_to_map(individual _ind)
     {
         String result = "";
@@ -220,6 +220,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
         BORROWED FUNCTIONS FOR RUNNING AN AGENT
                                                 */
 
+    /// TODO: Fix state observation- we have level as string- just need level mapping
+
     /**
 	 * current level described by the chromosome
 	 */
@@ -230,10 +232,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 	 * get game state observation for the current level
 	 * @return	StateObservation for the current level
 	 */
-	private StateObservation getStateObservation(){
-		if(stateObs != null){
-			return stateObs;
-		}
+	private StateObservation getStateObservation(individual ind){
 
         LevelMapping levelMapping = new LevelMapping(game);
 		levelMapping.clearLevelMapping();
