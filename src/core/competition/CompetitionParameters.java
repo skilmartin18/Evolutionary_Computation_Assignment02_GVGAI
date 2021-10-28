@@ -12,6 +12,7 @@ public class CompetitionParameters
     /**
      * Milliseconds allowed per controller action.
      */
+    // SEB WAS HERE- used to be 40 and 50
     public static final int ACTION_TIME = 40;
 
     /**

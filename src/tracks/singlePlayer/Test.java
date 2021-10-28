@@ -54,7 +54,7 @@ public class Test {
 
 		// 2. This plays a game in a level by the controller.
 		//ArcadeMachine.runOneGame(game, level1, visuals, gamercool, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, "YOLOBOT.Agent", recordActionsFile, seed, 0);
+		ArcadeMachine.runOneGame(game, level1, visuals, "NovelTS.Agent", recordActionsFile, seed, 0);
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);

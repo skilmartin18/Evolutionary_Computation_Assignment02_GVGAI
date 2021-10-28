@@ -246,36 +246,23 @@ public class individual {
     // or due to the best player not being able to complete the level.
     public boolean calc_disqual(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
+        // by default we will disqualify the level
         boolean disqual = true;
         
-        /* /// EVERYTHING IS PRESENT /// (legacy)
-        // this should be checked by the next part anyway
-        //int choice_count = 0;
-        // // disqualification factor 1-> are all choices present
-        // for(int i = 0; i < genotype.length; i++)
-        // {
-        //     if( (genotype[i] == 'g') || (genotype[i] == '+') || (genotype[i] == 'A') )
-        //     {
-        //         choice_count++;
-        //     }
-        // }
-
-        // if ( choice_count < 3)
-        // {
-        //     disqual = true;
-        // }
-        */
         
         ///// LEVEL IS COMPLETEABLE //////
-        /// Play the game using the best agent, copied from SampleGA
+        // Play the game using the best agent, similar to the sampleGA
+        // method, but ive made it much simpler- no idea why theirs was so complex
 
-        StepController stepAgent = new StepController(automatedAgent, 5000);
+        // create new agent to play game
+        StepController stepAgent = new StepController(automatedAgent, 40);
         ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();
         elapsedTimer.setMaxTimeMillis(5000);
 
-        /// run a few times to see if it can ever win
-        int game_num = 5;
-
+        /// run a few times incase it doesnt win 100% of the time
+        /// running twice doubles computational overhead, so until 
+        /// we find infeasible levels passing through, we will run once
+        int game_num = 1;
 
         for ( int i = 0; i < game_num; i++)
         {
@@ -283,10 +270,8 @@ public class individual {
         
             // gets end state of game
             StateObservation bestState = stepAgent.getFinalState();
-            //ArrayList<Types.ACTIONS> bestSol = stepAgent.getSolution();
             
-            //System.out.println(bestSol.size());
-            // if the player doesnt win i.e loses or cannot win
+            // if the player wins then dont disqualify
             if( (bestState.getGameWinner() == Types.WINNER.PLAYER_WINS) )
             {
                 System.out.println("i can win this level");

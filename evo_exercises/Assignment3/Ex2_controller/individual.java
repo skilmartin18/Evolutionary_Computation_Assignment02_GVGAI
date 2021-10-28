@@ -42,6 +42,12 @@ public class individual {
 
         genotype = new ArrayList<Types.ACTIONS>(_genotype);
     }
+
+    public individual(ArrayList<Types.ACTIONS> _genotype, double _fitness)
+    {
+        genotype = new ArrayList<Types.ACTIONS>(_genotype);
+        fitness = _fitness;
+    }
     
     public individual(int genotype_size, StateObservation StateObs)
     {
