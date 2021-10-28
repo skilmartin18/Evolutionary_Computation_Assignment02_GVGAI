@@ -71,10 +71,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     public void calculate_individual_fitness(individual ind)
     {
-        // this should initialise the best agent 
+        // this should initialise the best agent,
+        // best agent from sample code was incapable of playing zelda
+        // so have gone with the NovelTS controller to test level possibility
         try
         {
-        Class agentClass = Class.forName("tracks.singlePlayer.tools.repeatOLETS.Agent");
+        Class agentClass = Class.forName("NovelTS.Agent");
 		Constructor agentConst = agentClass.getConstructor(new Class[]{StateObservation.class, ElapsedCpuTimer.class});
 		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation(ind).copy(), null);
         }
@@ -83,6 +85,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
             e.printStackTrace();
         }
 
+        // pass this agent on to the individuals fitness calculation algo
         ind.calc_fitness(automatedAgent, getStateObservation(ind).copy());
 
     }
