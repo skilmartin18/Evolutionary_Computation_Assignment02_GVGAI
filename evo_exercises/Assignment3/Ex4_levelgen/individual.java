@@ -47,8 +47,7 @@ public class individual {
 
     // fitness stuff
     int fitness = 0;
-    
-   
+
     /*   
          LEVEL MAPPINGS
                           */
