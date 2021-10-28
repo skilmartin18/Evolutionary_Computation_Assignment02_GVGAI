@@ -36,7 +36,7 @@ public class Ex2_run_controller {
 		// This plays games_played games, in the first L levels, M times each.
 		// set games_played- indices are games indexes from all_games_sp.csv
 		//int[] games_played = {8,10,18,45}; 
-		int[] games_played = {8,8};
+		int[] games_played = {8};
 		int L = 5, M = 1;
 
 		String[] levels = new String[L];
@@ -57,7 +57,7 @@ public class Ex2_run_controller {
 			// ARCADEMACHINE.JAVA, LINE 537 IS WHERE OUTPUT FILE IS SPECIFIED
 			//
 
-			for(int k = 1; k < 5; ++k){
+			for(int k = 0; k < 5; ++k){
 				// runGames must take levels as an string array- so convert levels[k] into one
 				System.out.println("Lvl_"+k+":");
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
