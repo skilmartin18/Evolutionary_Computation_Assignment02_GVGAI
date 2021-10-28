@@ -48,6 +48,8 @@ public class individual {
     // fitness stuff
     int wallFitness = 0;
     int coverageFitness = 0; 
+    int normalisedWallFitness = 0;
+    int normalisedCoverageFitness = 0; 
 
     // Variables for dominance ranking in biobjective GA
     // ArrayList<individual> dominatedIndividuals; 
@@ -112,8 +114,8 @@ public class individual {
 
     public individual()
     {
-        // Set bi obj GA params
-        dominatedIndividuals = new ArrayList<individual>(); 
+        // // Set bi obj GA params
+        // dominatedIndividuals = new ArrayList<individual>(); 
 
 
         // create random genotype

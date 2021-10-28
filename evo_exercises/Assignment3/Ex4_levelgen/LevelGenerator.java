@@ -400,10 +400,29 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // Biobjective fitness function, for use in biobj GA
+    /* 
+        HELPER FUNCTIONS FOR GA
+                                 */
 
+    public void normaliseFitnesses(ArrayList<individual> population)
+    {
+
+    }
+
+    public void calcCrowdingDistance(ArrayList<individual> population)
+    {
+
+    }
+
+    public boolean notDominated(individual ind, ArrayList<individual> toBeRanked)
+    {
+        return true;
+    }
+
+    // Biobjective fitness function, for use in biobj GA
     public void bi_objective_fitness(ArrayList<individual> population)
     {
+
 
     }
     
@@ -421,8 +440,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
     // 2. Select parents for crossover and mutation 
     // 3. Create offspring until number equals same as parent population 
     // 4. Combine parents and offspring to make new population of size 2*M
-    // 5. Sort total population into ranks using dominance heirachies
-    // 6. Sort each rank by crowding distance 
+    // 5. Sort total population into ranks using dominance heirachies - see above function
+    // 6. Sort each rank by crowding distance - see above function
     // 7. Based on rank and crowding, take top M amount of individuals, discard the bottom M
     // 8. Repeat for n number of generations
 
@@ -469,6 +488,11 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
             // Once offspring size matches parent pop size, combine into one pop
             pop.addAll(offspring);
+
+            // ***Calculate coverage and wall fitness for each individual in pop BEFORE dominance ranking
+            //
+            //
+            //
 
             // Calculate dominance ranks and crowding distance for all individuals
             bi_objective_fitness(pop); 
