@@ -55,10 +55,59 @@ public class LevelGenerator extends AbstractLevelGenerator{
 	@Override
 	public String generateLevel(GameDescription game, ElapsedCpuTimer elapsedTimer) 
     {
-		
-        individual _ind = new individual();
-        String result = convert_genotype_to_map(_ind);
-        calculate_individual_fitness(_ind);
+		// ArrayList<individual> population = new ArrayList<individual>();
+        String result = " ";
+        // // initialise population
+        // for(int i = 0; i < 8; i++)
+        // {
+        //     population.add(new individual());
+        //     calculate_individual_fitness(population.get(i));
+        // }
+
+        // //run algo
+        // for(int gen = 0; gen < 15; gen++)
+        // {
+        //     System.out.println(gen);
+        //     ArrayList<individual> temp = get_elites(population, 2);
+
+        //     // mutate
+        //     for(int i = 0; i < 8; i++)
+        //     {
+        //         double prob = rand.nextDouble();
+
+        //         if(prob<0.7)
+        //         {
+        //             create_tile(population.get(i));
+        //         }
+        //         else
+        //         {
+        //             destroy_tile(population.get(i));
+        //         }
+        //     }
+
+        //     for(int i = 0; i < 8; i++)
+        //     {
+        //         calculate_individual_fitness(population.get(i));
+        //     }
+
+        //     // fill population
+        //     ArrayList<individual> temp2 = new ArrayList<individual>();
+        //     temp2.add(temp.get(0));
+        //     temp2.add(temp.get(1));
+        //     for(int i = 0; i < 3; i++)
+        //     {
+        //         ArrayList<individual> temp3 = tournament_selection(population, 2);
+        //         temp2.add(temp3.get(0));
+        //         temp2.add(temp3.get(1));
+        //     }
+            
+        //     population.clear();
+        //     population = temp2;
+        // }
+        
+        // individual _ind = get_elites(population, 1).get(0);
+        // String result = convert_genotype_to_map(_ind);
+        
 		return result;
 	}
 
@@ -71,10 +120,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     public void calculate_individual_fitness(individual ind)
     {
-        // this should initialise the best agent 
+        // this should initialise the best agent,
+        // best agent from sample code was incapable of playing zelda
+        // so have gone with the NovelTS controller to test level possibility
         try
         {
-        Class agentClass = Class.forName("tracks.singlePlayer.tools.repeatOLETS.Agent");
+        Class agentClass = Class.forName("NovelTS.Agent");
 		Constructor agentConst = agentClass.getConstructor(new Class[]{StateObservation.class, ElapsedCpuTimer.class});
 		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation(ind).copy(), null);
         }
@@ -83,6 +134,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
             e.printStackTrace();
         }
 
+        // pass this agent on to the individuals fitness calculation algo
         ind.calc_fitness(automatedAgent, getStateObservation(ind).copy());
 
     }
@@ -224,6 +276,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     {
         ind.genotype[rand.nextInt(ind.genotype.length)] = '.';
     }
+
 
     /// N-POINT CROSSOVER ///
     // returns an arrary list of 2 children individual objects after n-point parent crossover

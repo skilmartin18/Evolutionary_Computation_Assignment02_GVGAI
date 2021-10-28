@@ -65,8 +65,6 @@ public class Agent extends AbstractPlayer {
         {
             seed_individual.genotype.set(i,ACTIONS.ACTION_NIL);
         }
-
-
     }
 
     // creates population from stateOBS, is list of action lists, chucks in individual from previous runs
@@ -78,9 +76,37 @@ public class Agent extends AbstractPlayer {
             individual ind = new individual(stateObs, genotype_size);
             this.population.add(ind);
         }
-        // last member is best individual from previous run
-        //population.add(seed_individual);
     }
+
+    // finds a cutoff point until the last playable move (before the gamestate is finised)
+    // after this point, moves in sequence are redundant
+    public int find_cutoff(StateObservation stateObs, individual _individual)
+    {
+        StateObservation stateObsCopy = stateObs.copy();
+        finished = false;
+        int cutoff = 0;
+
+        // apply moves
+        for( int i = 0; (i < genotype_size && !finished); i++)
+        {
+            stateObsCopy.advance(_individual.genotype.get(i));
+
+            // if game is over, then finished becomes true, which will become NOT(true) within the loop condition
+            finished = stateObsCopy.isGameOver();
+
+            /* if individual_counter == 0 (we are calculating the fitness of the 1st ind in a population), and the game is finished
+            it will keep track of the index of the move that ended the game. This way, when we save the moves of the best individual
+            to a string, it won't print everything single move in its genotype, only the relevant ones*/
+
+            if (finished)
+            {
+                cutoff = i;
+            }
+        }
+
+        return cutoff;
+    }
+
 
     // apply all actions from a genotype into a stateobs and return score
     public void calculate_fitness(StateObservation stateObs, individual _individual, int individual_counter)
@@ -241,7 +267,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 4;
+        int acceptable_action_amount = 20;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -409,7 +435,7 @@ public class Agent extends AbstractPlayer {
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
         //setting number of elites
-        int numElites = 4;
+        int numElites = 6;
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -461,8 +487,10 @@ public class Agent extends AbstractPlayer {
             }
 
             // evolve while we have time remaining
-            while ( advance_count < 200001 )
-            {
+            while ( advance_count < 5000001 )
+            {   
+                int cutoff_two = 0;
+
                 previous_best_moves = best_moves_text;
                 previous_best_score = best_score_text;
                 previous_best_score_double = best_score;
@@ -476,7 +504,7 @@ public class Agent extends AbstractPlayer {
                 {   
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 10);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 3);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 8);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
@@ -484,8 +512,8 @@ public class Agent extends AbstractPlayer {
                 // mutation
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
-                    // mutation done based on probability and trials
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,20));
+                    // mutation is done once (can change to multiple times if need be)
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,40));
                 }
 
                 // select elites (should return n_Elites of population, this is set at the start of act())
@@ -516,36 +544,10 @@ public class Agent extends AbstractPlayer {
                     population.add(new_population.get(i-numElites));
                 }
 
-                // population entering 
-                if ( gen_count >= 50 && gen_count <= 70 ){
-                    System.out.print("\n\nPOPULATION BEFORE: ");
-                    for ( int i = 0; i < population_size; i++){
-                        System.out.print( population.get(i).fitness + ", " );
-                    }
-                    System.out.print("\n\n");
-                }
-
-                // calculate fitness of new pop and clearing it
+                // calculate fitness
                 calculate_population_fitness(stateObs, new_population);
+
                 new_population.clear();
-
-                // // new population 
-                // if ( gen_count >= 50 && gen_count <= 70 ){
-                //     //calculate_population_fitness(stateObs, new_population);
-                //     System.out.print("\n\nNEW POPULATION: ");
-                //     for ( int i = numElites; i < population_size; i++){
-                //         System.out.print( population.get(i).fitness + ", " );
-                //     }
-                // }
-
-                // population after
-                if ( gen_count >= 50 && gen_count <= 70 ){
-                    System.out.print("\n\nPOPULATION AFTER: ");
-                    for ( int i = 0; i < population_size; i++){
-                        System.out.print( population.get(i).fitness + ", " );
-                    }
-                    System.out.print("\n\n");
-                }
 
                 // gets score from best individual and converts to string
                 best_score = population.get(0).fitness;
@@ -554,13 +556,14 @@ public class Agent extends AbstractPlayer {
 
                 // converting ACTIONS to strings
                 best_moves = population.get(0).genotype;
+                cutoff_two = find_cutoff(stateObs, population.get(0));
 
-                for (int i = 0; i < move_cutoff; i++)
+                for (int i = 0; i < cutoff_two; i++)
                 {
                     best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
                 }
 
-                best_moves_text += fromACTIONS(best_moves.get(move_cutoff));
+                best_moves_text += fromACTIONS(best_moves.get(cutoff_two));
 
                 // prints score and genotype of best individual at milestones
                 // not necessary as Assignment only asks for final mean and std dev of scores at milestones. Can comment out if needed
@@ -588,10 +591,9 @@ public class Agent extends AbstractPlayer {
                     five_million = false;
                 }
 
-                System.out.print(" Generations: "+gen_count);       // this prints no. of gens
             }
 
-            final_text = final_text + "\n\n\n" + text;
+            final_text = final_text + "\n\n\n" + text + "\nGENERATION: "+ gen_count+"";
         }
 
         // calculating mean and std dev for each milestone
@@ -608,7 +610,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise02/BomberTests2", final_text);
+        handle_files.write_to_file("results/assignment03/exercise02/BoulderChaseTests", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
