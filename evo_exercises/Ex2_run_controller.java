@@ -36,12 +36,12 @@ public class Ex2_run_controller {
 		// This plays games_played games, in the first L levels, M times each.
 		// set games_played- indices are games indexes from all_games_sp.csv
 		//int[] games_played = {8,10,18,45}; 
-		int[] games_played = {8,10,18,45}; 
+		int[] games_played = {10,10}; 
 		int L = 5, M = 1;
 
 		String[] levels = new String[L];
 
-		for(int i = 0; i < 4; ++i)
+		for(int i = 0; i < 2; ++i)
 		{
 			
 			// get game and name

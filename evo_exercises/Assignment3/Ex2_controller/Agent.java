@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 100;
-    public int genotype_size = 1000;
+    public int population_size = 80; //originally 100
+    public int genotype_size = 200; //originally 800
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -245,7 +245,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 6;
+        int acceptable_action_amount = 15;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -440,7 +440,7 @@ public class Agent extends AbstractPlayer {
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
         //setting number of elites
-        int numElites = 20;
+        int numElites = 10;
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -507,7 +507,7 @@ public class Agent extends AbstractPlayer {
 
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 15);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 4);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
@@ -523,7 +523,7 @@ public class Agent extends AbstractPlayer {
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
                     // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,10));
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,20));
                 }
 
                 // select elites (should return n_Elites of population, this is set at the start of act())
