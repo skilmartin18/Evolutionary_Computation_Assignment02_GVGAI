@@ -328,7 +328,33 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // Create return array
         ArrayList<individual> paretoFront = new ArrayList<individual>();
 
-        // Do some fun stuff...
+        // Calculate fitness using weighted values for both objectives
+
+
+
+        /// FAST NON DOMINATED SORTING /// 
+        // This will rank all individuals in population
+        // Rank[0] is the first rank, and is the pareto front
+        for (individual _individual : population)
+        {
+            
+        }
+
+
+
+        
+
+
+        // mutate and crossover with pareto front
+
+
+        // Some code to fix crowding issues
+
+
+        // Repeat until certain number of gens, or until minimal variation between generations is reached
+
+
+        // Return final pareto front
 
         // Return best individuals
         return paretoFront;

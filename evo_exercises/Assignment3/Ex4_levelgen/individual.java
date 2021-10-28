@@ -48,6 +48,9 @@ public class individual {
     // fitness stuff
     int fitness = 0;
 
+    // Variables for dominance ranking in biobjective GA
+    ArrayList<individual> dominatedIndividuals; 
+
     /*   
          LEVEL MAPPINGS
                           */
@@ -95,6 +98,9 @@ public class individual {
 
     public individual()
     {
+        // Set bi obj GA params
+        dominatedIndividuals = new ArrayList<individual>(); 
+
         // create random genotype
         // initialise genotype as all floors
         for(int i = 0; i < genotype.length; i++)
