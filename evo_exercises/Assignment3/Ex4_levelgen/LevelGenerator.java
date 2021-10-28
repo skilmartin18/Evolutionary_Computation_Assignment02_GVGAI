@@ -74,7 +74,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // this should initialise the best agent 
         try
         {
-        Class agentClass = Class.forName("tracks.singlePlayer.tools.repeatOLETS.Agent");
+        Class agentClass = Class.forName("YOLOBOT.Agent");
 		Constructor agentConst = agentClass.getConstructor(new Class[]{StateObservation.class, ElapsedCpuTimer.class});
 		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation(ind).copy(), null);
         }

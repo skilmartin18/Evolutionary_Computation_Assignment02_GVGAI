@@ -246,7 +246,7 @@ public class individual {
     // or due to the best player not being able to complete the level.
     public boolean calc_disqual(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
-        boolean disqual = false;
+        boolean disqual = true;
         
         /* /// EVERYTHING IS PRESENT /// (legacy)
         // this should be checked by the next part anyway
@@ -269,21 +269,32 @@ public class individual {
         ///// LEVEL IS COMPLETEABLE //////
         /// Play the game using the best agent, copied from SampleGA
 
-        StepController stepAgent = new StepController(automatedAgent, 40);
+        StepController stepAgent = new StepController(automatedAgent, 5000);
         ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();
-        elapsedTimer.setMaxTimeMillis(40);
-        stepAgent.playGame(stateObs.copy(), elapsedTimer);
-        
-        // gets end state of game
-        StateObservation bestState = stepAgent.getFinalState();
-        // ArrayList<Types.ACTIONS> bestSol = stepAgent.getSolution();
+        elapsedTimer.setMaxTimeMillis(5000);
 
-        // if the player doesnt win i.e loses or cannot win
-        if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) )//|| (bestState.getGameWinner() == Types.WINNER.NO_WINNER) )
+        /// run a few times to see if it can ever win
+        int game_num = 5;
+
+
+        for ( int i = 0; i < game_num; i++)
         {
-            System.out.println("i cannot win this level");
-            disqual = true;
+            stepAgent.playGame(stateObs.copy(), elapsedTimer);
+        
+            // gets end state of game
+            StateObservation bestState = stepAgent.getFinalState();
+            //ArrayList<Types.ACTIONS> bestSol = stepAgent.getSolution();
+            
+            //System.out.println(bestSol.size());
+            // if the player doesnt win i.e loses or cannot win
+            if( (bestState.getGameWinner() == Types.WINNER.PLAYER_WINS) )
+            {
+                System.out.println("i can win this level");
+                disqual = false;
+            }
+
         }
+        
 
         return disqual;
     }
@@ -361,7 +372,7 @@ public class individual {
                             score += 0;                           
                             break;
                         case 1: 
-                            score += 5;                           
+                            score += 7;                           
                             break;
                         case 2:           
                             score += 3;                 
@@ -401,10 +412,13 @@ public class individual {
             }
         }
 
-        float coverage = wall_count/playspace;
-
         /// CONVERT THE AMOUNT OF COVERAGE INTO A SCORE
+        int non_walls_count = playspace-wall_count;
+        float wall_coverage = wall_count/playspace;
+        float floor_coverage = non_walls_count/playspace;
+        
 
+        score = non_walls_count;
         return score;
     }
 
@@ -414,9 +428,9 @@ public class individual {
     public void calc_fitness(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
         // testing running of automated agent
-        if(!calc_disqual(automatedAgent, stateObs))
+        if(calc_disqual(automatedAgent, stateObs))
         {
-            System.out.println("i can play the level yay");
+            System.out.println("i cant play the level no");
         }
 
     }

@@ -528,7 +528,7 @@ public class Agent extends AbstractPlayer {
 
                 // select elites (should return n_Elites of population, this is set at the start of act())
                 ArrayList<individual> temp3 = get_elites(population, numElites);
-
+                
                 // fill up pop
                 for ( int i = 0; i < numElites; i++ )
                 {
