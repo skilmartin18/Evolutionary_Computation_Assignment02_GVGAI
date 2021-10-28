@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 80; //originally 100
-    public int genotype_size = 200; //originally 800
+    public int population_size = 50;
+    public int genotype_size = 400;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -46,9 +46,6 @@ public class Agent extends AbstractPlayer {
 
     // this will keep track of the move that ends the game in advance. That way, we don't print unnecessary moves
     public int move_cutoff = 0; 
-
-    // public static int calls_to_act;                /// Maybe remove this (if it doesnt work)
-    // public String[] games = {"Bomber", "Boulderchase", "Chase", "Garbagecollector"};
 
     // constructor
     public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
@@ -71,7 +68,6 @@ public class Agent extends AbstractPlayer {
 
 
     }
-
 
     // creates population from stateOBS, is list of action lists, chucks in individual from previous runs
     public void create_population(StateObservation stateObs)
@@ -245,7 +241,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 15;
+        int acceptable_action_amount = 4;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -355,41 +351,14 @@ public class Agent extends AbstractPlayer {
         }
 
         // adding best and second best individuals to return list
-        parents.add(candidates.get(best_individual_index));
-        parents.add(candidates.get(second_individual_index));
+
+        individual parent1 = new individual(candidates.get(best_individual_index).genotype,candidates.get(best_individual_index).fitness);
+        individual parent2 = new individual(candidates.get(second_individual_index).genotype,candidates.get(best_individual_index).fitness);
+
+        parents.add(parent1);
+        parents.add(parent2);
 
         return parents;
-    }
-
-    // elitism (will only return 2 elites for now). Effectively the same as tournament selection
-    public ArrayList<individual> return_two_elites(ArrayList<individual> population){
-        
-        // initialising return list of elites
-        ArrayList<individual> elites = new ArrayList<individual>();
-
-        // finding best and second best individuals from all in population
-        int best_individual_index = 0;
-        int second_individual_index = 0;
-        double best_fitness = Double.NEGATIVE_INFINITY;
-        double second_best_fitness = Double.NEGATIVE_INFINITY;
-
-        for (int i = 0; i < population_size; i++){
-            if ((population.get(i)).fitness >= best_fitness){
-                second_best_fitness = best_fitness;
-                best_fitness = (population.get(i)).fitness;
-                best_individual_index = i;
-                
-            } else if ((population.get(i)).fitness > second_best_fitness){
-                second_best_fitness = (population.get(i)).fitness;
-                second_individual_index = i;
-            }
-        }
-
-        // adding best and second best individuals to return list
-        elites.add(population.get(best_individual_index));
-        elites.add(population.get(second_individual_index));
-
-        return elites;
     }
 
     // More Elitism 
@@ -440,7 +409,7 @@ public class Agent extends AbstractPlayer {
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
         //setting number of elites
-        int numElites = 10;
+        int numElites = 4;
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -479,7 +448,7 @@ public class Agent extends AbstractPlayer {
             String index = "";
             index = k+"";
 
-            // int gen_count = 0;
+            int gen_count = 0;
 
             // resetting advance count and once variable (michaels dumb idea)
             advance_count = 0;
@@ -492,7 +461,7 @@ public class Agent extends AbstractPlayer {
             }
 
             // evolve while we have time remaining
-            while ( advance_count < 5000001 )
+            while ( advance_count < 200001 )
             {
                 previous_best_moves = best_moves_text;
                 previous_best_score = best_score_text;
@@ -500,48 +469,83 @@ public class Agent extends AbstractPlayer {
 
                 best_moves_text = "";
 
+                gen_count++;
+
                 // crossover 
                 for(int i = 0; i < (population_size-numElites)/2; i++)
                 {   
-                    // gen_count++;
-
                     // select parents
-                    ArrayList<individual> temp = tournament_selection(population, 15);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 4);
+                    ArrayList<individual> temp = tournament_selection(population, 10);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 3);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
 
-                // if ( (population_size % 2) == 1 )
-                // {
-                //     ArrayList<individual> temp = tournament_selection(population, 20);
-                //     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
-                //     new_population.add(temp2.get(0));
-                // }
-
                 // mutation
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
-                    // mutation is done once (can change to multiple times if need be)
+                    // mutation done based on probability and trials
                     new_population.set(i,random_mutate(new_population.get(i),0.5,20));
                 }
 
                 // select elites (should return n_Elites of population, this is set at the start of act())
                 ArrayList<individual> temp3 = get_elites(population, numElites);
 
+                if ( gen_count >= 50 && gen_count <= 70 ){
+                    System.out.print("\n\nELITES: ");
+                    for ( int i = 0; i < numElites; i++){
+                        System.out.print( temp3.get(i).fitness + ", " );
+                    }
+                }
+
+                // clearing old population
+                population.clear();
+
                 // fill up pop
+                //if ( gen_count >= 50 && gen_count <= 70 ) System.out.print("\n\nELITES SUPPOSEDLY ADDED: ");
                 for ( int i = 0; i < numElites; i++ )
                 {
-                    population.set(i,temp3.get(i));
+                    population.add(temp3.get(i));
+
+                    //if ( gen_count >= 50 && gen_count <= 70 ) System.out.print( population.get(i).fitness + ", ");
                 }
+                //if ( gen_count >= 50 && gen_count <= 70 ) System.out.print("\n\n");
 
                 for ( int i = numElites; i < population_size; i++ )
                 {
-                    population.set(i,new_population.get(i-numElites));
+                    population.add(new_population.get(i-numElites));
                 }
 
-                // calculate fitness
-                calculate_population_fitness(stateObs, population);
+                // population entering 
+                if ( gen_count >= 50 && gen_count <= 70 ){
+                    System.out.print("\n\nPOPULATION BEFORE: ");
+                    for ( int i = 0; i < population_size; i++){
+                        System.out.print( population.get(i).fitness + ", " );
+                    }
+                    System.out.print("\n\n");
+                }
+
+                // calculate fitness of new pop and clearing it
+                calculate_population_fitness(stateObs, new_population);
+                new_population.clear();
+
+                // // new population 
+                // if ( gen_count >= 50 && gen_count <= 70 ){
+                //     //calculate_population_fitness(stateObs, new_population);
+                //     System.out.print("\n\nNEW POPULATION: ");
+                //     for ( int i = numElites; i < population_size; i++){
+                //         System.out.print( population.get(i).fitness + ", " );
+                //     }
+                // }
+
+                // population after
+                if ( gen_count >= 50 && gen_count <= 70 ){
+                    System.out.print("\n\nPOPULATION AFTER: ");
+                    for ( int i = 0; i < population_size; i++){
+                        System.out.print( population.get(i).fitness + ", " );
+                    }
+                    System.out.print("\n\n");
+                }
 
                 // gets score from best individual and converts to string
                 best_score = population.get(0).fitness;
@@ -583,10 +587,11 @@ public class Agent extends AbstractPlayer {
 
                     five_million = false;
                 }
+
+                System.out.print(" Generations: "+gen_count);       // this prints no. of gens
             }
 
             final_text = final_text + "\n\n\n" + text;
-            // System.out.print(" Generations: "+gen_count);       // this prints no. of gens at the end of a Test
         }
 
         // calculating mean and std dev for each milestone
@@ -603,7 +608,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise02/Test", final_text);
+        handle_files.write_to_file("results/assignment03/exercise02/BomberTests2", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
