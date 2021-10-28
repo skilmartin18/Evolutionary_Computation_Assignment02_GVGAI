@@ -36,7 +36,7 @@ public class individual {
 
     // placing optionals i.e optional locks or enemies
     double optional_chance = 0.5;
-    double average_optionals = 3;
+    double average_optionals = 1.5;
 
     // random generator
     public Random rand = new Random();
@@ -246,8 +246,8 @@ public class individual {
     // or due to the best player not being able to complete the level.
     public boolean calc_disqual(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
-        // by default we will disqualify the level
-        boolean disqual = true;
+        // by default we will let the level pass
+        boolean disqual = false;
         
         
         ///// LEVEL IS COMPLETEABLE //////
@@ -257,7 +257,7 @@ public class individual {
         // create new agent to play game
         StepController stepAgent = new StepController(automatedAgent, 40);
         ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();
-        elapsedTimer.setMaxTimeMillis(5000);
+        elapsedTimer.setMaxTimeMillis(10000);
 
         /// run a few times incase it doesnt win 100% of the time
         /// running twice doubles computational overhead, so until 
@@ -272,10 +272,10 @@ public class individual {
             StateObservation bestState = stepAgent.getFinalState();
             
             // if the player wins then dont disqualify
-            if( (bestState.getGameWinner() == Types.WINNER.PLAYER_WINS) )
+            if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) || (bestState.getGameWinner() == Types.WINNER.NO_WINNER))
             {
-                System.out.println("i can win this level");
-                disqual = false;
+                System.out.println("i didnt beat the level");
+                disqual = true;
             }
 
         }
@@ -354,16 +354,16 @@ public class individual {
                     /// scores can be changed at a later date to confer more or less fitness
                     switch (adjacent_walls) {
                         case 0: 
-                            score += 0;                           
+                            score += -10;                           
                             break;
                         case 1: 
-                            score += 7;                           
+                            score += 10;                           
                             break;
                         case 2:           
-                            score += 3;                 
+                            score += 5;                 
                             break;
                         case 3:     
-                            score += 2;                       
+                            score += 1;                       
                             break;
                         case 4:     
                             score += 0;                       
@@ -412,10 +412,15 @@ public class individual {
     /// requireing the level to be feasible
     public void calc_fitness(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
-        // testing running of automated agent
+        // is the level completable, based on the NovelTS agent
         if(calc_disqual(automatedAgent, stateObs))
         {
             System.out.println("i cant play the level no");
+            fitness = -1000;
+        }
+        else
+        {
+            fitness = calc_wall_fitness();
         }
 
     }
