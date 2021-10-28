@@ -46,10 +46,12 @@ public class individual {
     char[] genotype = new char[(playable_width)*(playable_height)];
 
     // fitness stuff
-    int fitness = 0;
+    int wallFitness = 0;
+    int coverageFitness = 0; 
 
     // Variables for dominance ranking in biobjective GA
     ArrayList<individual> dominatedIndividuals; 
+    int dominanceRanking = 0; 
 
     /*   
          LEVEL MAPPINGS
@@ -100,6 +102,7 @@ public class individual {
     {
         // Set bi obj GA params
         dominatedIndividuals = new ArrayList<individual>(); 
+
 
         // create random genotype
         // initialise genotype as all floors
@@ -252,40 +255,44 @@ public class individual {
     // or due to the best player not being able to complete the level.
     public boolean calc_disqual(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
-        // by default we will disqualify the level
-        boolean disqual = true;
+        boolean disqual = false;
         
+        /* /// EVERYTHING IS PRESENT /// (legacy)
+        // this should be checked by the next part anyway
+        //int choice_count = 0;
+        // // disqualification factor 1-> are all choices present
+        // for(int i = 0; i < genotype.length; i++)
+        // {
+        //     if( (genotype[i] == 'g') || (genotype[i] == '+') || (genotype[i] == 'A') )
+        //     {
+        //         choice_count++;
+        //     }
+        // }
+
+        // if ( choice_count < 3)
+        // {
+        //     disqual = true;
+        // }
+        */
         
         ///// LEVEL IS COMPLETEABLE //////
-        // Play the game using the best agent, similar to the sampleGA
-        // method, but ive made it much simpler- no idea why theirs was so complex
+        /// Play the game using the best agent, copied from SampleGA
 
-        // create new agent to play game
         StepController stepAgent = new StepController(automatedAgent, 40);
         ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();
-        elapsedTimer.setMaxTimeMillis(5000);
+        elapsedTimer.setMaxTimeMillis(40);
+        stepAgent.playGame(stateObs.copy(), elapsedTimer);
+        
+        // gets end state of game
+        StateObservation bestState = stepAgent.getFinalState();
+        // ArrayList<Types.ACTIONS> bestSol = stepAgent.getSolution();
 
-        /// run a few times incase it doesnt win 100% of the time
-        /// running twice doubles computational overhead, so until 
-        /// we find infeasible levels passing through, we will run once
-        int game_num = 1;
-
-        for ( int i = 0; i < game_num; i++)
+        // if the player doesnt win i.e loses or cannot win
+        if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) )//|| (bestState.getGameWinner() == Types.WINNER.NO_WINNER) )
         {
-            stepAgent.playGame(stateObs.copy(), elapsedTimer);
-        
-            // gets end state of game
-            StateObservation bestState = stepAgent.getFinalState();
-            
-            // if the player wins then dont disqualify
-            if( (bestState.getGameWinner() == Types.WINNER.PLAYER_WINS) )
-            {
-                System.out.println("i can win this level");
-                disqual = false;
-            }
-
+            System.out.println("i cannot win this level");
+            disqual = true;
         }
-        
 
         return disqual;
     }
@@ -363,7 +370,7 @@ public class individual {
                             score += 0;                           
                             break;
                         case 1: 
-                            score += 7;                           
+                            score += 5;                           
                             break;
                         case 2:           
                             score += 3;                 
@@ -403,13 +410,10 @@ public class individual {
             }
         }
 
-        /// CONVERT THE AMOUNT OF COVERAGE INTO A SCORE
-        int non_walls_count = playspace-wall_count;
-        float wall_coverage = wall_count/playspace;
-        float floor_coverage = non_walls_count/playspace;
-        
+        float coverage = wall_count/playspace;
 
-        score = non_walls_count;
+        /// CONVERT THE AMOUNT OF COVERAGE INTO A SCORE
+
         return score;
     }
 
@@ -419,16 +423,16 @@ public class individual {
     public void calc_fitness(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
         // testing running of automated agent
-        if(calc_disqual(automatedAgent, stateObs))
+        if(!calc_disqual(automatedAgent, stateObs))
         {
-            System.out.println("i cant play the level no");
+            System.out.println("i can play the level yay");
         }
 
     }
 
     public int get_fitness()
     {
-        return fitness;
+        return wallFitness;
     }
 
 

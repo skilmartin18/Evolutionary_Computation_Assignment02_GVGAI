@@ -115,7 +115,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // Fill the new population with only the individuals above the threshold value
         // Essentially, removing individuals below that value
         int i = 0; 
-        while (competingIndividuals.get(i).fitness > fitnessThreshold )
+        while (competingIndividuals.get(i).wallFitness > fitnessThreshold )
         {
             selectedIndividuals.add(competingIndividuals.get(i)); 
             i++; 
@@ -157,13 +157,13 @@ public class LevelGenerator extends AbstractLevelGenerator{
         double second_best_fitness = Double.NEGATIVE_INFINITY;
 
         for (int i = 0; i < k; i++){
-            if ((candidates.get(i)).fitness >= best_fitness){
+            if ((candidates.get(i)).wallFitness >= best_fitness){
                 second_best_fitness = best_fitness;
-                best_fitness = (candidates.get(i)).fitness;
+                best_fitness = (candidates.get(i)).wallFitness;
                 best_individual_index = i;
                 
-            } else if ((candidates.get(i)).fitness > second_best_fitness){
-                second_best_fitness = (candidates.get(i)).fitness;
+            } else if ((candidates.get(i)).wallFitness > second_best_fitness){
+                second_best_fitness = (candidates.get(i)).wallFitness;
                 second_individual_index = i;
             }
         }
@@ -321,19 +321,29 @@ public class LevelGenerator extends AbstractLevelGenerator{
     }
     
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     /*   
         GA TO FIND BEST GAME LEVELS
                                         */
 
+    /// Biobjective GA works as follows for each generation:
+
+    // 1. Get initial population (randomly generated levels)
+    // 2. Sort into ranks using dominance heirachies
+    // 3. Sort by crowding distance as well
+    // 4. Based on rank and crowding, take top x amount of individuals
+    // 5. Discard the rest
+    // 6. Mutate and crossover the selected individuals
+    // 7. Combine parents and offspring to make new population
+    // 8. Repeat for n number of generations
+
+
     public ArrayList<individual> bi_Objective_GA(ArrayList<individual> population)
     {
         // Create return array
         ArrayList<individual> paretoFront = new ArrayList<individual>();
-
-        // Calculate fitness using weighted values for both objectives
-
-
 
         /// FAST NON DOMINATED SORTING /// 
         // This will rank all individuals in population
@@ -344,28 +354,21 @@ public class LevelGenerator extends AbstractLevelGenerator{
         }
 
 
-
         
 
 
-        // mutate and crossover with pareto front
-
-
-        // Some code to fix crowding issues
-
-
-        // Repeat until certain number of gens, or until minimal variation between generations is reached
-
-
-        // Return final pareto front
-
+        
         // Return best individuals
         return paretoFront;
     }
 
-	
+
 
 	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+
+
     /* 
         BORROWED FUNCTIONS FOR RUNNING AN AGENT
                                                 */
