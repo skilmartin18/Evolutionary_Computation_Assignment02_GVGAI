@@ -55,10 +55,59 @@ public class LevelGenerator extends AbstractLevelGenerator{
 	@Override
 	public String generateLevel(GameDescription game, ElapsedCpuTimer elapsedTimer) 
     {
-		
-        individual _ind = new individual();
-        String result = convert_genotype_to_map(_ind);
-        calculate_individual_fitness(_ind);
+		// ArrayList<individual> population = new ArrayList<individual>();
+        String result = " ";
+        // // initialise population
+        // for(int i = 0; i < 8; i++)
+        // {
+        //     population.add(new individual());
+        //     calculate_individual_fitness(population.get(i));
+        // }
+
+        // //run algo
+        // for(int gen = 0; gen < 15; gen++)
+        // {
+        //     System.out.println(gen);
+        //     ArrayList<individual> temp = get_elites(population, 2);
+
+        //     // mutate
+        //     for(int i = 0; i < 8; i++)
+        //     {
+        //         double prob = rand.nextDouble();
+
+        //         if(prob<0.7)
+        //         {
+        //             create_tile(population.get(i));
+        //         }
+        //         else
+        //         {
+        //             destroy_tile(population.get(i));
+        //         }
+        //     }
+
+        //     for(int i = 0; i < 8; i++)
+        //     {
+        //         calculate_individual_fitness(population.get(i));
+        //     }
+
+        //     // fill population
+        //     ArrayList<individual> temp2 = new ArrayList<individual>();
+        //     temp2.add(temp.get(0));
+        //     temp2.add(temp.get(1));
+        //     for(int i = 0; i < 3; i++)
+        //     {
+        //         ArrayList<individual> temp3 = tournament_selection(population, 2);
+        //         temp2.add(temp3.get(0));
+        //         temp2.add(temp3.get(1));
+        //     }
+            
+        //     population.clear();
+        //     population = temp2;
+        // }
+        
+        // individual _ind = get_elites(population, 1).get(0);
+        // String result = convert_genotype_to_map(_ind);
+        
 		return result;
 	}
 
@@ -228,6 +277,35 @@ public class LevelGenerator extends AbstractLevelGenerator{
         ind.genotype[rand.nextInt(ind.genotype.length)] = '.';
     }
 
+    // Randomly perform mutations
+    public void mutate(individual ind)
+    {
+        double decider = rand.nextDouble();
+
+        if (decider < 0.25)
+        {
+            // No mutation
+        }
+        else if (decider >= 0.25 && decider < 0.5)
+        {
+            // 2 of same mutation
+            create_tile(ind); 
+            create_tile(ind);
+
+        } else if (decider >= 0.5 && decider < 0.75)
+        {
+            // 2 different
+            create_tile(ind);
+            destroy_tile(ind);
+
+        } else 
+        {
+            // 2 same
+            destroy_tile(ind);
+            destroy_tile(ind);
+        }
+    }
+
     /// N-POINT CROSSOVER ///
     // returns an arrary list of 2 children individual objects after n-point parent crossover
     // takes in individual genotypes, not individuals
@@ -319,6 +397,15 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
         return result;
     }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Biobjective fitness function, for use in biobj GA
+
+    public void bi_objective_fitness(ArrayList<individual> population)
+    {
+
+    }
     
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -330,36 +417,120 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     /// Biobjective GA works as follows for each generation:
 
-    // 1. Get initial population (randomly generated levels)
-    // 2. Sort into ranks using dominance heirachies
-    // 3. Sort by crowding distance as well
-    // 4. Based on rank and crowding, take top x amount of individuals
-    // 5. Discard the rest
-    // 6. Mutate and crossover the selected individuals
-    // 7. Combine parents and offspring to make new population
+    // 1. Get initial population of M randomly generated levels
+    // 2. Select parents for crossover and mutation 
+    // 3. Create offspring until number equals same as parent population 
+    // 4. Combine parents and offspring to make new population of size 2*M
+    // 5. Sort total population into ranks using dominance heirachies
+    // 6. Sort each rank by crowding distance 
+    // 7. Based on rank and crowding, take top M amount of individuals, discard the bottom M
     // 8. Repeat for n number of generations
 
-
-    public ArrayList<individual> bi_Objective_GA(ArrayList<individual> population)
+    public ArrayList<individual> bi_Objective_GA(ArrayList<individual> population, int numGens)
     {
-        // Create return array
-        ArrayList<individual> paretoFront = new ArrayList<individual>();
+        int selectionSize = population.size(); 
+        
+        // // Create return array
+        // ArrayList<individual> paretoFront = new ArrayList<individual>();
 
-        /// FAST NON DOMINATED SORTING /// 
-        // This will rank all individuals in population
-        // Rank[0] is the first rank, and is the pareto front
-        for (individual _individual : population)
+        // Create deep copy of population
+        ArrayList<individual> pop = new ArrayList<individual>();
+        System.arraycopy(population, 0, pop, 0, population.size()); 
+
+        // For each generation
+        for (int i=0; i<numGens; i++)
         {
+            // Create offspring array 
+            ArrayList<individual> offspring = new ArrayList<>(); 
+
+            // Create new individuals until offspring size = population size
+            while (offspring.size() < pop.size())
+            {
+                // Get index of random parents
+                int fatherIndex = rand.nextInt(pop.size());
+                int motherIndex = rand.nextInt(pop.size());
+
+                // Ensure not same individual twice selected
+                while (motherIndex == fatherIndex)
+                {
+                    motherIndex = rand.nextInt(pop.size());
+                }
+
+                // Do crossover, **Choose number of crossover points
+                ArrayList<individual> children = n_point_crossover(pop.get(motherIndex).genotype, pop.get(fatherIndex).genotype, 3); 
+
+                // Mutate the children
+                mutate(children.get(0));
+                mutate(children.get(1));   
+
+                // Add the two children to offspring
+                offspring.addAll(children); 
+            }
+
+            // Once offspring size matches parent pop size, combine into one pop
+            pop.addAll(offspring);
+
+            // Calculate dominance ranks and crowding distance for all individuals
+            bi_objective_fitness(pop); 
+
+            /// SORT THE POPULATION ///
+            // We need the population sorted from lowest rank to highest (rank 1 being best rank)
+            // Then WITHIN each rank, the individuals need to be sorted from highest crowding distance to lowest
+
+            // Get number of ranks to begin with
+            int numRanks = 0; 
+            for (int j=0; j<pop.size(); j++)
+            {
+                if (pop.get(j).rank > numRanks)
+                {
+                    numRanks = pop.get(j).rank; 
+                }
+            }
             
+            // Create ordered population list
+            ArrayList<individual> orderedPop = new ArrayList<individual>();
+            
+            // For each rank... 
+            for (int j=0; j<numRanks; j++)
+            {
+                // Create a temporary list
+                ArrayList<individual> tempRank = new ArrayList<individual>();
+
+                // Then loop through the whole population
+                for (int k=0; k<pop.size(); k++)
+                {
+                    // And build up a sublist of individuals from the current rank
+                    if (pop.get(k).rank == j+1)
+                    {
+                        tempRank.add(pop.get(k)); 
+                    }
+                }
+
+                // Now order the temporary list in descending order of crowding distance
+                Collections.sort(tempRank, Comparator.comparingInt(individual :: get_crowdingDistance));
+                Collections.reverse(tempRank);
+
+                // Then add the sorted rank to a new population list
+                orderedPop.addAll(tempRank); 
+            }
+
+            // Now that we have our full population ordered, add the top individuals back into pop
+            for (int j=0; j<selectionSize; j++)
+            {
+                pop.set(j,orderedPop.get(j)); 
+            }
         }
 
+        // /// FAST NON DOMINATED SORTING /// 
+        // // This will rank all individuals in population
+        // // Rank[0] is the first rank, and is the pareto front
+        // for (individual _individual : population)
+        // {
+            
+        // }
 
-        
-
-
-        
-        // Return best individuals
-        return paretoFront;
+        // Return final population
+        return pop;
     }
 
 

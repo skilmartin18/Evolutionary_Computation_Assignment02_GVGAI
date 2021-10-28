@@ -36,7 +36,7 @@ public class individual {
 
     // placing optionals i.e optional locks or enemies
     double optional_chance = 0.5;
-    double average_optionals = 3;
+    double average_optionals = 1.5;
 
     // random generator
     public Random rand = new Random();
@@ -50,8 +50,20 @@ public class individual {
     int coverageFitness = 0; 
 
     // Variables for dominance ranking in biobjective GA
-    ArrayList<individual> dominatedIndividuals; 
-    int dominanceRanking = 0; 
+    // ArrayList<individual> dominatedIndividuals; 
+    // int dominanceRanking = 0; 
+    int rank = 0; 
+    int crowdingDistance = 0; 
+
+    public int get_rank()
+    {
+        return rank; 
+    }
+
+    public int get_crowdingDistance()
+    {
+        return crowdingDistance; 
+    }
 
     /*   
          LEVEL MAPPINGS
@@ -255,6 +267,7 @@ public class individual {
     // or due to the best player not being able to complete the level.
     public boolean calc_disqual(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
+        // by default we will let the level pass
         boolean disqual = false;
         
         /* /// EVERYTHING IS PRESENT /// (legacy)
@@ -280,12 +293,26 @@ public class individual {
 
         StepController stepAgent = new StepController(automatedAgent, 40);
         ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();
-        elapsedTimer.setMaxTimeMillis(40);
-        stepAgent.playGame(stateObs.copy(), elapsedTimer);
+        elapsedTimer.setMaxTimeMillis(10000);
+
+        /// run a few times incase it doesnt win 100% of the time
+        /// running twice doubles computational overhead, so until 
+        /// we find infeasible levels passing through, we will run once
+        int game_num = 1;
+
+        for ( int i = 0; i < game_num; i++)
+        {
+            stepAgent.playGame(stateObs.copy(), elapsedTimer);
         
-        // gets end state of game
-        StateObservation bestState = stepAgent.getFinalState();
-        // ArrayList<Types.ACTIONS> bestSol = stepAgent.getSolution();
+            // gets end state of game
+            StateObservation bestState = stepAgent.getFinalState();
+            
+            // if the player wins then dont disqualify
+            if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) || (bestState.getGameWinner() == Types.WINNER.NO_WINNER))
+            {
+                System.out.println("i didnt beat the level");
+                disqual = true;
+            }
 
         // if the player doesnt win i.e loses or cannot win
         if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) )//|| (bestState.getGameWinner() == Types.WINNER.NO_WINNER) )
@@ -367,16 +394,16 @@ public class individual {
                     /// scores can be changed at a later date to confer more or less fitness
                     switch (adjacent_walls) {
                         case 0: 
-                            score += 0;                           
+                            score += -10;                           
                             break;
                         case 1: 
-                            score += 5;                           
+                            score += 10;                           
                             break;
                         case 2:           
-                            score += 3;                 
+                            score += 5;                 
                             break;
                         case 3:     
-                            score += 2;                       
+                            score += 1;                       
                             break;
                         case 4:     
                             score += 0;                       
@@ -422,10 +449,15 @@ public class individual {
     /// requireing the level to be feasible
     public void calc_fitness(AbstractPlayer automatedAgent, StateObservation stateObs)
     {
-        // testing running of automated agent
-        if(!calc_disqual(automatedAgent, stateObs))
+        // is the level completable, based on the NovelTS agent
+        if(calc_disqual(automatedAgent, stateObs))
         {
-            System.out.println("i can play the level yay");
+            System.out.println("i cant play the level no");
+            fitness = -1000;
+        }
+        else
+        {
+            fitness = calc_wall_fitness();
         }
 
     }
