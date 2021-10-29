@@ -36,6 +36,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
     GameDescription game;
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
+    int pop_size = 10;
+    int numGens = 10;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -61,8 +63,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 		ArrayList<individual> population = new ArrayList<individual>();
         ArrayList<individual> final_population = new ArrayList<individual>();
         String result = " ";
-        int pop_size = 10;
-        int numGens = 10;
+
         // initialise population
         for(int i = 0; i < pop_size; i++)
         {
@@ -374,10 +375,16 @@ public class LevelGenerator extends AbstractLevelGenerator{
         return true;
     }
 
-
+    static int count_fitness = 0;
     // Function that runs all 3 functions above, calculating ranks and crowding distances
     public void bi_objective_fitness(ArrayList<individual> population)
     {
+        // Counting
+        float percentage = (count_fitness/numGens*pop_size)*100;
+        System.out.print( "\r" + count_fitness + "/" + numGens*pop_size + " " + "(" );
+        System.out.printf( "%.1f",percentage );
+        System.out.print( "%" + ")" );
+
         // Begin by clearing existing rank and crowding values in population
         // This is because new offspring have been added so the ranks are not longer valid
         for (individual ind : population)
@@ -466,11 +473,11 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // For each generation
         for (int i=0; i<numGens; i++)
         {
-            // Malakia
-            float percentage = (i+1/numGens)*100;
-            System.out.print( "\r" + (i+1) + "/" + numGens + " " + "(" );
-            System.out.printf( "%.1f",percentage );
-            System.out.print( "%" + ")" );
+            // // Malakia
+            // float percentage = (i+1/numGens)*100;
+            // System.out.print( "\r" + (i+1) + "/" + numGens + " " + "(" );
+            // System.out.printf( "%.1f",percentage );
+            // System.out.print( "%" + ")" );
             
             // Create offspring array              
             ArrayList<individual> offspring = new ArrayList<>(); 
