@@ -676,11 +676,11 @@ public class LevelGenerator extends AbstractLevelGenerator{
             {
                 pop.set(j,orderedPop.get(j)); 
             }
+
         }
 
         // Some code for caculating hypervolume of the final population
-
-
+        
         // Some code for printing final population genotypes to file 
 
         // Return final population

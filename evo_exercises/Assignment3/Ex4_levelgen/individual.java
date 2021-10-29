@@ -48,6 +48,7 @@ public class individual {
     // fitness stuff
     int wallFitness = 0;
     int coverageFitness = 0; 
+    int feasible_fitness = 0;
     double normalisedWallFitness = 0;
     double normalisedCoverageFitness = 0; 
 
@@ -321,11 +322,6 @@ public class individual {
                 disqual = true;
             }
 
-        // if the player doesnt win i.e loses or cannot win
-        if( (bestState.getGameWinner() == Types.WINNER.PLAYER_LOSES) )//|| (bestState.getGameWinner() == Types.WINNER.NO_WINNER) )
-        {
-            System.out.println("i cannot win this level");
-            disqual = true;
         }
 
         return disqual;
@@ -445,10 +441,10 @@ public class individual {
         }
 
         float coverage = wall_count/playspace;
-
+        int tile_count = playspace - wall_count;
         /// CONVERT THE AMOUNT OF COVERAGE INTO A SCORE
 
-        return score;
+        return tile_count;
     }
 
     ///// CALC FITNESS //////
@@ -460,11 +456,11 @@ public class individual {
         if(calc_disqual(automatedAgent, stateObs))
         {
             System.out.println("i cant play the level no");
-            fitness = -1000;
+            
         }
         else
         {
-            fitness = calc_wall_fitness();
+            feasible_fitness = calc_wall_fitness();
         }
 
     }
