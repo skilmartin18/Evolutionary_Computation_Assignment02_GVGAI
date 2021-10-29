@@ -109,10 +109,10 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // so have gone with the NovelTS controller to test level possibility
         try
         {
-        Class agentClass = Class.forName("NovelTS.Agent");
-		Constructor agentConst = agentClass.getConstructor(new Class[]{StateObservation.class, ElapsedCpuTimer.class});
-		automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation(ind).copy(), null);
-        }
+            Class agentClass = Class.forName("NovelTS.Agent");
+            Constructor agentConst = agentClass.getConstructor(new Class[]{StateObservation.class, ElapsedCpuTimer.class});
+            automatedAgent = (AbstractPlayer)agentConst.newInstance(getStateObservation(ind).copy(), null);
+            }
         catch(Exception e)
         {
             e.printStackTrace();
