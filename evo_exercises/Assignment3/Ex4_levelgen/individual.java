@@ -456,11 +456,13 @@ public class individual {
         if(calc_disqual(automatedAgent, stateObs))
         {
             System.out.println("i cant play the level no");
-            
+            wallFitness = 0;
+            coverageFitness = 0;
         }
         else
         {
-            feasible_fitness = calc_wall_fitness();
+            wallFitness = calc_wall_fitness();
+            coverageFitness = calc_coverage_fitness();
         }
 
     }

@@ -339,7 +339,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
                 // Get vector positions of the three individuals, based upon 2 fitness vals
                 Vector2d currentPos = new tools.Vector2d(current.normalisedWallFitness, current.normalisedCoverageFitness); 
                 Vector2d leftPos = new tools.Vector2d(left.normalisedWallFitness, left.normalisedCoverageFitness); 
-                Vector2d rightPos = new tools.Vector2d(left.normalisedWallFitness, left.normalisedCoverageFitness); 
+                Vector2d rightPos = new tools.Vector2d(right.normalisedWallFitness, right.normalisedCoverageFitness); 
 
                 // Calc distance from current to left and right vecs
                 double leftDistance = currentPos.dist(leftPos); 
@@ -364,14 +364,14 @@ public class LevelGenerator extends AbstractLevelGenerator{
             }
 
             // Else, if indA fitness is higher (better) than or equal to indB on both fronts, indA is not dominated 
-            if (indB.wallFitness <= indA.wallFitness && indB.coverageFitness <= indA.coverageFitness)
+            if ( (indB.wallFitness >= indA.wallFitness) && (indB.coverageFitness >= indA.coverageFitness) )
             {
-                return true; 
+                return false; 
             }
         }
 
         // Otherwise, indA is dominated
-        return false;
+        return true;
     }
 
 
