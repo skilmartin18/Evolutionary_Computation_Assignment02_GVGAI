@@ -20,10 +20,12 @@ import ontology.Types;
 import ontology.Types.WINNER;
 import tools.LevelMapping;
 import tools.StepController;
+import tools.Vector2d;
 
 import evo_exercises.Assignment3.Ex4_levelgen.individual;
 import handle_files.handle_files;
 import ontology.effects.binary.WallStop;
+//import serialization.Vector2d;
 
 // THIS PROGRAM IS HARDCODED TO WORK ONLY FOR SPECIFIC GAMES
 
@@ -164,7 +166,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // Fill the new population with only the individuals above the threshold value
         // Essentially, removing individuals below that value
         int i = 0; 
-        while (competingIndividuals.get(i).fitness > fitnessThreshold )
+        while (competingIndividuals.get(i).wallFitness > fitnessThreshold )
         {
             selectedIndividuals.add(competingIndividuals.get(i)); 
             i++; 
@@ -206,13 +208,13 @@ public class LevelGenerator extends AbstractLevelGenerator{
         double second_best_fitness = Double.NEGATIVE_INFINITY;
 
         for (int i = 0; i < k; i++){
-            if ((candidates.get(i)).fitness >= best_fitness){
+            if ((candidates.get(i)).wallFitness >= best_fitness){
                 second_best_fitness = best_fitness;
-                best_fitness = (candidates.get(i)).fitness;
+                best_fitness = (candidates.get(i)).wallFitness;
                 best_individual_index = i;
                 
-            } else if ((candidates.get(i)).fitness > second_best_fitness){
-                second_best_fitness = (candidates.get(i)).fitness;
+            } else if ((candidates.get(i)).wallFitness > second_best_fitness){
+                second_best_fitness = (candidates.get(i)).wallFitness;
                 second_individual_index = i;
             }
         }
@@ -277,6 +279,34 @@ public class LevelGenerator extends AbstractLevelGenerator{
         ind.genotype[rand.nextInt(ind.genotype.length)] = '.';
     }
 
+    // Randomly perform mutations
+    public void mutate(individual ind)
+    {
+        double decider = rand.nextDouble();
+
+        if (decider < 0.25)
+        {
+            // No mutation
+        }
+        else if (decider >= 0.25 && decider < 0.5)
+        {
+            // 2 of same mutation
+            create_tile(ind); 
+            create_tile(ind);
+
+        } else if (decider >= 0.5 && decider < 0.75)
+        {
+            // 2 different
+            create_tile(ind);
+            destroy_tile(ind);
+
+        } else 
+        {
+            // 2 same
+            destroy_tile(ind);
+            destroy_tile(ind);
+        }
+    }
 
     /// N-POINT CROSSOVER ///
     // returns an arrary list of 2 children individual objects after n-point parent crossover
@@ -369,27 +399,307 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
         return result;
     }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /* 
+        HELPER FUNCTIONS FOR GA
+                                 */
+
+
+    // Normalises fitness values to make sure there is not a bias towards one objective
+    public void normaliseFitnesses(ArrayList<individual> population)
+    {
+        // Find max fitness values in population
+        int maxWallFitness = 0; 
+        int maxCoverageFitness = 0;
+        for (int i=0; i<population.size(); i++)
+        {
+            if (population.get(i).wallFitness > maxWallFitness)
+            {
+                maxWallFitness = population.get(i).wallFitness;
+            }
+            if (population.get(i).coverageFitness > maxCoverageFitness)
+            {
+                maxCoverageFitness = population.get(i).coverageFitness;
+            }
+        } 
+
+        // Modify normalised fitness values
+        for (int i=0; i<population.size(); i++)
+        {
+            population.get(i).normalisedWallFitness = population.get(i).wallFitness / maxWallFitness;
+            population.get(i).normalisedCoverageFitness = population.get(i).coverageFitness / maxCoverageFitness;
+
+        }
+    }
+
+
+    // Calculates the crowding distances for all individuals in a rank
+    public void calcCrowdingDistance(ArrayList<individual> rank)
+    {
+        // // Deep copy the rank
+        // ArrayList<individual> rankCopy = new ArrayList<individual>();
+        // System.arraycopy(rank, 0, rankCopy, 0, rank.size()); 
+
+        // Order the rank based on any of the two normalised fitness values
+        Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalisedWallFitness));
+
+        // Loop through the rank (the front)
+        for (int i=0; i<rank.size(); i++)
+        {
+
+            // If we are at first or last individual, assign +inf. crowding distance
+            if ( i==0 || i==rank.size()-1 )
+            {
+                rank.get(i).crowdingDistance = Double.POSITIVE_INFINITY; 
+            }
+            // All other cases...
+            else
+            {
+                // Get references to current, left, and right individuals
+                individual current = rank.get(i);
+                individual left = rank.get(i-1);
+                individual right = rank.get(i+1);
+
+                // Get vector positions of the three individuals, based upon 2 fitness vals
+                Vector2d currentPos = new tools.Vector2d(current.normalisedWallFitness, current.normalisedCoverageFitness); 
+                Vector2d leftPos = new tools.Vector2d(left.normalisedWallFitness, left.normalisedCoverageFitness); 
+                Vector2d rightPos = new tools.Vector2d(right.normalisedWallFitness, right.normalisedCoverageFitness); 
+
+                // Calc distance from current to left and right vecs
+                double leftDistance = currentPos.dist(leftPos); 
+                double rightDistance = currentPos.dist(rightPos); 
+
+                // Crowding distance is the total of these two values
+                rank.get(i).crowdingDistance = leftDistance + rightDistance; 
+            }
+        }
+    }
+
+
+    // Check if an individual is not dominated by any other solutions in population
+    public boolean notDominated(individual indA, ArrayList<individual> toBeRanked)
+    {
+        for (individual indB : toBeRanked)
+        {
+            // If we're comparing same individual, do nothing
+            if (indA == indB)
+            {
+
+            }
+
+            // Else, if indA fitness is higher (better) than or equal to indB on both fronts, indA is not dominated 
+            if ( (indB.wallFitness >= indA.wallFitness) && (indB.coverageFitness >= indA.coverageFitness) )
+            {
+                return false; 
+            }
+        }
+
+        // Otherwise, indA is dominated
+        return true;
+    }
+
+
+    // Function that runs all 3 functions above, calculating ranks and crowding distances
+    public void bi_objective_fitness(ArrayList<individual> population)
+    {
+        // Begin by clearing existing rank and crowding values in population
+        // This is because new offspring have been added so the ranks are not longer valid
+        for (individual ind : population)
+        {
+            ind.rank = -1;
+            ind.crowdingDistance = -1;  
+        }
+
+        // Normalise the fitness values
+        normaliseFitnesses(population);
+
+        // Shallow copy of population
+        ArrayList<individual> remainingToBeRanked = population; 
+
+        // Create an arraylist of arraylists
+        ArrayList<ArrayList<individual>> allRanks = new ArrayList<ArrayList<individual>>(); 
+
+        // Now sort the population into fronts:
+        int currentRank = 1; 
+
+        // While remaining to be ranked has individuals still remaining...
+        while(!remainingToBeRanked.isEmpty())
+        {
+            ArrayList<individual> indsInCurrentRank = new ArrayList<individual>();
+
+            for (int i=0; i<remainingToBeRanked.size(); i++)
+            {
+                individual ind = remainingToBeRanked.get(i);
+                if ( notDominated(ind, remainingToBeRanked) )
+                {
+                    ind.rank = currentRank; 
+                    indsInCurrentRank.add(ind);
+                }
+            }
+
+            // Remove all ranked individuals from the "toBeRanked" list
+            for (individual ind : indsInCurrentRank)
+            {
+                remainingToBeRanked.remove(ind);
+            }
+
+            // Add rank to the list that holds ranks
+            allRanks.add(indsInCurrentRank);
+
+            // Increment to next rank
+            currentRank++; 
+        }
+
+        // Loop through all ranks, and calculate crowding distances
+        for (ArrayList<individual> rank : allRanks)
+        {
+            calcCrowdingDistance(rank);
+        }
+    }
     
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     /*   
         GA TO FIND BEST GAME LEVELS
                                         */
 
-    public ArrayList<individual> bi_Objective_GA(ArrayList<individual> population)
+    /// Biobjective GA works as follows for each generation:
+
+    // 1. Get initial population of M randomly generated levels
+    // 2. Select parents for crossover and mutation 
+    // 3. Create offspring until number equals same as parent population 
+    // 4. Combine parents and offspring to make new population of size 2*M
+    // 5. Sort total population into ranks using dominance heirachies - see above function
+    // 6. Sort each rank by crowding distance - see above function
+    // 7. Based on rank and crowding, take top M amount of individuals, discard the bottom M
+    // 8. Repeat for n number of generations
+
+    public ArrayList<individual> bi_Objective_GA(ArrayList<individual> population, int numGens)
     {
-        // Create return array
-        ArrayList<individual> paretoFront = new ArrayList<individual>();
+        int selectionSize = population.size(); 
+        
+        // // Create return array
+        // ArrayList<individual> paretoFront = new ArrayList<individual>();
 
-        // Do some fun stuff...
+        // Create deep copy of population
+        ArrayList<individual> pop = new ArrayList<individual>();
+        System.arraycopy(population, 0, pop, 0, population.size()); 
 
-        // Return best individuals
-        return paretoFront;
+        // For each generation
+        for (int i=0; i<numGens; i++)
+        {
+            // Create offspring array              
+            ArrayList<individual> offspring = new ArrayList<>(); 
+
+            // Create new individuals until offspring size = population size
+            while (offspring.size() < pop.size())
+            {
+                // Get index of random parents
+                int fatherIndex = rand.nextInt(pop.size());
+                int motherIndex = rand.nextInt(pop.size());
+
+                // Ensure not same individual twice selected
+                while (motherIndex == fatherIndex)
+                {
+                    motherIndex = rand.nextInt(pop.size());
+                }
+
+                // Do crossover, **Choose number of crossover points
+                ArrayList<individual> children = n_point_crossover(pop.get(motherIndex).genotype, pop.get(fatherIndex).genotype, 3); 
+
+                // Mutate the children
+                mutate(children.get(0));
+                mutate(children.get(1));   
+
+                // Add the two children to offspring
+                offspring.addAll(children); 
+            }
+
+            // Once offspring size matches parent pop size, combine into one pop
+            pop.addAll(offspring);
+
+            // ***Calculate coverage and wall fitness for each individual in pop BEFORE dominance ranking
+            //
+            //
+            //
+
+            // Calculate dominance ranks and crowding distance for all individuals
+            bi_objective_fitness(pop); 
+
+            /// SORT THE POPULATION ///
+            // We need the population sorted from lowest rank to highest (rank 1 being best rank)
+            // Then WITHIN each rank, the individuals need to be sorted from highest crowding distance to lowest
+
+            // Get number of ranks to begin with
+            int numRanks = 0; 
+            for (int j=0; j<pop.size(); j++)
+            {
+                if (pop.get(j).rank > numRanks)
+                {
+                    numRanks = pop.get(j).rank; 
+                }
+            }
+            
+            // Create ordered population list
+            ArrayList<individual> orderedPop = new ArrayList<individual>();
+            
+            // For each rank... 
+            for (int j=0; j<numRanks; j++)
+            {
+                // Create a temporary list
+                ArrayList<individual> tempRank = new ArrayList<individual>();
+
+                // Then loop through the whole population
+                for (int k=0; k<pop.size(); k++)
+                {
+                    // And build up a sublist of individuals from the current rank
+                    if (pop.get(k).rank == j+1)
+                    {
+                        tempRank.add(pop.get(k)); 
+                    }
+                }
+
+                // Now order the temporary list in descending order of crowding distance
+                Collections.sort(tempRank, Comparator.comparingDouble(individual :: get_crowdingDistance));
+                Collections.reverse(tempRank);
+
+                // Then add the sorted rank to a new population list
+                orderedPop.addAll(tempRank); 
+            }
+
+            // Now that we have our full population ordered, add the top individuals back into pop
+            for (int j=0; j<selectionSize; j++)
+            {
+                pop.set(j,orderedPop.get(j)); 
+            }
+
+        }
+
+<<<<<<< HEAD
+        // Some code for calculating hypervolume of the final population
+        
+
+=======
+        // Some code for caculating hypervolume of the final population
+        
+>>>>>>> d21d48331f515c12a537eaf93b2115b81238d945
+        // Some code for printing final population genotypes to file 
+
+        // Return final population
+        return pop;
     }
 
-	
+
 
 	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+
+
     /* 
         BORROWED FUNCTIONS FOR RUNNING AN AGENT
                                                 */

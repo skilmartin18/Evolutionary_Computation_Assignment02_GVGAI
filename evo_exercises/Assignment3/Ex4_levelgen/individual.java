@@ -46,7 +46,32 @@ public class individual {
     char[] genotype = new char[(playable_width)*(playable_height)];
 
     // fitness stuff
-    int fitness = 0;
+    int wallFitness = 0;
+    int coverageFitness = 0; 
+    int feasible_fitness = 0;
+    double normalisedWallFitness = 0;
+    double normalisedCoverageFitness = 0; 
+
+    // Variables for dominance ranking in biobjective GA
+    // ArrayList<individual> dominatedIndividuals; 
+    // int dominanceRanking = 0; 
+    int rank = 0; 
+    double crowdingDistance = 0; 
+
+    public int get_rank()
+    {
+        return rank; 
+    }
+
+    public double get_crowdingDistance()
+    {
+        return crowdingDistance; 
+    }
+
+    public double get_normalisedWallFitness()
+    {
+        return normalisedWallFitness; 
+    }
 
     /*   
          LEVEL MAPPINGS
@@ -95,6 +120,10 @@ public class individual {
 
     public individual()
     {
+        // // Set bi obj GA params
+        // dominatedIndividuals = new ArrayList<individual>(); 
+
+
         // create random genotype
         // initialise genotype as all floors
         for(int i = 0; i < genotype.length; i++)
@@ -249,12 +278,27 @@ public class individual {
         // by default we will let the level pass
         boolean disqual = false;
         
+        /* /// EVERYTHING IS PRESENT /// (legacy)
+        // this should be checked by the next part anyway
+        //int choice_count = 0;
+        // // disqualification factor 1-> are all choices present
+        // for(int i = 0; i < genotype.length; i++)
+        // {
+        //     if( (genotype[i] == 'g') || (genotype[i] == '+') || (genotype[i] == 'A') )
+        //     {
+        //         choice_count++;
+        //     }
+        // }
+
+        // if ( choice_count < 3)
+        // {
+        //     disqual = true;
+        // }
+        */
         
         ///// LEVEL IS COMPLETEABLE //////
-        // Play the game using the best agent, similar to the sampleGA
-        // method, but ive made it much simpler- no idea why theirs was so complex
+        /// Play the game using the best agent, copied from SampleGA
 
-        // create new agent to play game
         StepController stepAgent = new StepController(automatedAgent, 40);
         ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();
         elapsedTimer.setMaxTimeMillis(10000);
@@ -279,7 +323,6 @@ public class individual {
             }
 
         }
-        
 
         return disqual;
     }
@@ -397,14 +440,11 @@ public class individual {
             }
         }
 
+        float coverage = wall_count/playspace;
+        int tile_count = playspace - wall_count;
         /// CONVERT THE AMOUNT OF COVERAGE INTO A SCORE
-        int non_walls_count = playspace-wall_count;
-        float wall_coverage = wall_count/playspace;
-        float floor_coverage = non_walls_count/playspace;
-        
 
-        score = non_walls_count;
-        return score;
+        return tile_count;
     }
 
     ///// CALC FITNESS //////
@@ -416,18 +456,28 @@ public class individual {
         if(calc_disqual(automatedAgent, stateObs))
         {
             System.out.println("i cant play the level no");
-            fitness = -1000;
+<<<<<<< HEAD
+            wallFitness = 0;
+            coverageFitness = 0;
         }
         else
         {
-            fitness = calc_wall_fitness();
+            wallFitness = calc_wall_fitness();
+            coverageFitness = calc_coverage_fitness();
+=======
+            
+        }
+        else
+        {
+            feasible_fitness = calc_wall_fitness();
+>>>>>>> d21d48331f515c12a537eaf93b2115b81238d945
         }
 
     }
 
     public int get_fitness()
     {
-        return fitness;
+        return wallFitness;
     }
 
 
