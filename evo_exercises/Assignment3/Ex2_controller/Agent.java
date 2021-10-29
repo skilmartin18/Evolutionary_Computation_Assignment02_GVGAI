@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 20;
-    public int genotype_size = 300;
+    public int population_size = 100;
+    public int genotype_size = 500;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -267,7 +267,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 5;
+        int acceptable_action_amount = 15;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -435,7 +435,7 @@ public class Agent extends AbstractPlayer {
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
         //setting number of elites
-        int numElites = 6;
+        int numElites = 10;
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -476,7 +476,7 @@ public class Agent extends AbstractPlayer {
 
             int gen_count = 0;
 
-            // resetting advance count and once variable (michaels dumb idea)
+            // resetting advance count and once variable
             advance_count = 0;
             once = false;
             test_counter++;
@@ -504,7 +504,7 @@ public class Agent extends AbstractPlayer {
                 {   
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 10);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 5);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
@@ -513,7 +513,7 @@ public class Agent extends AbstractPlayer {
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
                     // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,15));
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,40));
                 }
 
                 // select elites (should return n_Elites of population, this is set at the start of act())
@@ -599,7 +599,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise02/BoulderChaseTests", final_text);
+        handle_files.write_to_file("results/assignment03/exercise02/GarbageCollectorTests", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
