@@ -475,6 +475,7 @@ public class individual {
 
     }
 
+    
     public int get_fitness()
     {
         return wallFitness;
