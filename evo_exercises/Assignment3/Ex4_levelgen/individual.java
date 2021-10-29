@@ -48,23 +48,28 @@ public class individual {
     // fitness stuff
     int wallFitness = 0;
     int coverageFitness = 0; 
-    int normalisedWallFitness = 0;
-    int normalisedCoverageFitness = 0; 
+    double normalisedWallFitness = 0;
+    double normalisedCoverageFitness = 0; 
 
     // Variables for dominance ranking in biobjective GA
     // ArrayList<individual> dominatedIndividuals; 
     // int dominanceRanking = 0; 
     int rank = 0; 
-    int crowdingDistance = 0; 
+    double crowdingDistance = 0; 
 
     public int get_rank()
     {
         return rank; 
     }
 
-    public int get_crowdingDistance()
+    public double get_crowdingDistance()
     {
         return crowdingDistance; 
+    }
+
+    public double get_normalisedWallFitness()
+    {
+        return normalisedWallFitness; 
     }
 
     /*   
