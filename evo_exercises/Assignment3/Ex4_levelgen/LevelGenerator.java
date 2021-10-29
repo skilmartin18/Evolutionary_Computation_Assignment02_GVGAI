@@ -403,7 +403,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         normaliseFitnesses(population);
         System.out.print("fart1");
         // Shallow copy of population
-        ArrayList<individual> remainingToBeRanked = population; 
+        ArrayList<individual> remainingToBeRanked = new ArrayList<individual>(population); 
         System.out.print("fart2");
         // Create an arraylist of arraylists
         ArrayList<ArrayList<individual>> allRanks = new ArrayList<ArrayList<individual>>(); 
@@ -414,45 +414,65 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // While remaining to be ranked has individuals still remaining...
         while(!remainingToBeRanked.isEmpty())
         {
+            
             ArrayList<individual> indsInCurrentRank = new ArrayList<individual>();
+            ArrayList<Integer> addedIndices = new ArrayList<Integer>();
 
             for (int i=0; i<remainingToBeRanked.size(); i++)
             {
                 individual ind = remainingToBeRanked.get(i);
-                if ( notDominated(ind, remainingToBeRanked) )
+                if ( notDominated(ind, remainingToBeRanked ))
                 {
+                    System.out.println("NON DOMINATED INDIVIDUAL REACHED");
                     ind.rank = currentRank; 
                     indsInCurrentRank.add(ind);
+                    addedIndices.add(i);
                 }
             }
 
-            // Remove all ranked individuals from the "toBeRanked" list
-            for (individual ind : indsInCurrentRank)
+            if (indsInCurrentRank.size() == 0)
             {
-                remainingToBeRanked.remove(ind);
+                allRanks.add(remainingToBeRanked);
+                break;
+            } else 
+            {
+                // Add rank to the list that holds ranks
+                allRanks.add(indsInCurrentRank);
             }
+
+            // Remove all ranked individuals from the "toBeRanked" list
+            Collections.sort(addedIndices);
+            int removed = 0; 
+            System.out.println("Size before " + remainingToBeRanked.size());
+
+            for (int index : addedIndices)
+            {
+                System.out.println("FOR LOOP RUNNING"); 
+                remainingToBeRanked.remove(index-removed);
+                removed++; 
+            }
+
+            System.out.println("Size after " + remainingToBeRanked.size());
 
             System.out.print("\n\n\n"); 
 
            for (int i=0;i<remainingToBeRanked.size(); i++)
            {
-             System.out.println("Individual " + i + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
+             System.out.println("Individual " + i + "wall and coverage fitness: " + remainingToBeRanked.get(i).wallFitness + ", " + remainingToBeRanked.get(i).coverageFitness);
            }
 
-
-
-            // Add rank to the list that holds ranks
-            allRanks.add(indsInCurrentRank);
+           
 
             // Increment to next rank
             currentRank++; 
         }
         System.out.print("fart4");
         // Loop through all ranks, and calculate crowding distances
-        for (ArrayList<individual> rank : allRanks)
+        for (ArrayList<individual> rank : allRanks) 
         {
             calcCrowdingDistance(rank);
         }
+        System.out.println("CROWDING DISTANCE DONE");
     }
     
 
@@ -548,9 +568,13 @@ public class LevelGenerator extends AbstractLevelGenerator{
                     numRanks = pop.get(j).rank; 
                 }
             }
+
+            System.out.println("Numranks is: " + numRanks);
             
             // Create ordered population list
             ArrayList<individual> orderedPop = new ArrayList<individual>();
+
+            System.out.println("Ordering pop now...");
             
             // For each rank... 
             for (int j=0; j<numRanks; j++)
@@ -568,6 +592,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
                     }
                 }
 
+                System.out.println("temprank has size: " + tempRank.size());
+
                 // Now order the temporary list in descending order of crowding distance
                 Collections.sort(tempRank, Comparator.comparingDouble(individual :: get_crowdingDistance));
                 Collections.reverse(tempRank);
@@ -575,6 +601,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
                 // Then add the sorted rank to a new population list
                 orderedPop.addAll(tempRank); 
             }
+
+            System.out.println("OrderedPOp has size: " + orderedPop.size()); 
 
             // Now that we have our full population ordered, add the top individuals back into pop
             for (int j=0; j<selectionSize; j++)
