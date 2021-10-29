@@ -519,25 +519,14 @@ public class Agent extends AbstractPlayer {
                 // select elites (should return n_Elites of population, this is set at the start of act())
                 ArrayList<individual> temp3 = get_elites(population, numElites);
 
-                if ( gen_count >= 50 && gen_count <= 70 ){
-                    System.out.print("\n\nELITES: ");
-                    for ( int i = 0; i < numElites; i++){
-                        System.out.print( temp3.get(i).fitness + ", " );
-                    }
-                }
-
                 // clearing old population
                 population.clear();
 
                 // fill up pop
-                //if ( gen_count >= 50 && gen_count <= 70 ) System.out.print("\n\nELITES SUPPOSEDLY ADDED: ");
                 for ( int i = 0; i < numElites; i++ )
                 {
                     population.add(temp3.get(i));
-
-                    //if ( gen_count >= 50 && gen_count <= 70 ) System.out.print( population.get(i).fitness + ", ");
                 }
-                //if ( gen_count >= 50 && gen_count <= 70 ) System.out.print("\n\n");
 
                 for ( int i = numElites; i < population_size; i++ )
                 {
