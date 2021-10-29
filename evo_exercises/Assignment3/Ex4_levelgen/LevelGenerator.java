@@ -91,7 +91,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
             handle_files.write_to_file("results/assignment03/ex4/test1", "\n\n\n\n\n");
         }
         
-        
+        result = convert_genotype_to_map(final_population.get(0));
 		return result;
 	}
 
@@ -460,9 +460,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // ArrayList<individual> paretoFront = new ArrayList<individual>();
 
         // Create deep copy of population
-        ArrayList<individual> pop = new ArrayList<individual>();
-        System.arraycopy(population, 0, pop, 0, population.size()); 
-
+        ArrayList<individual> pop = new ArrayList<individual>(population);
+        
         // For each generation
         for (int i=0; i<numGens; i++)
         {
@@ -506,6 +505,10 @@ public class LevelGenerator extends AbstractLevelGenerator{
             //
             //
             //
+            for(individual ind:pop)
+            {
+                calculate_individual_fitness(ind);
+            }
 
             // Calculate dominance ranks and crowding distance for all individuals
             bi_objective_fitness(pop); 

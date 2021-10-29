@@ -278,23 +278,23 @@ public class individual {
         // by default we will let the level pass
         boolean disqual = false;
         
-        /* /// EVERYTHING IS PRESENT /// (legacy)
+        /// EVERYTHING IS PRESENT /// (legacy)
         // this should be checked by the next part anyway
-        //int choice_count = 0;
-        // // disqualification factor 1-> are all choices present
-        // for(int i = 0; i < genotype.length; i++)
-        // {
-        //     if( (genotype[i] == 'g') || (genotype[i] == '+') || (genotype[i] == 'A') )
-        //     {
-        //         choice_count++;
-        //     }
-        // }
+        int choice_count = 0;
+        // disqualification factor 1-> are all choices present
+        for(int i = 0; i < genotype.length; i++)
+        {
+            if( (genotype[i] == 'g') || (genotype[i] == '+') || (genotype[i] == 'A') )
+            {
+                choice_count++;
+            }
+        }
 
-        // if ( choice_count < 3)
-        // {
-        //     disqual = true;
-        // }
-        */
+        if ( choice_count < 3)
+        {
+            return true;
+        }
+        
         
         ///// LEVEL IS COMPLETEABLE //////
         /// Play the game using the best agent, copied from SampleGA
@@ -456,13 +456,21 @@ public class individual {
         if(calc_disqual(automatedAgent, stateObs))
         {
             System.out.println("i cant play the level no");
-            wallFitness = 0;
-            coverageFitness = 0;
+            wallFitness = -1;
+            coverageFitness = -1;
         }
         else
         {
             wallFitness = calc_wall_fitness();
+            if (wallFitness == 0)
+            {
+                wallFitness = -1;
+            }
             coverageFitness = calc_coverage_fitness();
+            if (coverageFitness == 0)
+            {
+                coverageFitness = -1;
+            }
         }
 
     }
