@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 20;
-    public int genotype_size = 300;
+    public int population_size = 50;
+    public int genotype_size = 400;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -267,7 +267,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 5;
+        int acceptable_action_amount = 20;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -504,7 +504,7 @@ public class Agent extends AbstractPlayer {
                 {   
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 10);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 5);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 8);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
@@ -513,7 +513,7 @@ public class Agent extends AbstractPlayer {
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
                     // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,15));
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,40));
                 }
 
                 // select elites (should return n_Elites of population, this is set at the start of act())

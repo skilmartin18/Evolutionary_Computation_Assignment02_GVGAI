@@ -466,6 +466,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // For each generation
         for (int i=0; i<numGens; i++)
         {
+            // Malakia
+            float percentage = (i+1/numGens)*100;
+            System.out.print( "\r" + (i+1) + "/" + numGens + " " + "(" );
+            System.out.printf( "%.1f",percentage );
+            System.out.print( "%" + ")" );
+            
             // Create offspring array              
             ArrayList<individual> offspring = new ArrayList<>(); 
 
