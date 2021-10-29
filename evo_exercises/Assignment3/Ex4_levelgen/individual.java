@@ -397,7 +397,7 @@ public class individual {
                     /// scores can be changed at a later date to confer more or less fitness
                     switch (adjacent_walls) {
                         case 0: 
-                            score += -10;                           
+                            score += 0;                           
                             break;
                         case 1: 
                             score += 10;                           
@@ -456,21 +456,21 @@ public class individual {
         if(calc_disqual(automatedAgent, stateObs))
         {
             System.out.println("i cant play the level no");
-            wallFitness = -1;
-            coverageFitness = -1;
+            wallFitness = -1000;
+            coverageFitness = -1000;
         }
         else
         {
             wallFitness = calc_wall_fitness();
-            if (wallFitness == 0)
-            {
-                wallFitness = -1;
-            }
+            // if (wallFitness == 0)
+            // {
+            //     wallFitness = -1;
+            // }
             coverageFitness = calc_coverage_fitness();
-            if (coverageFitness == 0)
-            {
-                coverageFitness = -1;
-            }
+            // if (coverageFitness == 0)
+            // {
+            //     coverageFitness = -1;
+            // }
         }
 
     }

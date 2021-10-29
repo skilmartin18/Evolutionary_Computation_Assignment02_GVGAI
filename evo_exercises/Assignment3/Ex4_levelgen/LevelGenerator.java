@@ -379,6 +379,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
     // Function that runs all 3 functions above, calculating ranks and crowding distances
     public void bi_objective_fitness(ArrayList<individual> population)
     {
+        for (int i=0;i<population.size(); i++)
+        {
+            System.out.println("Individual " + i + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
+        }
+
+
         // Counting
         float percentage = (count_fitness/numGens*pop_size)*100;
         System.out.print( "\r" + count_fitness + "/" + numGens*pop_size + " " + "(" );
@@ -425,6 +431,15 @@ public class LevelGenerator extends AbstractLevelGenerator{
             {
                 remainingToBeRanked.remove(ind);
             }
+
+            System.out.print("\n\n\n"); 
+
+           for (int i=0;i<remainingToBeRanked.size(); i++)
+           {
+             System.out.println("Individual " + i + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
+           }
+
+
 
             // Add rank to the list that holds ranks
             allRanks.add(indsInCurrentRank);
