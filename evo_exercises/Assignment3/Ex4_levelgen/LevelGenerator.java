@@ -57,58 +57,40 @@ public class LevelGenerator extends AbstractLevelGenerator{
 	@Override
 	public String generateLevel(GameDescription game, ElapsedCpuTimer elapsedTimer) 
     {
-		// ArrayList<individual> population = new ArrayList<individual>();
+        // var decs
+		ArrayList<individual> population = new ArrayList<individual>();
+        ArrayList<individual> final_population = new ArrayList<individual>();
         String result = " ";
-        // // initialise population
-        // for(int i = 0; i < 8; i++)
-        // {
-        //     population.add(new individual());
-        //     calculate_individual_fitness(population.get(i));
-        // }
+        int pop_size = 10;
+        int numGens = 10;
+        // initialise population
+        for(int i = 0; i < pop_size; i++)
+        {
+            population.add(new individual());
+            calculate_individual_fitness(population.get(i));
+        }
 
-        // //run algo
-        // for(int gen = 0; gen < 15; gen++)
-        // {
-        //     System.out.println(gen);
-        //     ArrayList<individual> temp = get_elites(population, 2);
 
-        //     // mutate
-        //     for(int i = 0; i < 8; i++)
-        //     {
-        //         double prob = rand.nextDouble();
-
-        //         if(prob<0.7)
-        //         {
-        //             create_tile(population.get(i));
-        //         }
-        //         else
-        //         {
-        //             destroy_tile(population.get(i));
-        //         }
-        //     }
-
-        //     for(int i = 0; i < 8; i++)
-        //     {
-        //         calculate_individual_fitness(population.get(i));
-        //     }
-
-        //     // fill population
-        //     ArrayList<individual> temp2 = new ArrayList<individual>();
-        //     temp2.add(temp.get(0));
-        //     temp2.add(temp.get(1));
-        //     for(int i = 0; i < 3; i++)
-        //     {
-        //         ArrayList<individual> temp3 = tournament_selection(population, 2);
-        //         temp2.add(temp3.get(0));
-        //         temp2.add(temp3.get(1));
-        //     }
-            
-        //     population.clear();
-        //     population = temp2;
-        // }
+        final_population = bi_Objective_GA(population, numGens);
         
-        // individual _ind = get_elites(population, 1).get(0);
-        // String result = convert_genotype_to_map(_ind);
+        // calculate hypervolume
+
+        // print genotypes
+        
+        for ( int i = 0; i < final_population.size(); i++)
+        {
+            String wallfitness, coveragefitness, rank;
+            wallfitness = final_population.get(i).wallFitness+"";
+            coveragefitness = final_population.get(i).coverageFitness+"";
+            rank = final_population.get(i).rank+"";
+
+            handle_files.write_to_file("results/assignment03/ex4/test1", "WAL_FIT: "+wallfitness);
+            handle_files.write_to_file("results/assignment03/ex4/test1", "COVER_FIT: "+coveragefitness);
+            handle_files.write_to_file("results/assignment03/ex4/test1", "RANK: "+rank);
+            handle_files.write_to_file("results/assignment03/ex4/test1", convert_genotype_to_map(final_population.get(i)));
+            handle_files.write_to_file("results/assignment03/ex4/test1", "\n\n\n\n\n");
+        }
+        
         
 		return result;
 	}
@@ -141,115 +123,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     }
 
-    ////// SELECTION METHODS //////
-
-
-    /// MODIFIED TRUNCATION SELECT ///
-
-    // Removes all population members below a certain fitness
-    // Or, I think it'd be better if it selects the top proportion of individuals
-    // since we don't know what fitness values we're gonna get
-
-    public ArrayList<individual> modified_truncation_selection(ArrayList<individual> population, double fitnessThreshold)
-    {
-        // Initialise an array list to return
-        ArrayList<individual> selectedIndividuals = new ArrayList<individual>(); 
-
-        // Copy the population array
-        // This is a shallow copy, so it might need to be changed idk???
-        ArrayList<individual> competingIndividuals = new ArrayList<individual>(population);  
-
-        // Sort population by fitness, and then reverse to get from highest -> lowest fitness
-        Collections.sort(competingIndividuals, Comparator.comparingInt(individual :: get_fitness));
-        Collections.reverse(competingIndividuals);
-    
-        // Fill the new population with only the individuals above the threshold value
-        // Essentially, removing individuals below that value
-        int i = 0; 
-        while (competingIndividuals.get(i).wallFitness > fitnessThreshold )
-        {
-            selectedIndividuals.add(competingIndividuals.get(i)); 
-            i++; 
-        }
-
-        return selectedIndividuals; 
-    }
-
-
-    /// TOURNAMENT AND ELITISM SELECT ///
-    // Borrowed from Ex2, and then modified to fit Ex4
-
-    // Tournament selection WITHOUT replacement. Returns 2 individuals to be parents. k = tournament size
-    public ArrayList<individual> tournament_selection(ArrayList<individual> population, int k){
-       
-        // initialising arraylist of 2 parents to return
-        ArrayList<individual> parents = new ArrayList<individual>();
-
-        // initialising arraylist of candidate indices and candidates
-        List<Integer> indices = new ArrayList<Integer>();
-        ArrayList<individual> candidates = new ArrayList<individual>();
-        
-        // fills up a list of indices which is then shuffled, then the first k indices are taken (this prevents duplicates)
-        for (int i = 0; i < population.size(); i++){
-            indices.add(i);
-        }
-
-        Collections.shuffle(indices);
-
-        // selecting chosen random candidates from population
-        for (int i = 0; i < k; i++){
-            candidates.add(population.get(indices.get(i)));
-        }
-
-        // finding best and second best individuals from candidates
-        int best_individual_index = 0;
-        int second_individual_index = 0;
-        double best_fitness = Double.NEGATIVE_INFINITY;
-        double second_best_fitness = Double.NEGATIVE_INFINITY;
-
-        for (int i = 0; i < k; i++){
-            if ((candidates.get(i)).wallFitness >= best_fitness){
-                second_best_fitness = best_fitness;
-                best_fitness = (candidates.get(i)).wallFitness;
-                best_individual_index = i;
-                
-            } else if ((candidates.get(i)).wallFitness > second_best_fitness){
-                second_best_fitness = (candidates.get(i)).wallFitness;
-                second_individual_index = i;
-            }
-        }
-
-        // adding best and second best individuals to return list
-        parents.add(candidates.get(best_individual_index));
-        parents.add(candidates.get(second_individual_index));
-
-        return parents;
-    }
-
-    // Elitism 
-    // Returns a variable number of elites, depending on input
-    public ArrayList<individual> get_elites(ArrayList<individual> population, int numElites){
-        
-        // initialising return list of elites
-        ArrayList<individual> elites = new ArrayList<individual>();
-
-        // Make copy of population 
-        ArrayList<individual> populationCopy = new ArrayList<individual>(population);  
-
-        // Sort population by fitness, and then reverse to get from highest -> lowest fitness
-        Collections.sort(populationCopy, Comparator.comparingInt(individual :: get_fitness));
-        Collections.reverse(populationCopy);
-
-        // finding elites based on number specified in function call
-        for (int i=0; i<numElites; i++)
-        {
-            elites.add(populationCopy.get(i));
-        }
-
-        return elites;
-    }
-
-    
+     
     ////// MUTATIONS AND CROSSOVER //////
 
 
@@ -680,7 +554,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         }
 
         // Some code for caculating hypervolume of the final population
-        
+
         // Some code for printing final population genotypes to file 
 
         // Return final population
@@ -722,5 +596,114 @@ public class LevelGenerator extends AbstractLevelGenerator{
 	}
 
 
-}
 
+////// SELECTION METHODS //////
+
+
+    /// MODIFIED TRUNCATION SELECT ///
+
+    // Removes all population members below a certain fitness
+    // Or, I think it'd be better if it selects the top proportion of individuals
+    // since we don't know what fitness values we're gonna get
+
+    public ArrayList<individual> modified_truncation_selection(ArrayList<individual> population, double fitnessThreshold)
+    {
+        // Initialise an array list to return
+        ArrayList<individual> selectedIndividuals = new ArrayList<individual>(); 
+
+        // Copy the population array
+        // This is a shallow copy, so it might need to be changed idk???
+        ArrayList<individual> competingIndividuals = new ArrayList<individual>(population);  
+
+        // Sort population by fitness, and then reverse to get from highest -> lowest fitness
+        Collections.sort(competingIndividuals, Comparator.comparingInt(individual :: get_fitness));
+        Collections.reverse(competingIndividuals);
+    
+        // Fill the new population with only the individuals above the threshold value
+        // Essentially, removing individuals below that value
+        int i = 0; 
+        while (competingIndividuals.get(i).wallFitness > fitnessThreshold )
+        {
+            selectedIndividuals.add(competingIndividuals.get(i)); 
+            i++; 
+        }
+
+        return selectedIndividuals; 
+    }
+
+
+    /// TOURNAMENT AND ELITISM SELECT ///
+    // Borrowed from Ex2, and then modified to fit Ex4
+
+    // Tournament selection WITHOUT replacement. Returns 2 individuals to be parents. k = tournament size
+    public ArrayList<individual> tournament_selection(ArrayList<individual> population, int k){
+       
+        // initialising arraylist of 2 parents to return
+        ArrayList<individual> parents = new ArrayList<individual>();
+
+        // initialising arraylist of candidate indices and candidates
+        List<Integer> indices = new ArrayList<Integer>();
+        ArrayList<individual> candidates = new ArrayList<individual>();
+        
+        // fills up a list of indices which is then shuffled, then the first k indices are taken (this prevents duplicates)
+        for (int i = 0; i < population.size(); i++){
+            indices.add(i);
+        }
+
+        Collections.shuffle(indices);
+
+        // selecting chosen random candidates from population
+        for (int i = 0; i < k; i++){
+            candidates.add(population.get(indices.get(i)));
+        }
+
+        // finding best and second best individuals from candidates
+        int best_individual_index = 0;
+        int second_individual_index = 0;
+        double best_fitness = Double.NEGATIVE_INFINITY;
+        double second_best_fitness = Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < k; i++){
+            if ((candidates.get(i)).wallFitness >= best_fitness){
+                second_best_fitness = best_fitness;
+                best_fitness = (candidates.get(i)).wallFitness;
+                best_individual_index = i;
+                
+            } else if ((candidates.get(i)).wallFitness > second_best_fitness){
+                second_best_fitness = (candidates.get(i)).wallFitness;
+                second_individual_index = i;
+            }
+        }
+
+        // adding best and second best individuals to return list
+        parents.add(candidates.get(best_individual_index));
+        parents.add(candidates.get(second_individual_index));
+
+        return parents;
+    }
+
+    // Elitism 
+    // Returns a variable number of elites, depending on input
+    public ArrayList<individual> get_elites(ArrayList<individual> population, int numElites){
+        
+        // initialising return list of elites
+        ArrayList<individual> elites = new ArrayList<individual>();
+
+        // Make copy of population 
+        ArrayList<individual> populationCopy = new ArrayList<individual>(population);  
+
+        // Sort population by fitness, and then reverse to get from highest -> lowest fitness
+        Collections.sort(populationCopy, Comparator.comparingInt(individual :: get_fitness));
+        Collections.reverse(populationCopy);
+
+        // finding elites based on number specified in function call
+        for (int i=0; i<numElites; i++)
+        {
+            elites.add(populationCopy.get(i));
+        }
+
+        return elites;
+    }
+
+}
+   
