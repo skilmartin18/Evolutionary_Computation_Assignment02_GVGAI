@@ -26,8 +26,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 100;
-    public int genotype_size = 500;
+    public int population_size = 50;
+    public int genotype_size = 400;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -266,7 +266,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 15;
+        int acceptable_action_amount = 20;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -502,8 +502,8 @@ public class Agent extends AbstractPlayer {
                 for(int i = 0; i < (population_size-numElites)/2; i++)
                 {   
                     // select parents
-                    ArrayList<individual> temp = tournament_selection(population, 15);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
+                    ArrayList<individual> temp = tournament_selection(population, 10);
+                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 8);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
@@ -574,7 +574,7 @@ public class Agent extends AbstractPlayer {
                 if (five_million){
                     scores5mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
 
                     five_million = false;
                 }

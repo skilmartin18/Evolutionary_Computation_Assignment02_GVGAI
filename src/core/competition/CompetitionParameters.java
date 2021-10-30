@@ -35,11 +35,11 @@ public class CompetitionParameters
      */
     //public static final int LEVEL_ACTION_TIME = 1800000*10;
     //public static final int LEVEL_ACTION_TIME = 28800000;
-    public static final int LEVEL_ACTION_TIME = 3600000;
+    public static final int LEVEL_ACTION_TIME = 999999999;
     /**
      * Milliseconds allowed for the level generator disqualification, if it returns a level after this time.
      */
-    public static final int LEVEL_ACTION_TIME_DISQ = 21600000;
+    public static final int LEVEL_ACTION_TIME_DISQ = 999999999;
     
     /**
      * Milliseconds allowed for level generator to initialize
