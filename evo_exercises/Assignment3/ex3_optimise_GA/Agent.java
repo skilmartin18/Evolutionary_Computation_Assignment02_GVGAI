@@ -220,37 +220,6 @@ public class Agent extends AbstractPlayer {
     }
 
     // returns an arrary list of 2 children after parent crossover
-    public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
-    
-        // initialising an arraylist of children to return
-        ArrayList<individual> children = new ArrayList<individual>();
-
-        // creating children clones
-        individual child1 = new individual(ind1.genotype,stateObs);
-        individual child2 = new individual(ind2.genotype,stateObs);
-
-        // initialising a variable to store Types.ACTIONS
-        Types.ACTIONS temp;
-        
-        // random int to find crossover point
-        rand = new Random();
-        int rand_int = rand.nextInt(genotype_size);
-
-        // iterates through random index to end of list and swaps values
-        for (int i = rand_int; i < genotype_size; i++){
-            temp = child1.genotype.get(i);
-            child1.genotype.set(i, child2.genotype.get(i));
-            child2.genotype.set(i, temp);
-        }
-
-        // adding children
-        children.add(child1);
-        children.add(child2);
-
-        return children;
-    }
-
-    // returns an arrary list of 2 children after parent crossover
     public ArrayList<individual> n_point_crossover(individual ind1, individual ind2, int num){
     
         // initialising an arraylist of children to return
@@ -336,80 +305,6 @@ public class Agent extends AbstractPlayer {
         children.add(child2);
 
         return children;
-    }
-
-    // tournament selection WITHOUT replacement. Returns 2 individuals to be parents. k = tournament size
-    public ArrayList<individual> tournament_selection(ArrayList<individual> population, int k){
-       
-        // initialising arraylist of 2 parents to return
-        ArrayList<individual> parents = new ArrayList<individual>();
-
-        // initialising arraylist of candidate indices and candidates
-        List<Integer> indices = new ArrayList<Integer>();
-        ArrayList<individual> candidates = new ArrayList<individual>();
-        
-        // fills up a list of indices which is then shuffled, then the first k indices are taken (this prevents duplicates)
-        for (int i = 0; i < population_size; i++){
-            indices.add(i);
-        }
-
-        Collections.shuffle(indices);
-
-        // selecting chosen random candidates from population
-        for (int i = 0; i < k; i++){
-            candidates.add(population.get(indices.get(i)));
-        }
-
-        // finding best and second best individuals from candidates
-        int best_individual_index = 0;
-        int second_individual_index = 0;
-        double best_fitness = Double.NEGATIVE_INFINITY;
-        double second_best_fitness = Double.NEGATIVE_INFINITY;
-
-        for (int i = 0; i < k; i++){
-            if ((candidates.get(i)).fitness >= best_fitness){
-                second_best_fitness = best_fitness;
-                best_fitness = (candidates.get(i)).fitness;
-                best_individual_index = i;
-                
-            } else if ((candidates.get(i)).fitness > second_best_fitness){
-                second_best_fitness = (candidates.get(i)).fitness;
-                second_individual_index = i;
-            }
-        }
-
-        // adding best and second best individuals to return list
-
-        individual parent1 = new individual(candidates.get(best_individual_index).genotype,candidates.get(best_individual_index).fitness);
-        individual parent2 = new individual(candidates.get(second_individual_index).genotype,candidates.get(best_individual_index).fitness);
-
-        parents.add(parent1);
-        parents.add(parent2);
-
-        return parents;
-    }
-
-    // More Elitism 
-    // Returns a variable number of elites, depending on input
-    public ArrayList<individual> get_elites(ArrayList<individual> population, int numElites){
-        
-        // initialising return list of elites
-        ArrayList<individual> elites = new ArrayList<individual>();
-
-        // Make copy of population 
-        ArrayList<individual> populationCopy = new ArrayList<individual>(population);  
-
-        // Sort population by fitness, and then reverse to get from highest -> lowest fitness
-        Collections.sort(populationCopy, Comparator.comparingDouble(individual :: get_fitness));
-        Collections.reverse(populationCopy);
-
-        // finding elites based on number specified in function call
-        for (int i=0; i<numElites; i++)
-        {
-            elites.add(populationCopy.get(i));
-        }
-
-        return elites;
     }
 
     public String fromACTIONS(ACTIONS move){
@@ -623,9 +518,6 @@ public class Agent extends AbstractPlayer {
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 
-        //setting number of elites
-        int numElites = 10;
-
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
         StatSummary scores1mill = new StatSummary();
@@ -690,7 +582,7 @@ public class Agent extends AbstractPlayer {
                 gen_count++;
 
                 // crossover 
-                for(int i = 0; i < (population_size-numElites)/2; i++)
+                for(int i = 0; i < population_size; i++)
                 {   
                     // select parents
                     ArrayList<individual> temp = tournament_selection(population, 10);
@@ -706,21 +598,13 @@ public class Agent extends AbstractPlayer {
                     new_population.set(i,random_mutate(new_population.get(i),0.5,40));
                 }
 
-                // select elites (should return n_Elites of population, this is set at the start of act())
-                ArrayList<individual> temp3 = get_elites(population, numElites);
-
                 // clearing old population
                 population.clear();
 
                 // fill up pop
-                for ( int i = 0; i < numElites; i++ )
+                for ( int i = 0; i < population_size; i++ )
                 {
-                    population.add(temp3.get(i));
-                }
-
-                for ( int i = numElites; i < population_size; i++ )
-                {
-                    population.add(new_population.get(i-numElites));
+                    population.add(new_population.get(i));
                 }
 
                 // calculate fitness
@@ -784,7 +668,7 @@ public class Agent extends AbstractPlayer {
                     orderedPop.addAll(tempRank); 
                 }
 
-                System.out.println("OrderedPOp has size: " + orderedPop.size()); 
+                System.out.println("OrderedPoop has size: " + orderedPop.size()); 
 
                 // Now that we have our full population ordered, add the top individuals back into population
                 for (int j=0; j<selectionSize; j++)
@@ -820,7 +704,7 @@ public class Agent extends AbstractPlayer {
                 if (two_hundred_thou){
                     scores200k.add(previous_best_score_double);
 
-                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
 
                     two_hundred_thou = false;
                 }
@@ -828,7 +712,7 @@ public class Agent extends AbstractPlayer {
                 if (one_million) {
                     scores1mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
 
                     one_million = false;
                 }
@@ -863,7 +747,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise02/NewPopTest", final_text);
+        handle_files.write_to_file("results/assignment03/exercise03/NewPopTest", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */

@@ -1,0 +1,1 @@
+// want to minimise (optimise) sequence length. we already have a move cutoff counter btu now we want to evolve that
