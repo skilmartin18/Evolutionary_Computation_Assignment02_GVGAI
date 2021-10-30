@@ -37,7 +37,7 @@ public class Ex3_optimise_GA {
 		// This plays games_played games, in the first L levels, M times each.
 		// set games_played- indices are games indexes from all_games_sp.csv
 		//int[] games_played = {8,10,18,45}; 
-		int[] games_played = {10};
+		int[] games_played = {8};
 		int L = 5, M = 1;
 
 		String[] levels = new String[L];
@@ -63,10 +63,6 @@ public class Ex3_optimise_GA {
 				System.out.println("Lvl_"+k+":");
 				ArcadeMachine.runOneGame(game, levels[k], visuals, assignment03ex03, recordActionsFile, seed, 0);
 			}
-			
 		}
-
-
-
     }
 }

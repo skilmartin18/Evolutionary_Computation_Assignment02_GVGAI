@@ -27,8 +27,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 50;
-    public int genotype_size = 400;
+    public int population_size = 10;
+    public int genotype_size = 200;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -420,14 +420,8 @@ public class Agent extends AbstractPlayer {
     {
         for (int i=0;i<population.size(); i++)
         {
-            System.out.println(population.get(i).toString() + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
+            System.out.println("individual " + i+"" + " score and sequence fitness: " + population.get(i).fitness + ", " + population.get(i).sequence_fitness);
         }
-
-        // Counting
-        float percentage = (count_fitness/numGens*pop_size)*100;
-        System.out.print( "\r" + count_fitness + "/" + numGens*pop_size + " " + "(" );
-        System.out.printf( "%.1f",percentage );
-        System.out.print( "%" + ")" );
 
         // Begin by clearing existing rank and crowding values in population
         // This is because new offspring have been added so the ranks are not longer valid
@@ -484,8 +478,6 @@ public class Agent extends AbstractPlayer {
                 allRanks.add(indsInCurrentRank);
             }
 
-
-
             // Remove all ranked individuals from the "toBeRanked" list
             Collections.sort(addedIndices);
             int removed = 0; 
@@ -496,8 +488,6 @@ public class Agent extends AbstractPlayer {
                 remainingToBeRanked.remove(index-removed);
                 removed++; 
             }
-
-
 
             // Increment to next rank
             currentRank++; 
@@ -511,7 +501,7 @@ public class Agent extends AbstractPlayer {
 
         for (int i=0;i<population.size(); i++)
         {
-            System.out.println(population.get(i).toString() + "rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
+            System.out.println("individual " + i+"" +  " rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
         }
     }
 
@@ -533,6 +523,8 @@ public class Agent extends AbstractPlayer {
      * @return An action for the current state
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
+        // calculating fitness for first seed population
+        calculate_population_fitness(stateObs, population);
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -577,7 +569,7 @@ public class Agent extends AbstractPlayer {
             advance_count = 0;
             once = false;
             test_counter++;
-            int selectionSize = population.size(); 
+            int selectionSize = population_size; 
 
             // moving onto next level (may not actually be needed depending on how testing is done)
             if ( test_counter > 9 ){
@@ -598,38 +590,36 @@ public class Agent extends AbstractPlayer {
                 gen_count++;
 
                 // crossover 
-                // for(int i = 0; i < population_size; i++)
-                // {   
-                //     // select parents
-                //     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 8);
-                //     new_population.add(temp2.get(0));
-                //     new_population.add(temp2.get(1));
-                // }
+                for(int i = 0; i < (population_size/2); i++)
+                {   
+                    // select parents
+                    // Get index of random parents
+                    int fatherIndex = rand.nextInt(population_size);
+                    int motherIndex = rand.nextInt(population_size);
+
+                    ArrayList<individual> temp2 = n_point_crossover(population.get(fatherIndex), population.get(motherIndex), 8);
+                    new_population.add(temp2.get(0));
+                    new_population.add(temp2.get(1));
+                }
 
                 // mutation
-                // for ( int i = 0; i < new_population.size(); i++ )
-                // {
-                //     // mutation is done once (can change to multiple times if need be)
-                //     new_population.set(i,random_mutate(new_population.get(i),0.5,40));
-                // }
+                for ( int i = 0; i < new_population.size(); i++ )
+                {
+                    // mutation is done once (can change to multiple times if need be)
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,40));
+                }
 
-                // clearing old population
-                // population.clear();
-
-                // // fill up pop
-                // for ( int i = 0; i < population_size; i++ )
-                // {
-                //     population.add(new_population.get(i));
-                // }
+                // add children to parent population, will result in a population of double size
+                population.addAll(new_population);
 
                 // calculate fitness
                 calculate_population_fitness(stateObs, new_population);
 
-                // new_population.clear();
+                new_population.clear();
 
                 /*
 
-                    CODE FOR NSGA GOES HERE POSSIBLY
+                    CODE FOR NSGA GOES HERE
 
                 */
                 
@@ -683,17 +673,19 @@ public class Agent extends AbstractPlayer {
                     orderedPop.addAll(tempRank); 
                 }
 
-                System.out.println("OrderedPoop has size: " + orderedPop.size()); 
+                population.clear();
+
+                System.out.println("OrderedPop has size: " + orderedPop.size()); 
 
                 // Now that we have our full population ordered, add the top individuals back into population
                 for (int j=0; j<selectionSize; j++)
                 {
-                    population.set(j,orderedPop.get(j)); 
+                    population.add(orderedPop.get(j));
                 }
 
                 for (int i=0; i<population_size; i++)
                 {
-                    System.out.println(population.get(i).toString() + "rank and crowding: " + population.get(k).rank + ", " + population.get(k).crowdingDistance);
+                    System.out.println("individual " + i+"" + " rank and crowding: " + population.get(k).rank + ", " + population.get(k).crowdingDistance);
                 }
 
                 /*
