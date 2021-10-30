@@ -44,7 +44,6 @@ public class Ex3_optimise_GA {
 
 		for(int i = 0; i < 4; ++i)
 		{
-			
 			// get game and name
 			String game = games[ games_played[i] ][ 0 ];
 			String gameName = games[ games_played[i] ][1];

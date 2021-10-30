@@ -19,7 +19,7 @@ public class individual {
 
     Random rand = new Random();
     double fitness = 0;
-    int sequence_fitness = 0;
+    double sequence_fitness = 0;
     double normalised_fitness = 0;
     double normalised_sequence_fitness = 0;
     int rank = 0; 
@@ -32,7 +32,7 @@ public class individual {
 
     public double get_normalised_fitness()
     {
-        return normalised_fitness;
+        return normalised_sequence_fitness;
     }
 
     public double get_crowdingDistance()
