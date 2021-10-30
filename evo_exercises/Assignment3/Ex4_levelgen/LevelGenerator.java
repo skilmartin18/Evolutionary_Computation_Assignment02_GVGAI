@@ -37,7 +37,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
     int pop_size = 4;
-    int numGens = 3;
+    int numGens = 16;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -359,7 +359,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
             {
 
             }
-
+            else 
             // Else, if indA fitness is higher (better) than or equal to indB on both fronts, indA is not dominated 
             if ( (indB.normalisedWallFitness > indA.normalisedWallFitness) || (indB.normalisedCoverageFitness > indA.normalisedCoverageFitness) )
             {
@@ -377,7 +377,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     {
         for (int i=0;i<population.size(); i++)
         {
-            System.out.println("Individual " + i + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
+            System.out.println(population.get(i).toString() + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
         }
 
 
@@ -469,7 +469,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
         for (int i=0;i<population.size(); i++)
         {
-            System.out.println("Individual " + i + "rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
+            System.out.println(population.get(i).toString() + "rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
         }
 
 
@@ -534,8 +534,10 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
                 // crossover is fucked- trying mutate only
                 ArrayList<individual> children = new ArrayList<individual>();
-                children.add(pop.get(motherIndex));
-                children.add(pop.get(fatherIndex));
+                individual child1 = new individual(population.get(motherIndex).genotype);
+                individual child2 = new individual(population.get(fatherIndex).genotype);
+                children.add(child1);
+                children.add(child2);
 
                 // Mutate the children
                 mutate(children.get(0));
@@ -615,6 +617,11 @@ public class LevelGenerator extends AbstractLevelGenerator{
             for (int j=0; j<selectionSize; j++)
             {
                 pop.add(orderedPop.get(j)); 
+            }
+
+            for (int k=0;k<pop.size(); k++)
+            {
+                System.out.println(pop.get(k).toString() + "rank and crowding: " + pop.get(k).rank + ", " + pop.get(k).crowdingDistance);
             }
             
         }

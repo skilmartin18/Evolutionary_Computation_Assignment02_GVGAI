@@ -401,13 +401,13 @@ public class individual {
                             score += 0;                           
                             break;
                         case 1: 
-                            score += 10;                           
+                            score += 15;                           
                             break;
                         case 2:           
-                            score += 5;                 
+                            score += 4;                 
                             break;
                         case 3:     
-                            score += 1;                       
+                            score += 2;                       
                             break;
                         case 4:     
                             score += 0;                       
