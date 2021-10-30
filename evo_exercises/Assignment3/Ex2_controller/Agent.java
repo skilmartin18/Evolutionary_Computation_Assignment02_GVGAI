@@ -44,14 +44,13 @@ public class Agent extends AbstractPlayer {
     public boolean five_million = false;
     public boolean finished = false;
 
-    // this will keep track of the move that ends the game in advance. That way, we don't print unnecessary moves
+    // this will keep track of the move that ends the game in advance(). That way, we don't print unnecessary moves
     public int move_cutoff = 0; 
 
     // constructor
     public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
     {
         stateObs = _stateObs;
-        // calls_to_act = 0;                       ///// Maybe remove this
         
         // init random number generator
         rand = new Random();
@@ -487,7 +486,7 @@ public class Agent extends AbstractPlayer {
             }
 
             // evolve while we have time remaining
-            while ( advance_count < 5000001 )
+            while ( advance_count < 200001 )
             {   
                 int cutoff_two = 0;
 
@@ -503,7 +502,7 @@ public class Agent extends AbstractPlayer {
                 for(int i = 0; i < (population_size-numElites)/2; i++)
                 {   
                     // select parents
-                    ArrayList<individual> temp = tournament_selection(population, 10);
+                    ArrayList<individual> temp = tournament_selection(population, 15);
                     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 10);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
@@ -543,7 +542,7 @@ public class Agent extends AbstractPlayer {
 
                 best_score_text = best_score+"";
 
-                // converting ACTIONS to strings
+                // converting ACTIONS to strings (comment out if you just want to print scores for results)
                 best_moves = population.get(0).genotype;
                 cutoff_two = find_cutoff(stateObs, population.get(0));
 
@@ -575,14 +574,17 @@ public class Agent extends AbstractPlayer {
                 if (five_million){
                     scores5mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
 
                     five_million = false;
                 }
-
             }
 
             final_text = final_text + "\n\n\n" + text + "\nGENERATION: "+ gen_count+"";
+
+            // resetting population for next test (the individuals here have a randomised list of moves)
+            population.clear();
+            create_population(stateObs);
         }
 
         // calculating mean and std dev for each milestone
@@ -599,7 +601,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise02/GarbageCollectorTests", final_text);
+        handle_files.write_to_file("results/assignment03/exercise02/NewPopTest", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
