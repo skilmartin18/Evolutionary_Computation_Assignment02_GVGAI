@@ -19,10 +19,25 @@ public class individual {
 
     Random rand = new Random();
     double fitness = 0;
+    int sequence_fitness = 0;
+    double normalised_fitness = 0;
+    double normalised_sequence_fitness = 0;
+    int rank = 0; 
+    double crowdingDistance = 0; 
 
     public double get_fitness()
     {
         return fitness;
+    }
+
+    public double get_normalised_fitness()
+    {
+        return normalised_fitness;
+    }
+
+    public double get_crowdingDistance()
+    {
+        return crowdingDistance; 
     }
 
     public individual(StateObservation StateObs, int genotype_size)
@@ -47,6 +62,13 @@ public class individual {
     {
         genotype = new ArrayList<Types.ACTIONS>(_genotype);
         fitness = _fitness;
+    }
+
+    public individual(ArrayList<Types.ACTIONS> _genotype, double _fitness, int _sequence_fitness)
+    {
+        genotype = new ArrayList<Types.ACTIONS>(_genotype);
+        fitness = _fitness;
+        sequence_fitness = _sequence_fitness;
     }
     
     public individual(int genotype_size, StateObservation StateObs)
