@@ -426,11 +426,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
                 }
             }
 
-            // Remove all ranked individuals from the "toBeRanked" list
-            for (individual ind : indsInCurrentRank)
-            {
-                remainingToBeRanked.remove(ind);
-            }
+    
 
             System.out.print("\n\n\n"); 
 
