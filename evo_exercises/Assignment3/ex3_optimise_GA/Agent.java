@@ -582,35 +582,34 @@ public class Agent extends AbstractPlayer {
                 gen_count++;
 
                 // crossover 
-                for(int i = 0; i < population_size; i++)
-                {   
-                    // select parents
-                    ArrayList<individual> temp = tournament_selection(population, 10);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 8);
-                    new_population.add(temp2.get(0));
-                    new_population.add(temp2.get(1));
-                }
+                // for(int i = 0; i < population_size; i++)
+                // {   
+                //     // select parents
+                //     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 8);
+                //     new_population.add(temp2.get(0));
+                //     new_population.add(temp2.get(1));
+                // }
 
                 // mutation
-                for ( int i = 0; i < new_population.size(); i++ )
-                {
-                    // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,40));
-                }
+                // for ( int i = 0; i < new_population.size(); i++ )
+                // {
+                //     // mutation is done once (can change to multiple times if need be)
+                //     new_population.set(i,random_mutate(new_population.get(i),0.5,40));
+                // }
 
                 // clearing old population
-                population.clear();
+                // population.clear();
 
-                // fill up pop
-                for ( int i = 0; i < population_size; i++ )
-                {
-                    population.add(new_population.get(i));
-                }
+                // // fill up pop
+                // for ( int i = 0; i < population_size; i++ )
+                // {
+                //     population.add(new_population.get(i));
+                // }
 
                 // calculate fitness
                 calculate_population_fitness(stateObs, new_population);
 
-                new_population.clear();
+                // new_population.clear();
 
                 /*
 

@@ -1,1 +1,0 @@
-Results in aliens_lvl3 - Mean score: 25.0, Std Dev: 15.15842266786943

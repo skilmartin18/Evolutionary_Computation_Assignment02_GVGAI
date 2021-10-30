@@ -1,1 +1,0 @@
-Results in boulderdash_lvl2 - Mean score: 8.2, Std Dev: 5.827139568909908

@@ -1,1 +1,0 @@
-Results in chase_lvl0 - Mean score: 0.5, Std Dev: 0.8498365855987975
