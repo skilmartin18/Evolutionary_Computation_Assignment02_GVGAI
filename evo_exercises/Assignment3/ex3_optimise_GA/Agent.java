@@ -1,4 +1,4 @@
-package evo_exercises.Assignment3.Ex2_controller;
+package evo_exercises.Assignment3.ex3_optimise_GA;
 
 import tracks.singlePlayer.tools.Heuristics.SimplestHeuristic;
 import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
@@ -14,6 +14,7 @@ import java.util.*;
 import handle_files.handle_files;
 
 import tools.StatSummary;
+import tools.Vector2d;
 
 /**
  * Created with IntelliJ IDEA.
@@ -79,6 +80,7 @@ public class Agent extends AbstractPlayer {
 
     // finds a cutoff point until the last playable move (before the gamestate is finised)
     // after this point, moves in sequence are redundant
+    //(May not be needed)
     public int find_cutoff(StateObservation stateObs, individual _individual)
     {
         StateObservation stateObsCopy = stateObs.copy();
@@ -108,7 +110,7 @@ public class Agent extends AbstractPlayer {
 
 
     // apply all actions from a genotype into a stateobs and return score
-    public void calculate_fitness(StateObservation stateObs, individual _individual, int individual_counter)
+    public void calculate_fitness(StateObservation stateObs, individual _individual)
     {
         StateObservation stateObsCopy = stateObs.copy();
         boolean stop = false;
@@ -127,7 +129,7 @@ public class Agent extends AbstractPlayer {
             it will keep track of the index of the move that ended the game. This way, when we save the moves of the best individual
             to a string, it won't print everything single move in its genotype, only the relevant ones*/
 
-            if (individual_counter == 0 && finished)
+            if (finished)
             {
                 move_cutoff = i;
             }
@@ -174,6 +176,7 @@ public class Agent extends AbstractPlayer {
         double score = stateObsCopy.getGameScore();
 
         _individual.fitness = score;
+        _individual.sequence_fitness = move_cutoff;
 
     }
 
@@ -183,7 +186,7 @@ public class Agent extends AbstractPlayer {
     {
         for ( int i = 0; i < population.size(); i++)
         {
-            calculate_fitness(stateObs, population.get(i), i);
+            calculate_fitness(stateObs, population.get(i));
         }
     }
 
@@ -214,37 +217,6 @@ public class Agent extends AbstractPlayer {
         }
 
         return individual;
-    }
-
-    // returns an arrary list of 2 children after parent crossover
-    public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
-    
-        // initialising an arraylist of children to return
-        ArrayList<individual> children = new ArrayList<individual>();
-
-        // creating children clones
-        individual child1 = new individual(ind1.genotype,stateObs);
-        individual child2 = new individual(ind2.genotype,stateObs);
-
-        // initialising a variable to store Types.ACTIONS
-        Types.ACTIONS temp;
-        
-        // random int to find crossover point
-        rand = new Random();
-        int rand_int = rand.nextInt(genotype_size);
-
-        // iterates through random index to end of list and swaps values
-        for (int i = rand_int; i < genotype_size; i++){
-            temp = child1.genotype.get(i);
-            child1.genotype.set(i, child2.genotype.get(i));
-            child2.genotype.set(i, temp);
-        }
-
-        // adding children
-        children.add(child1);
-        children.add(child2);
-
-        return children;
     }
 
     // returns an arrary list of 2 children after parent crossover
@@ -335,80 +307,6 @@ public class Agent extends AbstractPlayer {
         return children;
     }
 
-    // tournament selection WITHOUT replacement. Returns 2 individuals to be parents. k = tournament size
-    public ArrayList<individual> tournament_selection(ArrayList<individual> population, int k){
-       
-        // initialising arraylist of 2 parents to return
-        ArrayList<individual> parents = new ArrayList<individual>();
-
-        // initialising arraylist of candidate indices and candidates
-        List<Integer> indices = new ArrayList<Integer>();
-        ArrayList<individual> candidates = new ArrayList<individual>();
-        
-        // fills up a list of indices which is then shuffled, then the first k indices are taken (this prevents duplicates)
-        for (int i = 0; i < population_size; i++){
-            indices.add(i);
-        }
-
-        Collections.shuffle(indices);
-
-        // selecting chosen random candidates from population
-        for (int i = 0; i < k; i++){
-            candidates.add(population.get(indices.get(i)));
-        }
-
-        // finding best and second best individuals from candidates
-        int best_individual_index = 0;
-        int second_individual_index = 0;
-        double best_fitness = Double.NEGATIVE_INFINITY;
-        double second_best_fitness = Double.NEGATIVE_INFINITY;
-
-        for (int i = 0; i < k; i++){
-            if ((candidates.get(i)).fitness >= best_fitness){
-                second_best_fitness = best_fitness;
-                best_fitness = (candidates.get(i)).fitness;
-                best_individual_index = i;
-                
-            } else if ((candidates.get(i)).fitness > second_best_fitness){
-                second_best_fitness = (candidates.get(i)).fitness;
-                second_individual_index = i;
-            }
-        }
-
-        // adding best and second best individuals to return list
-
-        individual parent1 = new individual(candidates.get(best_individual_index).genotype,candidates.get(best_individual_index).fitness);
-        individual parent2 = new individual(candidates.get(second_individual_index).genotype,candidates.get(best_individual_index).fitness);
-
-        parents.add(parent1);
-        parents.add(parent2);
-
-        return parents;
-    }
-
-    // More Elitism 
-    // Returns a variable number of elites, depending on input
-    public ArrayList<individual> get_elites(ArrayList<individual> population, int numElites){
-        
-        // initialising return list of elites
-        ArrayList<individual> elites = new ArrayList<individual>();
-
-        // Make copy of population 
-        ArrayList<individual> populationCopy = new ArrayList<individual>(population);  
-
-        // Sort population by fitness, and then reverse to get from highest -> lowest fitness
-        Collections.sort(populationCopy, Comparator.comparingDouble(individual :: get_fitness));
-        Collections.reverse(populationCopy);
-
-        // finding elites based on number specified in function call
-        for (int i=0; i<numElites; i++)
-        {
-            elites.add(populationCopy.get(i));
-        }
-
-        return elites;
-    }
-
     public String fromACTIONS(ACTIONS move){
         String error = "";
 
@@ -423,6 +321,193 @@ public class Agent extends AbstractPlayer {
         else return error;
     }
 
+    /* 
+
+
+        CODE FOR NSGA
+    
+
+    */
+        // Normalises fitness values to make sure there is not a bias towards one objective
+    public void normaliseFitnesses(ArrayList<individual> population)
+    {
+        // Find max fitness values in population
+        double max_fitness = 0; 
+        int max_sequence_fitness = 0;
+        for (int i=0; i<population.size(); i++)
+        {
+            if (population.get(i).fitness > max_fitness)
+            {
+                max_fitness = population.get(i).fitness;
+            }
+            if (population.get(i).sequence_fitness > max_sequence_fitness)
+            {
+                max_sequence_fitness = population.get(i).sequence_fitness;
+            }
+        }
+
+        // Modify normalised fitness values
+        for (int i=0; i<population.size(); i++)
+        {
+            population.get(i).normalised_fitness = population.get(i).fitness / max_fitness;
+            population.get(i).normalised_sequence_fitness = (max_sequence_fitness - population.get(i).sequence_fitness)/(max_sequence_fitness);
+        }
+    }
+
+    // Calculates the crowding distances for all individuals in a rank
+    public void calcCrowdingDistance(ArrayList<individual> rank)
+    {
+        // // Deep copy the rank
+        // ArrayList<individual> rankCopy = new ArrayList<individual>();
+        // System.arraycopy(rank, 0, rankCopy, 0, rank.size()); 
+
+        // Order the rank based on any of the two normalised fitness values
+        Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalised_fitness));
+
+        // Loop through the rank (the front)
+        for (int i=0; i<rank.size(); i++)
+        {
+
+            // If we are at first or last individual, assign +inf. crowding distance
+            if ( i==0 || i==rank.size()-1 )
+            {
+                rank.get(i).crowdingDistance = Double.POSITIVE_INFINITY; 
+            }
+            // All other cases...
+            else
+            {
+                // Get references to current, left, and right individuals
+                individual current = rank.get(i);
+                individual left = rank.get(i-1);
+                individual right = rank.get(i+1);
+
+                // Get vector positions of the three individuals, based upon 2 fitness vals
+                Vector2d currentPos = new tools.Vector2d(current.normalised_fitness, current.normalised_sequence_fitness); 
+                Vector2d leftPos = new tools.Vector2d(left.normalised_fitness, left.normalised_sequence_fitness); 
+                Vector2d rightPos = new tools.Vector2d(right.normalised_fitness, right.normalised_sequence_fitness); 
+
+                // Calc distance from current to left and right vecs
+                double leftDistance = currentPos.dist(leftPos); 
+                double rightDistance = currentPos.dist(rightPos); 
+
+                // Crowding distance is the total of these two values
+                rank.get(i).crowdingDistance = leftDistance + rightDistance; 
+            }
+        }
+    }
+
+    // Check if an individual is not dominated by any other solutions in population
+    public boolean notDominated(individual indA, ArrayList<individual> toBeRanked)
+    {
+        for (individual indB : toBeRanked)
+        {
+            // If we're comparing same individual, do nothing
+            if (indA == indB)
+            {
+
+            }
+
+            // Else, if indA fitness is higher (better) than or equal to indB on both fronts, indA is not dominated 
+            if ( (indB.fitness >= indA.fitness) && ( 1/indB.sequence_fitness >= 1/indA.sequence_fitness) )
+            {
+                return false; 
+            }
+        }
+
+        // Otherwise, indA is dominated
+        return true;
+    }
+
+    // Function that runs all 3 functions above, calculating ranks and crowding distances
+    public void bi_objective_fitness(ArrayList<individual> population)
+    {
+
+        // Begin by clearing existing rank and crowding values in population
+        // This is because new offspring have been added so the ranks are not longer valid
+        for (individual ind : population)
+        {
+            ind.rank = -1;
+            ind.crowdingDistance = -1;  
+        }
+        System.out.print("fart");
+        // Normalise the fitness values
+        normaliseFitnesses(population);
+        System.out.print("fart1");
+        // Shallow copy of population
+        ArrayList<individual> remainingToBeRanked = new ArrayList<individual>(population); 
+        System.out.print("fart2");
+        // Create an arraylist of arraylists
+        ArrayList<ArrayList<individual>> allRanks = new ArrayList<ArrayList<individual>>(); 
+        System.out.print("fart3");
+        // Now sort the population into fronts:
+        int currentRank = 1; 
+
+        // While remaining to be ranked has individuals still remaining...
+        while(!remainingToBeRanked.isEmpty())
+        {
+            
+            ArrayList<individual> indsInCurrentRank = new ArrayList<individual>();
+            ArrayList<Integer> addedIndices = new ArrayList<Integer>();
+
+            for (int i=0; i<remainingToBeRanked.size(); i++)
+            {
+                individual ind = remainingToBeRanked.get(i);
+                if ( notDominated(ind, remainingToBeRanked ))
+                {
+                    System.out.println("NON DOMINATED INDIVIDUAL REACHED");
+                    ind.rank = currentRank; 
+                    indsInCurrentRank.add(ind);
+                    addedIndices.add(i);
+                }
+            }
+
+            if (indsInCurrentRank.size() == 0)
+            {
+                allRanks.add(remainingToBeRanked);
+                break;
+            } else 
+            {
+                // Add rank to the list that holds ranks
+                allRanks.add(indsInCurrentRank);
+            }
+
+            // Remove all ranked individuals from the "toBeRanked" list
+            Collections.sort(addedIndices);
+            int removed = 0; 
+            System.out.println("Size before " + remainingToBeRanked.size());
+
+            for (int index : addedIndices)
+            {
+                System.out.println("FOR LOOP RUNNING"); 
+                remainingToBeRanked.remove(index-removed);
+                removed++; 
+            }
+
+            System.out.println("Size after " + remainingToBeRanked.size());
+
+            System.out.print("\n\n\n"); 
+
+            // Increment to next rank
+            currentRank++; 
+        }
+        System.out.print("fart4");
+        // Loop through all ranks, and calculate crowding distances
+        for (ArrayList<individual> rank : allRanks) 
+        {
+            calcCrowdingDistance(rank);
+        }
+        System.out.println("CROWDING DISTANCE DONE");
+    }
+
+    /*
+
+
+        CODE FOR NSGA ENDS
+
+
+    */
+
+
     /**
      *
      * Very simple diy GA
@@ -432,9 +517,6 @@ public class Agent extends AbstractPlayer {
      * @return An action for the current state
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
-
-        //setting number of elites
-        int numElites = 10;
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -479,6 +561,7 @@ public class Agent extends AbstractPlayer {
             advance_count = 0;
             once = false;
             test_counter++;
+            int selectionSize = population.size(); 
 
             // moving onto next level (may not actually be needed depending on how testing is done)
             if ( test_counter > 9 ){
@@ -499,43 +582,105 @@ public class Agent extends AbstractPlayer {
                 gen_count++;
 
                 // crossover 
-                for(int i = 0; i < (population_size-numElites)/2; i++)
-                {   
-                    // select parents
-                    ArrayList<individual> temp = tournament_selection(population, 10);
-                    ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 8);
-                    new_population.add(temp2.get(0));
-                    new_population.add(temp2.get(1));
-                }
+                // for(int i = 0; i < population_size; i++)
+                // {   
+                //     // select parents
+                //     ArrayList<individual> temp2 = n_point_crossover(temp.get(0), temp.get(1), 8);
+                //     new_population.add(temp2.get(0));
+                //     new_population.add(temp2.get(1));
+                // }
 
                 // mutation
-                for ( int i = 0; i < new_population.size(); i++ )
-                {
-                    // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,40));
-                }
-
-                // select elites (should return n_Elites of population, this is set at the start of act())
-                ArrayList<individual> temp3 = get_elites(population, numElites);
+                // for ( int i = 0; i < new_population.size(); i++ )
+                // {
+                //     // mutation is done once (can change to multiple times if need be)
+                //     new_population.set(i,random_mutate(new_population.get(i),0.5,40));
+                // }
 
                 // clearing old population
-                population.clear();
+                // population.clear();
 
-                // fill up pop
-                for ( int i = 0; i < numElites; i++ )
-                {
-                    population.add(temp3.get(i));
-                }
-
-                for ( int i = numElites; i < population_size; i++ )
-                {
-                    population.add(new_population.get(i-numElites));
-                }
+                // // fill up pop
+                // for ( int i = 0; i < population_size; i++ )
+                // {
+                //     population.add(new_population.get(i));
+                // }
 
                 // calculate fitness
                 calculate_population_fitness(stateObs, new_population);
 
-                new_population.clear();
+                // new_population.clear();
+
+                /*
+
+                    CODE FOR NSGA GOES HERE POSSIBLY
+
+                */
+                
+                // Calculate dominance ranks and crowding distance for all individuals
+                bi_objective_fitness(population); 
+
+                /// SORT THE POPULATION ///
+                // We need the population sorted from lowest rank to highest (rank 1 being best rank)
+                // Then WITHIN each rank, the individuals need to be sorted from highest crowding distance to lowest
+
+                // Get number of ranks to begin with
+                int numRanks = 0; 
+                for (int j = 0; j<population.size(); j++)
+                {
+                    if (population.get(j).rank > numRanks)
+                    {
+                        numRanks = population.get(j).rank; 
+                    }
+                }
+
+                System.out.println("Numranks is: " + numRanks);
+                
+                // Create ordered population list
+                ArrayList<individual> orderedPop = new ArrayList<individual>();
+
+                System.out.println("Ordering population now...");
+                
+                // For each rank... 
+                for (int j = 0; j<numRanks; j++)
+                {
+                    // Create a temporary list
+                    ArrayList<individual> tempRank = new ArrayList<individual>();
+
+                    // Then loop through the whole population
+                    for (int n = 0; n<population.size(); n++)
+                    {
+                        // And build up a sublist of individuals from the current rank
+                        if (population.get(n).rank == n+1)
+                        {
+                            tempRank.add(population.get(n)); 
+                        }
+                    }
+
+                    System.out.println("temprank has size: " + tempRank.size());
+
+                    // Now order the temporary list in descending order of crowding distance
+                    Collections.sort(tempRank, Comparator.comparingDouble(individual :: get_crowdingDistance));
+                    Collections.reverse(tempRank);
+
+                    // Then add the sorted rank to a new population list
+                    orderedPop.addAll(tempRank); 
+                }
+
+                System.out.println("OrderedPoop has size: " + orderedPop.size()); 
+
+                // Now that we have our full population ordered, add the top individuals back into population
+                for (int j=0; j<selectionSize; j++)
+                {
+                    population.set(j,orderedPop.get(j)); 
+                }
+
+                /*
+
+                    CODE FOR NSGA ENDS HERE
+
+                */
+
 
                 // gets score from best individual and converts to string
                 best_score = population.get(0).fitness;
@@ -558,7 +703,7 @@ public class Agent extends AbstractPlayer {
                 if (two_hundred_thou){
                     scores200k.add(previous_best_score_double);
 
-                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
 
                     two_hundred_thou = false;
                 }
@@ -566,7 +711,7 @@ public class Agent extends AbstractPlayer {
                 if (one_million) {
                     scores1mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
 
                     one_million = false;
                 }
@@ -601,7 +746,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise02/NewPopTest", final_text);
+        handle_files.write_to_file("results/assignment03/exercise03/NewPopTest", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */

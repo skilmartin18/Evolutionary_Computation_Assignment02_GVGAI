@@ -280,22 +280,23 @@ public class individual {
         
         /// EVERYTHING IS PRESENT /// (legacy)
         // this should be checked by the next part anyway
-        int choice_count = 0;
+        //int choice_count = 0;
+        boolean avatar = false; 
         // disqualification factor 1-> are all choices present
         for(int i = 0; i < genotype.length; i++)
         {
-            if( (genotype[i] == 'g') || (genotype[i] == '+') || (genotype[i] == 'A') )
+            if( (genotype[i] == 'A') )
             {
-                choice_count++;
+                avatar = true; 
             }
         }
 
-        if ( choice_count < 3)
+        if (!avatar)        
         {
             return true;
         }
         
-        
+    
         ///// LEVEL IS COMPLETEABLE //////
         /// Play the game using the best agent, copied from SampleGA
 

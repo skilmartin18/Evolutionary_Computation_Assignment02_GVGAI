@@ -36,8 +36,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
     GameDescription game;
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
-    int pop_size = 10;
-    int numGens = 10;
+    int pop_size = 4;
+    int numGens = 3;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -68,7 +68,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         for(int i = 0; i < pop_size; i++)
         {
             population.add(new individual());
-            calculate_individual_fitness(population.get(i));
+            // calculate_individual_fitness(population.get(i));
         }
 
 
@@ -159,11 +159,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     {
         double decider = rand.nextDouble();
 
-        if (decider < 0.25)
-        {
-            // No mutation
-        }
-        else if (decider >= 0.25 && decider < 0.5)
+        if (decider < 0.5)
         {
             // 2 of same mutation
             create_tile(ind); 
@@ -365,7 +361,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
             }
 
             // Else, if indA fitness is higher (better) than or equal to indB on both fronts, indA is not dominated 
-            if ( (indB.wallFitness >= indA.wallFitness) && (indB.coverageFitness >= indA.coverageFitness) )
+            if ( (indB.normalisedWallFitness > indA.normalisedWallFitness) || (indB.normalisedCoverageFitness > indA.normalisedCoverageFitness) )
             {
                 return false; 
             }
@@ -403,7 +399,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         normaliseFitnesses(population);
         
         // Shallow copy of population
-        ArrayList<individual> remainingToBeRanked = population; 
+        ArrayList<individual> remainingToBeRanked = new ArrayList<individual>(population); 
         
         // Create an arraylist of arraylists
         ArrayList<ArrayList<individual>> allRanks = new ArrayList<ArrayList<individual>>(); 
@@ -414,39 +410,69 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // While remaining to be ranked has individuals still remaining...
         while(!remainingToBeRanked.isEmpty())
         {
+            
             ArrayList<individual> indsInCurrentRank = new ArrayList<individual>();
+            ArrayList<Integer> addedIndices = new ArrayList<Integer>();
 
             for (int i=0; i<remainingToBeRanked.size(); i++)
             {
                 individual ind = remainingToBeRanked.get(i);
-                if ( notDominated(ind, remainingToBeRanked) )
+                if ( notDominated(ind, remainingToBeRanked ))
                 {
+                    System.out.println("NON DOMINATED INDIVIDUAL REACHED");
                     ind.rank = currentRank; 
                     indsInCurrentRank.add(ind);
+                    addedIndices.add(i);
                 }
+            }
+
+            if (indsInCurrentRank.size() == 0)
+            {
+                for(individual ind:remainingToBeRanked)
+                {
+                    ind.rank = currentRank;
+                }
+
+                allRanks.add(remainingToBeRanked);
+                break;
+
+            } else 
+            {
+                // Add rank to the list that holds ranks
+                allRanks.add(indsInCurrentRank);
             }
 
 
 
-            // Add rank to the list that holds ranks
-            allRanks.add(indsInCurrentRank);
+            // Remove all ranked individuals from the "toBeRanked" list
+            Collections.sort(addedIndices);
+            int removed = 0; 
+        
+            for (int index : addedIndices)
+            {
+                System.out.println("FOR LOOP RUNNING"); 
+                remainingToBeRanked.remove(index-removed);
+                removed++; 
+            }
+
+
 
             // Increment to next rank
             currentRank++; 
         }
         
         // Loop through all ranks, and calculate crowding distances
-        for (ArrayList<individual> rank : allRanks)
+        for (ArrayList<individual> rank : allRanks) 
         {
             calcCrowdingDistance(rank);
         }
 
-        System.out.print("\n\n\n"); 
-
-        for (int i=0;i<remainingToBeRanked.size(); i++)
+        for (int i=0;i<population.size(); i++)
         {
-          System.out.println("Individual " + i + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
+            System.out.println("Individual " + i + "rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
         }
+
+
     }
     
 
@@ -493,18 +519,23 @@ public class LevelGenerator extends AbstractLevelGenerator{
             // Create new individuals until offspring size = population size
             while (offspring.size() < pop.size())
             {
-                // Get index of random parents
+                // // Get index of random parents
                 int fatherIndex = rand.nextInt(pop.size());
                 int motherIndex = rand.nextInt(pop.size());
 
-                // Ensure not same individual twice selected
-                while (motherIndex == fatherIndex)
-                {
-                    motherIndex = rand.nextInt(pop.size());
-                }
+                // // Ensure not same individual twice selected
+                // while (motherIndex == fatherIndex)
+                // {
+                //     motherIndex = rand.nextInt(pop.size());
+                // }
 
-                // Do crossover, **Choose number of crossover points
-                ArrayList<individual> children = n_point_crossover(pop.get(motherIndex).genotype, pop.get(fatherIndex).genotype, 3); 
+                // // Do crossover, **Choose number of crossover points
+                // ArrayList<individual> children = n_point_crossover(pop.get(motherIndex).genotype, pop.get(fatherIndex).genotype, 3); 
+
+                // crossover is fucked- trying mutate only
+                ArrayList<individual> children = new ArrayList<individual>();
+                children.add(pop.get(motherIndex));
+                children.add(pop.get(fatherIndex));
 
                 // Mutate the children
                 mutate(children.get(0));
@@ -542,9 +573,13 @@ public class LevelGenerator extends AbstractLevelGenerator{
                     numRanks = pop.get(j).rank; 
                 }
             }
+
+            System.out.println("Numranks is: " + numRanks);
             
             // Create ordered population list
             ArrayList<individual> orderedPop = new ArrayList<individual>();
+
+            System.out.println("Ordering pop now...");
             
             // For each rank... 
             for (int j=0; j<numRanks; j++)
@@ -562,20 +597,26 @@ public class LevelGenerator extends AbstractLevelGenerator{
                     }
                 }
 
+                System.out.println("temprank has size: " + tempRank.size());
+
                 // Now order the temporary list in descending order of crowding distance
                 Collections.sort(tempRank, Comparator.comparingDouble(individual :: get_crowdingDistance));
                 Collections.reverse(tempRank);
 
                 // Then add the sorted rank to a new population list
                 orderedPop.addAll(tempRank); 
+              
             }
 
+            System.out.println("OrderedPOp has size: " + orderedPop.size()); 
+
+            pop.clear();
             // Now that we have our full population ordered, add the top individuals back into pop
             for (int j=0; j<selectionSize; j++)
             {
-                pop.set(j,orderedPop.get(j)); 
+                pop.add(orderedPop.get(j)); 
             }
-
+            
         }
 
         // Some code for caculating hypervolume of the final population
