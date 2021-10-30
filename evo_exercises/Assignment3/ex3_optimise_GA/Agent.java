@@ -45,9 +45,6 @@ public class Agent extends AbstractPlayer {
     public boolean five_million = false;
     public boolean finished = false;
 
-    // this will keep track of the move that ends the game in advance(). That way, we don't print unnecessary moves
-    public int move_cutoff = 0; 
-
     // constructor
     public Agent(StateObservation _stateObs, ElapsedCpuTimer elapsedTimer) 
     {
@@ -108,13 +105,13 @@ public class Agent extends AbstractPlayer {
         return cutoff;
     }
 
-
     // apply all actions from a genotype into a stateobs and return score
     public void calculate_fitness(StateObservation stateObs, individual _individual)
     {
         StateObservation stateObsCopy = stateObs.copy();
         boolean stop = false;
         finished = false;
+        int move_cutoff = 0;
 
         // apply moves
         for( int i = 0; (i < genotype_size && !finished); i++)
@@ -179,7 +176,6 @@ public class Agent extends AbstractPlayer {
         _individual.sequence_fitness = move_cutoff;
 
     }
-
 
     // iterates through all individuals 
     public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population)
@@ -357,7 +353,7 @@ public class Agent extends AbstractPlayer {
     // Calculates the crowding distances for all individuals in a rank
     public void calcCrowdingDistance(ArrayList<individual> rank)
     {
-        // // Deep copy the rank
+        // Deep copy the rank
         // ArrayList<individual> rankCopy = new ArrayList<individual>();
         // System.arraycopy(rank, 0, rankCopy, 0, rank.size()); 
 
@@ -408,7 +404,7 @@ public class Agent extends AbstractPlayer {
             }
 
             // Else, if indA fitness is higher (better) than or equal to indB on both fronts, indA is not dominated 
-            if ( (indB.fitness >= indA.fitness) && ( 1/indB.sequence_fitness >= 1/indA.sequence_fitness) )
+            if ( (indB.normalised_fitness >= indA.normalised_fitness) && ( indB.normalised_sequence_fitness >= indA.normalised_sequence_fitness) )
             {
                 return false; 
             }
@@ -418,9 +414,20 @@ public class Agent extends AbstractPlayer {
         return true;
     }
 
+    static int count_fitness = 0;
     // Function that runs all 3 functions above, calculating ranks and crowding distances
     public void bi_objective_fitness(ArrayList<individual> population)
     {
+        for (int i=0;i<population.size(); i++)
+        {
+            System.out.println(population.get(i).toString() + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
+        }
+
+        // Counting
+        float percentage = (count_fitness/numGens*pop_size)*100;
+        System.out.print( "\r" + count_fitness + "/" + numGens*pop_size + " " + "(" );
+        System.out.printf( "%.1f",percentage );
+        System.out.print( "%" + ")" );
 
         // Begin by clearing existing rank and crowding values in population
         // This is because new offspring have been added so the ranks are not longer valid
@@ -429,16 +436,16 @@ public class Agent extends AbstractPlayer {
             ind.rank = -1;
             ind.crowdingDistance = -1;  
         }
-        System.out.print("fart");
+    
         // Normalise the fitness values
         normaliseFitnesses(population);
-        System.out.print("fart1");
+        
         // Shallow copy of population
         ArrayList<individual> remainingToBeRanked = new ArrayList<individual>(population); 
-        System.out.print("fart2");
+        
         // Create an arraylist of arraylists
         ArrayList<ArrayList<individual>> allRanks = new ArrayList<ArrayList<individual>>(); 
-        System.out.print("fart3");
+        
         // Now sort the population into fronts:
         int currentRank = 1; 
 
@@ -463,19 +470,26 @@ public class Agent extends AbstractPlayer {
 
             if (indsInCurrentRank.size() == 0)
             {
+                for(individual ind:remainingToBeRanked)
+                {
+                    ind.rank = currentRank;
+                }
+
                 allRanks.add(remainingToBeRanked);
                 break;
+
             } else 
             {
                 // Add rank to the list that holds ranks
                 allRanks.add(indsInCurrentRank);
             }
 
+
+
             // Remove all ranked individuals from the "toBeRanked" list
             Collections.sort(addedIndices);
             int removed = 0; 
-            System.out.println("Size before " + remainingToBeRanked.size());
-
+        
             for (int index : addedIndices)
             {
                 System.out.println("FOR LOOP RUNNING"); 
@@ -483,20 +497,22 @@ public class Agent extends AbstractPlayer {
                 removed++; 
             }
 
-            System.out.println("Size after " + remainingToBeRanked.size());
 
-            System.out.print("\n\n\n"); 
 
             // Increment to next rank
             currentRank++; 
         }
-        System.out.print("fart4");
+        
         // Loop through all ranks, and calculate crowding distances
         for (ArrayList<individual> rank : allRanks) 
         {
             calcCrowdingDistance(rank);
         }
-        System.out.println("CROWDING DISTANCE DONE");
+
+        for (int i=0;i<population.size(); i++)
+        {
+            System.out.println(population.get(i).toString() + "rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
+        }
     }
 
     /*
@@ -673,6 +689,11 @@ public class Agent extends AbstractPlayer {
                 for (int j=0; j<selectionSize; j++)
                 {
                     population.set(j,orderedPop.get(j)); 
+                }
+
+                for (int i=0; i<population_size; i++)
+                {
+                    System.out.println(population.get(i).toString() + "rank and crowding: " + population.get(k).rank + ", " + population.get(k).crowdingDistance);
                 }
 
                 /*
