@@ -398,16 +398,16 @@ public class LevelGenerator extends AbstractLevelGenerator{
             ind.rank = -1;
             ind.crowdingDistance = -1;  
         }
-        System.out.print("fart");
+    
         // Normalise the fitness values
         normaliseFitnesses(population);
-        System.out.print("fart1");
+        
         // Shallow copy of population
         ArrayList<individual> remainingToBeRanked = population; 
-        System.out.print("fart2");
+        
         // Create an arraylist of arraylists
         ArrayList<ArrayList<individual>> allRanks = new ArrayList<ArrayList<individual>>(); 
-        System.out.print("fart3");
+        
         // Now sort the population into fronts:
         int currentRank = 1; 
 
@@ -426,15 +426,6 @@ public class LevelGenerator extends AbstractLevelGenerator{
                 }
             }
 
-    
-
-            System.out.print("\n\n\n"); 
-
-           for (int i=0;i<remainingToBeRanked.size(); i++)
-           {
-             System.out.println("Individual " + i + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
-           }
-
 
 
             // Add rank to the list that holds ranks
@@ -443,11 +434,18 @@ public class LevelGenerator extends AbstractLevelGenerator{
             // Increment to next rank
             currentRank++; 
         }
-        System.out.print("fart4");
+        
         // Loop through all ranks, and calculate crowding distances
         for (ArrayList<individual> rank : allRanks)
         {
             calcCrowdingDistance(rank);
+        }
+
+        System.out.print("\n\n\n"); 
+
+        for (int i=0;i<remainingToBeRanked.size(); i++)
+        {
+          System.out.println("Individual " + i + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
         }
     }
     
