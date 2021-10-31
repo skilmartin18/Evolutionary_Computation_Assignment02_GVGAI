@@ -73,6 +73,16 @@ public class individual {
         return normalisedWallFitness; 
     }
 
+    public double get_coverage_fitness()
+    {
+        return coverageFitness;
+    }
+
+    public double get_wall_fitness()
+    {
+        return wallFitness;
+    }
+
     /*   
          LEVEL MAPPINGS
                           */
