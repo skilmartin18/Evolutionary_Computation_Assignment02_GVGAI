@@ -42,7 +42,7 @@ public class Ex3_optimise_GA {
 
 		String[] levels = new String[L];
 
-		for(int i = 0; i < 4; ++i)
+		for(int i = 0; i < 1; ++i)
 		{
 			// get game and name
 			String game = games[ games_played[i] ][ 0 ];
