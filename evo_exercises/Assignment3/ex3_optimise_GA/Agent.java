@@ -742,11 +742,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Hypervolumes:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-<<<<<<< HEAD
-        handle_files.write_to_file("results/assignment03/exercise03/BoulderChaseTest", final_text);
-=======
         handle_files.write_to_file("results/assignment03/exercise03/BomberTest22", final_text);
->>>>>>> 26814a9c0d0f0a8464a8d1456fe803d2ebb5657f
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
