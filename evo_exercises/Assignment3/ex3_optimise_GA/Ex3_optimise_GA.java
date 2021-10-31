@@ -57,10 +57,12 @@ public class Ex3_optimise_GA {
 			// ARCADEMACHINE.JAVA, LINE 537 IS WHERE OUTPUT FILE IS SPECIFIED
 			//
 
+			ArcadeMachine.runOneGame(game, levels[0], visuals, assignment03ex03, recordActionsFile, seed, 0);
+
 			for(int k = 0; k < 5; ++k){
 				// runGames must take levels as an string array- so convert levels[k] into one
 				System.out.println("Lvl_"+k+":");
-				ArcadeMachine.runOneGame(game, levels[k], visuals, assignment03ex03, recordActionsFile, seed, 0);
+				//ArcadeMachine.runOneGame(game, levels[k], visuals, assignment03ex03, recordActionsFile, seed, 0);
 			}
 		}
     }

@@ -27,8 +27,8 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 50;
-    public int genotype_size = 300;
+    public int population_size = 80;
+    public int genotype_size = 200;
     public Random rand;
     public individual seed_individual;
     public ElapsedCpuTimer timer;
@@ -274,7 +274,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 10;
+        int acceptable_action_amount = 7;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -397,39 +397,65 @@ public class Agent extends AbstractPlayer {
         // ArrayList<individual> rankCopy = new ArrayList<individual>();
         // System.arraycopy(rank, 0, rankCopy, 0, rank.size()); 
 
-        // Order the rank based on any of the two normalised fitness values
-        Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalised_fitness));
+        // Order the rank based on sequence fitness
+        Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalised_sequence_fitness));
 
         // Loop through the rank (the front)
         for (int i=0; i<rank.size(); i++)
         {
-
             // If we are at first or last individual, assign +inf. crowding distance
             if ( i==0 || i==rank.size()-1 )
             {
-                rank.get(i).crowdingDistance = Double.POSITIVE_INFINITY; 
+                rank.get(i).sequence_distance = Double.POSITIVE_INFINITY; 
             }
             // All other cases...
             else
             {
-                // Get references to current, left, and right individuals
-                individual current = rank.get(i);
-                individual left = rank.get(i-1);
-                individual right = rank.get(i+1);
+                // Get references to left and right individuals
+                individual sequence_left = rank.get(i-1);
+                individual sequence_right = rank.get(i+1);
+
+                // Get current individual sequence distance
+                rank.get(i).sequence_distance = (sequence_right.normalised_sequence_fitness-sequence_left.normalised_sequence_fitness)/
+                (rank.get(rank.size()-1).normalised_sequence_fitness-rank.get(0).normalised_sequence_fitness);
 
                 // Get vector positions of the three individuals, based upon 2 fitness vals
-                Vector2d currentPos = new tools.Vector2d(current.normalised_fitness, current.normalised_sequence_fitness); 
-                Vector2d leftPos = new tools.Vector2d(left.normalised_fitness, left.normalised_sequence_fitness); 
-                Vector2d rightPos = new tools.Vector2d(right.normalised_fitness, right.normalised_sequence_fitness); 
+                // Vector2d currentPos = new tools.Vector2d(current.normalised_fitness, current.normalised_sequence_fitness); 
+                // Vector2d leftPos = new tools.Vector2d(left.normalised_fitness, left.normalised_sequence_fitness); 
+                // Vector2d rightPos = new tools.Vector2d(right.normalised_fitness, right.normalised_sequence_fitness); 
 
                 // Calc distance from current to left and right vecs
-                double leftDistance = currentPos.dist(leftPos); 
-                double rightDistance = currentPos.dist(rightPos); 
+                // double leftDistance = currentPos.dist(leftPos); 
+                // double rightDistance = currentPos.dist(rightPos); 
 
                 // Crowding distance is the total of these two values
-                rank.get(i).crowdingDistance = leftDistance + rightDistance; 
+                //rank.get(i).crowdingDistance = (leftDistance + rightDistance); 
             }
         }
+
+        Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalised_fitness));
+        // Loop through the rank (the front)
+        for (int j=0; j<rank.size(); j++)
+        {
+                // If we are at first or last individual, assign +inf. crowding distance
+            if ( j==0 || j==rank.size()-1 )
+            {
+                rank.get(j).score_distance= Double.POSITIVE_INFINITY; 
+            }
+            else
+            {
+                // Get references to left and right individuals
+                individual score_left = rank.get(j-1);
+                individual score_right = rank.get(j+1);
+
+                // Get current individual sequence distance
+                rank.get(j).score_distance = (score_right.normalised_fitness-score_left.normalised_fitness)/
+                (rank.get(rank.size()-1).normalised_fitness-rank.get(0).normalised_fitness);
+            }
+
+            // Calculate crowding distance
+            rank.get(j).crowdingDistance = rank.get(j).sequence_distance + rank.get(j).score_distance ;
+        } 
     }
 
     // Check if an individual is not dominated by any other solutions in population
@@ -650,7 +676,7 @@ public class Agent extends AbstractPlayer {
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
                     // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,30));
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,20));
                 }
 
                 // add children to parent population, will result in a population of double size
@@ -810,7 +836,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise03/NewPopTest", final_text);
+        handle_files.write_to_file("results/assignment03/exercise03/BomberTest", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */

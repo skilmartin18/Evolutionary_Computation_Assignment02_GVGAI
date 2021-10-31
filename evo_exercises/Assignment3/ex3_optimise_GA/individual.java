@@ -24,15 +24,22 @@ public class individual {
     double normalised_sequence_fitness = 0;
     int rank = 0; 
     double crowdingDistance = 0; 
+    double sequence_distance = 0;
+    double score_distance = 0;
 
     public double get_fitness()
     {
         return fitness;
     }
 
-    public double get_normalised_fitness()
+    public double get_normalised_sequence_fitness()
     {
         return normalised_sequence_fitness;
+    }
+
+    public double get_normalised_fitness()
+    {
+        return normalised_fitness;
     }
 
     public double get_crowdingDistance()
