@@ -369,12 +369,22 @@ public class LevelGenerator extends AbstractLevelGenerator{
             // first index does not have previous data point
             if ( i == 0 )
             {
-                hypervolume = hypervolume + ( copied_pop.get(i).coverageFitness*copied_pop.get(i).wallFitness );
+                hypervolume = copied_pop.get(i).coverageFitness*copied_pop.get(i).wallFitness;
 
             // every other data point has a previous data point
             }else
             {
-                hypervolume = hypervolume + ( (copied_pop.get(i).coverageFitness - copied_pop.get(i-1).coverageFitness)*copied_pop.get(i).wallFitness );
+                // if next data point is higher than previous
+                if ( copied_pop.get(i).wallFitness > copied_pop.get(i-1).wallFitness )
+                {
+
+                    hypervolume = copied_pop.get(i).coverageFitness*copied_pop.get(i).wallFitness;
+
+                // if data point is lower then calculate as rectangle area
+                }else
+                {
+                    hypervolume = hypervolume + ( (copied_pop.get(i).coverageFitness - copied_pop.get(i-1).coverageFitness)*copied_pop.get(i).wallFitness );
+                }
             }
         }
 

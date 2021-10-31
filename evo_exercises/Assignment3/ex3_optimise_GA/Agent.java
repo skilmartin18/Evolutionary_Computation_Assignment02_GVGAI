@@ -521,7 +521,7 @@ public class Agent extends AbstractPlayer {
             // first index does not have previous data point
             if ( i == 0 )
             {
-                hypervolume = hypervolume + ( copied_pop.get(i).fitness*absolute_sequence_fitness);
+                hypervolume = copied_pop.get(i).fitness*absolute_sequence_fitness;
 
             // every other data point has a previous data point
             }else
