@@ -421,8 +421,6 @@ public class LevelGenerator extends AbstractLevelGenerator{
         {
             population.get(i).normalisedWallFitness = (double)population.get(i).wallFitness / (double)maxWallFitness;
             population.get(i).normalisedCoverageFitness = (double)population.get(i).coverageFitness / (double)maxCoverageFitness;
-            System.out.println(population.get(i).normalisedWallFitness);
-            System.out.println(population.get(i).normalisedCoverageFitness);
         }
     }
 
@@ -773,7 +771,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
         // Some code for printing final population genotypes to file 
         // Return final population
-        
+
         return pop;
     }
 
