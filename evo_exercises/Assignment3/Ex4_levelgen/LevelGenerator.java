@@ -36,8 +36,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
     GameDescription game;
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
-    int pop_size = 4;
-    int numGens = 16;
+    int pop_size = 10;
+    int numGens = 2;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -85,10 +85,10 @@ public class LevelGenerator extends AbstractLevelGenerator{
             coveragefitness = final_population.get(i).coverageFitness+"";
             rank = final_population.get(i).rank+"";
 
-            handle_files.write_to_file("results/assignment03/ex4/test1", "WAL_FIT: "+wallfitness);
-            handle_files.write_to_file("results/assignment03/ex4/test1", "COVER_FIT: "+coveragefitness);
-            handle_files.write_to_file("results/assignment03/ex4/test1", "RANK: "+rank);
-            handle_files.write_to_file("results/assignment03/ex4/test1", convert_genotype_to_map(final_population.get(i)));
+            handle_files.write_to_file("results/assignment03/ex4/test1",final_population.get(i).toString()+":\n"+ "WAL_FIT: "+wallfitness+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/test1", "COVER_FIT: "+coveragefitness+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/test1", "RANK: "+rank+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/test1", "\n"+convert_genotype_to_map(final_population.get(i)));
             handle_files.write_to_file("results/assignment03/ex4/test1", "\n\n\n\n\n");
         }
         
@@ -126,6 +126,93 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
      
     ////// MUTATIONS AND CROSSOVER //////
+
+
+    /// REMOVE WALL ///
+    public void remove_wall(individual ind)
+    {
+        ArrayList<Integer> wall_loc = new ArrayList<Integer>();
+
+        // get locations of all walls 
+        for ( int i =0; i < ind.genotype.length; i++)
+        {
+            if ( ind.genotype[i] == 'w')
+            {
+                wall_loc.add(i);
+            }
+        }
+
+        /// CHOOSE RANDOM WALL TO REMOVE
+        // choose index from list of wall indices 
+        int index = rand.nextInt(wall_loc.size());
+        // remove wall from the location given in the list of wall indices
+        ind.genotype[wall_loc.get(index)] = '.';
+
+    }
+
+    /// CREATE WALL SECTION ///
+
+    public void create_walls(individual ind)
+    {
+        int maximum_wall_length = 3;
+       
+    
+        // how long is wall?
+        int wall_len = rand.nextInt(maximum_wall_length)+1;
+
+        // horizontal?
+        if ( rand.nextDouble() > 0.5)
+        {
+            // wall start
+            int x_rand = rand.nextInt(ind.playable_width-1);
+            int y_rand = rand.nextInt(ind.playable_height-1);
+
+            for(int j = 0; j < wall_len; j++)
+            {
+                // dont place outside bounds
+                if(x_rand == ind.playable_width)
+                {
+                    break;
+                }
+
+                // place the wall
+                if(ind.genotype[x_rand+y_rand*ind.playable_width]=='.')
+                {
+                    ind.genotype[x_rand+y_rand*ind.playable_width] = 'w';
+                }
+
+                // move next
+                x_rand++;
+
+            }
+        }
+        else //vertical
+        {
+            // wall start
+            int x_rand = rand.nextInt(ind.playable_width-1);
+            int y_rand = rand.nextInt(ind.playable_height-1);
+
+            for(int j = 0; j < wall_len; j++)
+            {
+                // dont place outside bounds
+                if(y_rand == ind.playable_height)
+                {
+                    break;
+                }
+
+                // place the wall
+                if(ind.genotype[x_rand+y_rand*ind.playable_width]=='.')
+                {
+                    ind.genotype[x_rand+y_rand*ind.playable_width] = 'w';
+                }
+
+                // move next
+                y_rand++;
+            }
+        }
+
+    }
+
 
 
     /// CREATE TILE ///
@@ -607,16 +694,28 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
                 // Then add the sorted rank to a new population list
                 orderedPop.addAll(tempRank); 
-              
+                
             }
 
             System.out.println("OrderedPOp has size: " + orderedPop.size()); 
 
             pop.clear();
+
             // Now that we have our full population ordered, add the top individuals back into pop
-            for (int j=0; j<selectionSize; j++)
+            // for (int j=0; j<selectionSize; j++)
+            // {
+            //     pop.add(orderedPop.get(j)); 
+            // }
+            // add and dont accidentally add "eliminated" scores
+            int count = 0;
+            while(pop.size()<selectionSize)
             {
-                pop.add(orderedPop.get(j)); 
+                if ( orderedPop.get(count).wallFitness != -1000)
+                {
+                    pop.add(orderedPop.get(count));  
+                }
+
+                count++;
             }
 
             for (int k=0;k<pop.size(); k++)
