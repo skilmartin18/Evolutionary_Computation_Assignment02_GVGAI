@@ -1,7 +1,7 @@
 package evo_exercises.Assignment3.Ex4_levelgen;
 
 
-
+import java.lang.Math.* ;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +51,8 @@ public class individual {
     int feasible_fitness = 0;
     double normalisedWallFitness = 0;
     double normalisedCoverageFitness = 0; 
+    double coverage_distance = 0;
+    double wall_distance = 0;
 
     // Variables for dominance ranking in biobjective GA
     // ArrayList<individual> dominatedIndividuals; 
@@ -71,6 +73,11 @@ public class individual {
     public double get_normalisedWallFitness()
     {
         return normalisedWallFitness; 
+    }
+
+    public double get_normalisedCoverageFitness()
+    {
+        return normalisedCoverageFitness; 
     }
 
     public double get_coverage_fitness()
@@ -312,7 +319,7 @@ public class individual {
 
         StepController stepAgent = new StepController(automatedAgent, 40);
         ElapsedCpuTimer elapsedTimer = new ElapsedCpuTimer();
-        elapsedTimer.setMaxTimeMillis(10000);
+        elapsedTimer.setMaxTimeMillis(20000);
 
         /// run a few times incase it doesnt win 100% of the time
         /// running twice doubles computational overhead, so until 
@@ -411,13 +418,13 @@ public class individual {
                             score += 0;                           
                             break;
                         case 1: 
-                            score += 15;                           
+                            score += 10;                           
                             break;
                         case 2:           
-                            score += 4;                 
+                            score += 15;                 
                             break;
                         case 3:     
-                            score += 2;                       
+                            score += 4;                       
                             break;
                         case 4:     
                             score += 0;                       
@@ -477,7 +484,13 @@ public class individual {
             // {
             //     wallFitness = -1;
             // }
-            coverageFitness = calc_coverage_fitness();
+            // trying a little change in coverage fitness calcualtion, previously there would be no dominant
+            // points, as each wallplaced while increasing wallscore directly takes away from the coverage score
+            // thus almost impossible to have a dominating point, thus trying to change coverag fitness
+            // to "how well used the tiles are", i.e the wallscore per tile used.
+            // now testing with normal coverage, and changed wallFitness
+            coverageFitness = (int)(calc_coverage_fitness()+0.1*wallFitness);
+
             // if (coverageFitness == 0)
             // {
             //     coverageFitness = -1;

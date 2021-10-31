@@ -244,7 +244,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 7;
+        int acceptable_action_amount = 20;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -526,7 +526,15 @@ public class Agent extends AbstractPlayer {
             // every other data point has a previous data point
             }else
             {
-                hypervolume = hypervolume + ( (copied_pop.get(i).fitness - copied_pop.get(i-1).fitness)*absolute_sequence_fitness);
+                // if next data point is higher than previous
+                if ( absolute_sequence_fitness > (gen_size - copied_pop.get(i-1).sequence_fitness) )
+                {
+                    hypervolume = copied_pop.get(i).fitness*absolute_sequence_fitness;
+
+                // if data point is lower then calculate as rectangle area
+                }else{
+                    hypervolume = hypervolume + ( (copied_pop.get(i).fitness - copied_pop.get(i-1).fitness)*absolute_sequence_fitness);
+                }
             }
         }
 
@@ -615,7 +623,7 @@ public class Agent extends AbstractPlayer {
                     int fatherIndex = rand.nextInt(population_size);
                     int motherIndex = rand.nextInt(population_size);
 
-                    ArrayList<individual> temp2 = n_point_crossover(population.get(fatherIndex), population.get(motherIndex), 7);
+                    ArrayList<individual> temp2 = n_point_crossover(population.get(fatherIndex), population.get(motherIndex), 8);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
@@ -624,7 +632,7 @@ public class Agent extends AbstractPlayer {
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
                     // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,20));
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,40));
                 }
 
                 // calculate fitness
