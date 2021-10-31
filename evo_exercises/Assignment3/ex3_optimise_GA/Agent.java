@@ -576,11 +576,6 @@ public class Agent extends AbstractPlayer {
             // create population
             ArrayList<individual> new_population = new ArrayList<individual>();
 
-            // var decs
-            double best_score = 0;
-            String best_score_text = "";
-            String best_moves_text = "";
-
             // hypervolume
             double hypervolume = 0;
 
@@ -606,7 +601,7 @@ public class Agent extends AbstractPlayer {
             }
 
             // evolve while we have time remaining
-            while ( advance_count < 200001 )
+            while ( advance_count < 5000001 )
             {
                 previous_hypervol = hypervolume;
 
@@ -742,7 +737,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Hypervolumes:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise03/BomberTest22", final_text);
+        handle_files.write_to_file("results/assignment03/exercise03/quickbombertest", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
