@@ -42,7 +42,7 @@ public class Ex3_optimise_GA {
 
 		String[] levels = new String[L];
 
-		for(int i = 0; i < 4; ++i)
+		for(int i = 0; i < 1; ++i)
 		{
 			// get game and name
 			String game = games[ games_played[i] ][ 0 ];
@@ -57,7 +57,7 @@ public class Ex3_optimise_GA {
 			// ARCADEMACHINE.JAVA, LINE 537 IS WHERE OUTPUT FILE IS SPECIFIED
 			//
 
-			for(int k = 0; k < 5; ++k){
+			for(int k = 0; k < 1; ++k){
 				// runGames must take levels as an string array- so convert levels[k] into one
 				System.out.println("Lvl_"+k+":");
 				ArcadeMachine.runOneGame(game, levels[k], visuals, assignment03ex03, recordActionsFile, seed, 0);
