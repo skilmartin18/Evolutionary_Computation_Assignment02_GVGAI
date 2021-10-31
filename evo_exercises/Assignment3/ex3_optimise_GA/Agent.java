@@ -27,7 +27,7 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0;
-    public int population_size = 50;
+    public int population_size = 80;
     public int genotype_size = 200;
     public Random rand;
     public individual seed_individual;
@@ -737,7 +737,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Hypervolumes:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise03/quickbombertest", final_text);
+        handle_files.write_to_file("results/assignment03/exercise03/OfficialBomberTest", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
