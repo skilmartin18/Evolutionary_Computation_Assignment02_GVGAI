@@ -574,6 +574,39 @@ public class Agent extends AbstractPlayer {
         // }
     }
 
+    // calculates hypervolume for a population
+    public double hypervolume_population(ArrayList<individual> population)
+    {
+        // initialising variables to sort copied version of population based on x axis variable
+        ArrayList<individual> copied_pop = new ArrayList<individual>(population);
+        Collections.sort(copied_pop, Comparator.comparingDouble(individual :: get_fitness));
+
+        // hypervolume variable which is returned
+        double hypervolume = 0.0;
+        double absolute_sequence_fitness = 0.0;
+        double gen_size = genotype_size;
+
+        // calculating hypervolume for given population
+        for ( int i = 0; i < population_size; i++ )
+        {
+            // calculating absolute normalised sequence fitness (based on set genotype size rather than a varying max sequence length of a population)
+            absolute_sequence_fitness = (gen_size - copied_pop.get(i).sequence_fitness)/gen_size;
+
+            // first index does not have previous data point
+            if ( i == 0 )
+            {
+                hypervolume = hypervolume + ( copied_pop.get(i).normalised_fitness*absolute_sequence_fitness);
+
+            // every other data point has a previous data point
+            }else
+            {
+                hypervolume = hypervolume + ( (copied_pop.get(i).normalised_fitness - copied_pop.get(i-1).normalised_fitness)*absolute_sequence_fitness);
+            }
+        }
+
+        return hypervolume;
+    }
+
     /*
 
 
