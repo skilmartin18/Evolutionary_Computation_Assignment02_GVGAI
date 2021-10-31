@@ -106,7 +106,6 @@ public class Agent extends AbstractPlayer {
         return cutoff;
     }
 
-
     // apply all actions from a genotype into a stateobs and return score
     public void calculate_fitness(StateObservation stateObs, individual _individual, int individual_counter)
     {
@@ -177,7 +176,6 @@ public class Agent extends AbstractPlayer {
 
     }
 
-
     // iterates through all individuals 
     public void calculate_population_fitness(StateObservation stateObs, ArrayList<individual> population)
     {
@@ -214,37 +212,6 @@ public class Agent extends AbstractPlayer {
         }
 
         return individual;
-    }
-
-    // returns an arrary list of 2 children after parent crossover
-    public ArrayList<individual> one_point_crossover(individual ind1, individual ind2){
-    
-        // initialising an arraylist of children to return
-        ArrayList<individual> children = new ArrayList<individual>();
-
-        // creating children clones
-        individual child1 = new individual(ind1.genotype,stateObs);
-        individual child2 = new individual(ind2.genotype,stateObs);
-
-        // initialising a variable to store Types.ACTIONS
-        Types.ACTIONS temp;
-        
-        // random int to find crossover point
-        rand = new Random();
-        int rand_int = rand.nextInt(genotype_size);
-
-        // iterates through random index to end of list and swaps values
-        for (int i = rand_int; i < genotype_size; i++){
-            temp = child1.genotype.get(i);
-            child1.genotype.set(i, child2.genotype.get(i));
-            child2.genotype.set(i, temp);
-        }
-
-        // adding children
-        children.add(child1);
-        children.add(child2);
-
-        return children;
     }
 
     // returns an arrary list of 2 children after parent crossover
@@ -409,6 +376,7 @@ public class Agent extends AbstractPlayer {
         return elites;
     }
 
+    // converts from Type.ACTIONS to string, useful for printing genotype for replaying games if needed
     public String fromACTIONS(ACTIONS move){
         String error = "";
 
@@ -456,8 +424,8 @@ public class Agent extends AbstractPlayer {
         {
             // create population
             ArrayList<individual> new_population = new ArrayList<individual>();
+
             // var decs
-            // Types.ACTIONS action = ACTIONS.ACTION_NIL;
             double best_score = 0;
             String best_score_text = "";
             ArrayList<Types.ACTIONS> best_moves;
@@ -486,7 +454,7 @@ public class Agent extends AbstractPlayer {
             }
 
             // evolve while we have time remaining
-            while ( advance_count < 200001 )
+            while ( advance_count < 5000001 )
             {   
                 int cutoff_two = 0;
 
@@ -543,6 +511,7 @@ public class Agent extends AbstractPlayer {
                 best_score_text = best_score+"";
 
                 // converting ACTIONS to strings (comment out if you just want to print scores for results)
+                // it stops converting once the cutoff point is reached (once game state is finished; further actions are redundant)
                 best_moves = population.get(0).genotype;
                 cutoff_two = find_cutoff(stateObs, population.get(0));
 
