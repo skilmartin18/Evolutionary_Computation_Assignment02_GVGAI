@@ -41,7 +41,7 @@ public class Ex2_run_controller {
 
 		String[] levels = new String[L];
 
-		for(int i = 0; i < 2; ++i)
+		for(int i = 0; i < games_played.length; ++i)
 		{
 			
 			// get game and name
@@ -57,7 +57,7 @@ public class Ex2_run_controller {
 			// ARCADEMACHINE.JAVA, LINE 537 IS WHERE OUTPUT FILE IS SPECIFIED
 			//
 
-			for(int k = 0; k < 5; ++k){
+			for(int k = 0; k < L; ++k){
 				// runGames must take levels as an string array- so convert levels[k] into one
 				System.out.println("Lvl_"+k+":");
 				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
