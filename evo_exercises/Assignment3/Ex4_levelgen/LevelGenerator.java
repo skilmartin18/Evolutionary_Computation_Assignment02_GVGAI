@@ -36,8 +36,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
     GameDescription game;
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
-    int pop_size = 10;
-    int numGens = 2;
+    int pop_size = 18;
+    int numGens = 50;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -64,6 +64,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
         ArrayList<individual> final_population = new ArrayList<individual>();
         String result = " ";
 
+        String filename = "ex4_zelda";
+
         // initialise population
         for(int i = 0; i < pop_size; i++)
         {
@@ -75,9 +77,10 @@ public class LevelGenerator extends AbstractLevelGenerator{
         final_population = bi_Objective_GA(population, numGens);
         
         // calculate hypervolume
+        double hypervolume = hypervolume_population(final_population);
 
         // print genotypes
-        
+        handle_files.write_to_file("results/assignment03/ex4/"+filename,"START OF NEW RUN:\n");
         for ( int i = 0; i < final_population.size(); i++)
         {
             String wallfitness, coveragefitness, rank;
@@ -85,11 +88,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
             coveragefitness = final_population.get(i).coverageFitness+"";
             rank = final_population.get(i).rank+"";
 
-            handle_files.write_to_file("results/assignment03/ex4/",final_population.get(i).toString()+":\n"+ "WAL_FIT: "+wallfitness+"\n");
-            handle_files.write_to_file("results/assignment03/ex4/", "COVER_FIT: "+coveragefitness+"\n");
-            handle_files.write_to_file("results/assignment03/ex4/", "RANK: "+rank+"\n");
-            handle_files.write_to_file("results/assignment03/ex4/", "\n"+convert_genotype_to_map(final_population.get(i)));
-            handle_files.write_to_file("results/assignment03/ex4/", "\n\n\n\n\n");
+            handle_files.write_to_file("results/assignment03/ex4/"+filename,final_population.get(i).toString()+":\n"+ "WAL_FIT: "+wallfitness+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/"+filename, "COVER_FIT: "+coveragefitness+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/"+filename, "HYPERVOLUME: "+hypervolume+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/"+filename, "RANK: "+rank+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/"+filename, "\n"+convert_genotype_to_map(final_population.get(i)));
+            handle_files.write_to_file("results/assignment03/ex4/"+filename, "\n\n\n\n\n");
         }
         
         result = convert_genotype_to_map(final_population.get(0));
@@ -154,7 +158,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     public void create_walls(individual ind)
     {
-        int maximum_wall_length = 3;
+        int maximum_wall_length = 6;
        
     
         // how long is wall?
@@ -246,23 +250,14 @@ public class LevelGenerator extends AbstractLevelGenerator{
     {
         double decider = rand.nextDouble();
 
-        if (decider < 0.5)
+        if (decider < 0.65)
         {
-            // 2 of same mutation
-            create_tile(ind); 
-            create_tile(ind);
+            remove_wall(ind);
 
-        } else if (decider >= 0.5 && decider < 0.75)
+        } 
+        else 
         {
-            // 2 different
-            create_tile(ind);
-            destroy_tile(ind);
-
-        } else 
-        {
-            // 2 same
-            destroy_tile(ind);
-            destroy_tile(ind);
+            create_walls(ind);
         }
     }
 
@@ -356,6 +351,34 @@ public class LevelGenerator extends AbstractLevelGenerator{
         }
 
         return result;
+    }
+
+    // CALCULATING HYPERVOLUME FOR A POPULATION
+    public double hypervolume_population(ArrayList<individual> population)
+    {
+        // initialising variables to sort copied version of population based on x axis variable
+        ArrayList<individual> copied_pop = new ArrayList<individual>(population);
+        Collections.sort(copied_pop, Comparator.comparingDouble(individual :: get_coverage_fitness));
+
+        // hypervolume variable which is returned
+        double hypervolume = 0;
+
+        // calculating hypervolume for given population
+        for ( int i = 0; i < pop_size; i++ )
+        {
+            // first index does not have previous data point
+            if ( i == 0 )
+            {
+                hypervolume = hypervolume + ( copied_pop.get(i).coverageFitness*copied_pop.get(i).wallFitness );
+
+            // every other data point has a previous data point
+            }else
+            {
+                hypervolume = hypervolume + ( (copied_pop.get(i).coverageFitness - copied_pop.get(i-1).coverageFitness)*copied_pop.get(i).wallFitness );
+            }
+        }
+
+        return hypervolume;
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -462,17 +485,11 @@ public class LevelGenerator extends AbstractLevelGenerator{
     // Function that runs all 3 functions above, calculating ranks and crowding distances
     public void bi_objective_fitness(ArrayList<individual> population)
     {
-        for (int i=0;i<population.size(); i++)
-        {
-            System.out.println(population.get(i).toString() + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
-        }
+        // for (int i=0;i<population.size(); i++)
+        // {
+        //     System.out.println(population.get(i).toString() + "wall and coverage fitness: " + population.get(i).wallFitness + ", " + population.get(i).coverageFitness);
+        // }
 
-
-        // Counting
-        float percentage = (count_fitness/numGens*pop_size)*100;
-        System.out.print( "\r" + count_fitness + "/" + numGens*pop_size + " " + "(" );
-        System.out.printf( "%.1f",percentage );
-        System.out.print( "%" + ")" );
 
         // Begin by clearing existing rank and crowding values in population
         // This is because new offspring have been added so the ranks are not longer valid
@@ -506,7 +523,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
                 individual ind = remainingToBeRanked.get(i);
                 if ( notDominated(ind, remainingToBeRanked ))
                 {
-                    System.out.println("NON DOMINATED INDIVIDUAL REACHED");
+                    //System.out.println("NON DOMINATED INDIVIDUAL REACHED");
                     ind.rank = currentRank; 
                     indsInCurrentRank.add(ind);
                     addedIndices.add(i);
@@ -537,7 +554,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         
             for (int index : addedIndices)
             {
-                System.out.println("FOR LOOP RUNNING"); 
+                //System.out.println("FOR LOOP RUNNING"); 
                 remainingToBeRanked.remove(index-removed);
                 removed++; 
             }
@@ -554,10 +571,10 @@ public class LevelGenerator extends AbstractLevelGenerator{
             calcCrowdingDistance(rank);
         }
 
-        for (int i=0;i<population.size(); i++)
-        {
-            System.out.println(population.get(i).toString() + "rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
-        }
+        // for (int i=0;i<population.size(); i++)
+        // {
+        //     System.out.println(population.get(i).toString() + "rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
+        // }
 
 
     }
@@ -724,8 +741,6 @@ public class LevelGenerator extends AbstractLevelGenerator{
             }
             
         }
-
-        // Some code for caculating hypervolume of the final population
 
         // Some code for printing final population genotypes to file 
 
