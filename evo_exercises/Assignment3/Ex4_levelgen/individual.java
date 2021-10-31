@@ -415,7 +415,7 @@ public class individual {
                     /// scores can be changed at a later date to confer more or less fitness
                     switch (adjacent_walls) {
                         case 0: 
-                            score += 0;                           
+                            score += -1;                           
                             break;
                         case 1: 
                             score += 10;                           
@@ -424,10 +424,10 @@ public class individual {
                             score += 15;                 
                             break;
                         case 3:     
-                            score += 4;                       
+                            score += 5;                       
                             break;
                         case 4:     
-                            score += 0;                       
+                            score += -5;                       
                             break;
                         default:
                             break;
@@ -480,17 +480,17 @@ public class individual {
         else
         {
             wallFitness = calc_wall_fitness();
-            // if (wallFitness == 0)
-            // {
-            //     wallFitness = -1;
-            // }
+            if (wallFitness == 0)
+            {
+                wallFitness = 1;
+            }
             // trying a little change in coverage fitness calcualtion, previously there would be no dominant
             // points, as each wallplaced while increasing wallscore directly takes away from the coverage score
             // thus almost impossible to have a dominating point, thus trying to change coverag fitness
             // to "how well used the tiles are", i.e the wallscore per tile used.
             // now testing with normal coverage, and changed wallFitness
-            coverageFitness = (int)(calc_coverage_fitness()+0.1*wallFitness);
-
+            // coverageFitness = (int)(calc_coverage_fitness()+0.1*wallFitness);
+            coverageFitness = calc_coverage_fitness();
             // if (coverageFitness == 0)
             // {
             //     coverageFitness = -1;

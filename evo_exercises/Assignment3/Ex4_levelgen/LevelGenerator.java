@@ -36,8 +36,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
     GameDescription game;
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
-    int pop_size = 12;
-    int numGens = 10;
+    int pop_size = 10;
+    int numGens = 120;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -158,11 +158,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     public void create_walls(individual ind)
     {
-        int maximum_wall_length = 6;
+        // actually maximum wall length -1
+        int maximum_wall_length = 5;
        
     
         // how long is wall?
-        int wall_len = rand.nextInt(maximum_wall_length)+1;
+        int wall_len = rand.nextInt(maximum_wall_length)+2;
 
         // horizontal?
         if ( rand.nextDouble() > 0.5)
@@ -250,7 +251,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     {
         double decider = rand.nextDouble();
 
-        if (decider < 0.65)
+        if (decider < 0.7)
         {
             remove_wall(ind);
 
@@ -421,8 +422,6 @@ public class LevelGenerator extends AbstractLevelGenerator{
         {
             population.get(i).normalisedWallFitness = (double)population.get(i).wallFitness / (double)maxWallFitness;
             population.get(i).normalisedCoverageFitness = (double)population.get(i).coverageFitness / (double)maxCoverageFitness;
-            System.out.println(population.get(i).normalisedWallFitness);
-            System.out.println(population.get(i).normalisedCoverageFitness);
         }
     }
 
@@ -641,7 +640,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         {
             // progress update
             gen_count++;
-            float percentage = gen_count/numGens;
+            float percentage = (gen_count/numGens)*100;
             System.out.print( "\rRunning Test... " + gen_count + "/" + numGens + " " + "(" );
             System.out.printf( "%.1f",percentage );
             System.out.print( "%" + ")" );
@@ -773,7 +772,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
         // Some code for printing final population genotypes to file 
         // Return final population
-        
+
         return pop;
     }
 
