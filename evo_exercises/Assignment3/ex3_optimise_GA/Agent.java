@@ -26,8 +26,8 @@ import tools.Vector2d;
 public class Agent extends AbstractPlayer {
 
     // var decs 
-    public int advance_count = 0 ;
-    public int population_size = 16;
+    public int advance_count = 0;
+    public int population_size = 50;
     public int genotype_size = 200;
     public Random rand;
     public individual seed_individual;
@@ -187,7 +187,7 @@ public class Agent extends AbstractPlayer {
         }
     }
 
-    // iterates through all initial individuals (the ones created by Agent constructor
+    // iterates through all initial individuals (the ones created by Agent constructor)
     public void calculate_initial_population_fitness(StateObservation stateObs, ArrayList<individual> population)
     {
         for ( int i = 0; i < population.size(); i++)
@@ -313,20 +313,6 @@ public class Agent extends AbstractPlayer {
         return children;
     }
 
-    public String fromACTIONS(ACTIONS move){
-        String error = "";
-
-        if (move == ACTIONS.ACTION_NIL) return "ACTION_NIL";
-        else if (move == ACTIONS.ACTION_UP) return "ACTION_UP";
-        else if (move == ACTIONS.ACTION_DOWN) return "ACTION_DOWN";
-        else if (move == ACTIONS.ACTION_LEFT) return "ACTION_LEFT";
-        else if (move == ACTIONS.ACTION_RIGHT) return "ACTION_RIGHT";
-        else if (move == ACTIONS.ACTION_USE) return "ACTION_USE";
-        else if (move == ACTIONS.ACTION_ESCAPE) return "ACTION_ESCAPE";
-
-        else return error;
-    }
-
     /* 
 
 
@@ -363,9 +349,6 @@ public class Agent extends AbstractPlayer {
     // Calculates the crowding distances for all individuals in a rank
     public void calcCrowdingDistance(ArrayList<individual> rank)
     {
-        // Deep copy the rank
-        // ArrayList<individual> rankCopy = new ArrayList<individual>();
-        // System.arraycopy(rank, 0, rankCopy, 0, rank.size()); 
 
         // Order the rank based on sequence fitness
         Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalised_sequence_fitness));
@@ -388,18 +371,6 @@ public class Agent extends AbstractPlayer {
                 // Get current individual sequence distance
                 rank.get(i).sequence_distance = (sequence_right.normalised_sequence_fitness-sequence_left.normalised_sequence_fitness)/
                 (rank.get(rank.size()-1).normalised_sequence_fitness-rank.get(0).normalised_sequence_fitness);
-
-                // Get vector positions of the three individuals, based upon 2 fitness vals
-                // Vector2d currentPos = new tools.Vector2d(current.normalised_fitness, current.normalised_sequence_fitness); 
-                // Vector2d leftPos = new tools.Vector2d(left.normalised_fitness, left.normalised_sequence_fitness); 
-                // Vector2d rightPos = new tools.Vector2d(right.normalised_fitness, right.normalised_sequence_fitness); 
-
-                // Calc distance from current to left and right vecs
-                // double leftDistance = currentPos.dist(leftPos); 
-                // double rightDistance = currentPos.dist(rightPos); 
-
-                // Crowding distance is the total of these two values
-                //rank.get(i).crowdingDistance = (leftDistance + rightDistance); 
             }
         }
 
@@ -454,10 +425,6 @@ public class Agent extends AbstractPlayer {
     // Function that runs all 3 functions above, calculating ranks and crowding distances
     public void bi_objective_fitness(ArrayList<individual> population)
     {
-        // for (int i=0;i<population.size(); i++)
-        // {
-        //     System.out.println(population.get(i).toString() + " score and sequence fitness: " + population.get(i).fitness + ", " + population.get(i).sequence_fitness);
-        // }
 
         // Begin by clearing existing rank and crowding values in population
         // This is because new offspring have been added so the ranks are not longer valid
@@ -472,8 +439,6 @@ public class Agent extends AbstractPlayer {
         
         // Shallow copy of population
         ArrayList<individual> remainingToBeRanked = new ArrayList<individual>(population); 
-
-        // System.out.println("remainingToBeRanked size: " + remainingToBeRanked.size());
         
         // Create an arraylist of arraylists
         ArrayList<ArrayList<individual>> allRanks = new ArrayList<ArrayList<individual>>(); 
@@ -492,7 +457,6 @@ public class Agent extends AbstractPlayer {
                 individual ind = remainingToBeRanked.get(i);
                 if ( notDominated(ind, remainingToBeRanked ))
                 {
-                    // System.out.println("NON DOMINATED INDIVIDUAL REACHED");
                     ind.rank = currentRank; 
                     indsInCurrentRank.add(ind);
                     addedIndices.add(i);
@@ -521,7 +485,6 @@ public class Agent extends AbstractPlayer {
         
             for (int index : addedIndices)
             {
-                // System.out.println("FOR LOOP RUNNING"); 
                 remainingToBeRanked.remove(index-removed);
                 removed++;
             }
@@ -535,13 +498,6 @@ public class Agent extends AbstractPlayer {
         {
             calcCrowdingDistance(rank);
         }
-
-        // for (int i=0;i<population.size(); i++)
-        // {
-        //     System.out.println(population.get(i).toString()+  " rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
-        //     System.out.println(population.get(i).toString() + " score and sequence fitness: " + population.get(i).fitness + ", " + population.get(i).sequence_fitness);
-        //     System.out.println(population.get(i).toString() + " normalised score and sequence fitness: " + population.get(i).normalised_fitness + ", " + population.get(i).normalised_sequence_fitness);
-        // }
     }
 
     // calculates hypervolume for a population
@@ -560,17 +516,17 @@ public class Agent extends AbstractPlayer {
         for ( int i = 0; i < population_size; i++ )
         {
             // calculating absolute normalised sequence fitness (based on set genotype size rather than a varying max sequence length of a population)
-            absolute_sequence_fitness = (gen_size - copied_pop.get(i).sequence_fitness)/gen_size;
+            absolute_sequence_fitness = (gen_size - copied_pop.get(i).sequence_fitness);
 
             // first index does not have previous data point
             if ( i == 0 )
             {
-                hypervolume = hypervolume + ( copied_pop.get(i).normalised_fitness*absolute_sequence_fitness);
+                hypervolume = hypervolume + ( copied_pop.get(i).fitness*absolute_sequence_fitness);
 
             // every other data point has a previous data point
             }else
             {
-                hypervolume = hypervolume + ( (copied_pop.get(i).normalised_fitness - copied_pop.get(i-1).normalised_fitness)*absolute_sequence_fitness);
+                hypervolume = hypervolume + ( (copied_pop.get(i).fitness - copied_pop.get(i-1).fitness)*absolute_sequence_fitness);
             }
         }
 
@@ -621,20 +577,15 @@ public class Agent extends AbstractPlayer {
             ArrayList<individual> new_population = new ArrayList<individual>();
 
             // var decs
-            // Types.ACTIONS action = ACTIONS.ACTION_NIL;
             double best_score = 0;
             String best_score_text = "";
-            ArrayList<Types.ACTIONS> best_moves;
             String best_moves_text = "";
-
-            // keeps track of previous scores just in case
-            String previous_best_score = "";
-            String previous_best_moves = "";
-            double previous_best_score_double = 0;
 
             // hypervolume
             double hypervolume = 0;
-            double previous_best_hypervol = 0;
+
+            // keeps track of previous hypervolume
+            double previous_hypervol = 0;
 
             // text that is printed at the end of act
             String text = "";
@@ -657,13 +608,7 @@ public class Agent extends AbstractPlayer {
             // evolve while we have time remaining
             while ( advance_count < 200001 )
             {
-
-                previous_best_moves = best_moves_text;
-                previous_best_score = best_score_text;
-                previous_best_score_double = best_score;
-                previous_best_hypervol = hypervolume;
-
-                best_moves_text = "";
+                previous_hypervol = hypervolume;
 
                 gen_count++;
 
@@ -694,23 +639,9 @@ public class Agent extends AbstractPlayer {
                 population.addAll(new_population);
 
                 new_population.clear();
-
-                /*
-
-                    CODE FOR NSGA GOES HERE
-
-                */
                 
                 // Calculate dominance ranks and crowding distance for all individuals
                 bi_objective_fitness(population);
-
-                // System.out.println("pop size after bi: " + population.size());
-                // for (int i=0; i<population.size(); i++)
-                // {
-                //     System.out.println(population.get(i).toString()+ " rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
-                //     System.out.println(population.get(i).toString() + " score and sequence fitness: " + population.get(i).fitness + ", " + population.get(i).sequence_fitness);
-                //     System.out.println(population.get(i).toString() + " normalised score and sequence fitness: " + population.get(i).normalised_fitness + ", " + population.get(i).normalised_sequence_fitness);
-                // }
 
                 /// SORT THE POPULATION ///
                 // We need the population sorted from lowest rank to highest (rank 1 being best rank)
@@ -725,13 +656,9 @@ public class Agent extends AbstractPlayer {
                         numRanks = population.get(j).rank; 
                     }
                 }
-
-                // System.out.println("Numranks is: " + numRanks);
                 
                 // Create ordered population list
                 ArrayList<individual> orderedPop = new ArrayList<individual>();
-
-                // System.out.println("Ordering population now...");
                 
                 // For each rank... 
                 for (int j = 0; j<numRanks; j++)
@@ -749,8 +676,6 @@ public class Agent extends AbstractPlayer {
                         }
                     }
 
-                    // System.out.println("temprank has size: " + tempRank.size());
-
                     // Now order the temporary list in descending order of crowding distance
                     Collections.sort(tempRank, Comparator.comparingDouble(individual :: get_crowdingDistance));
                     Collections.reverse(tempRank);
@@ -761,66 +686,36 @@ public class Agent extends AbstractPlayer {
 
                 population.clear();
 
-                // System.out.println("OrderedPop has size: " + orderedPop.size()); 
-
                 // Now that we have our full population ordered, add the top individuals back into population
                 for (int j=0; j<selectionSize; j++)
                 {
                     population.add(orderedPop.get(j));
                 }
-
-                // for (int i=0; i<population_size; i++)
-                // {
-                //     System.out.println(population.get(i).toString()+ " rank and crowding: " + population.get(i).rank + ", " + population.get(i).crowdingDistance);
-                // }
-
-                /*
-
-                    CODE FOR NSGA ENDS HERE
-
-                */
                 
+                // calculate population hypervolume
                 hypervolume = hypervolume_population(population);
 
-                // gets score from best individual and converts to string
-                best_score = population.get(0).fitness;
-
-                best_score_text = best_score+"";
-
-                // converting ACTIONS to strings (comment out if you just want to print scores for results)
-                best_moves = population.get(0).genotype;
-
-                int temp = (int)(population.get(0).sequence_fitness);
-
-                for (int i = 0; i < temp-1; i++)
-                {
-                    best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
-                }
-
-                best_moves_text += fromACTIONS(best_moves.get(temp-1));
-
-                // prints score and genotype of best individual at milestones
-                // not necessary as Assignment only asks for final mean and std dev of scores at milestones. Can comment out if needed
+                // prints hypervolume of population at milestones
                 if (two_hundred_thou){
-                    scores200k.add(previous_best_score_double);
+                    scores200k.add(previous_hypervol);
 
-                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nGenotype Length: " + population.get(0).sequence_fitness + "\nHypervolume: " + previous_best_hypervol+"";
+                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nHypervolume: " + previous_hypervol+"";
 
                     two_hundred_thou = false;
                 }
 
                 if (one_million) {
-                    scores1mill.add(previous_best_score_double);
+                    scores1mill.add(previous_hypervol);
 
-                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nGenotype Length: " + population.get(0).sequence_fitness + "\nHypervolume: " + previous_best_hypervol+"";
+                    text = text + "\n\nAt 1,000,000 advance calls:\nHypervolume: " + previous_hypervol+"";
 
                     one_million = false;
                 }
 
                 if (five_million){
-                    scores5mill.add(previous_best_score_double);
+                    scores5mill.add(previous_hypervol);
 
-                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nGenotype Length: " + population.get(0).sequence_fitness + "\nHypervolume: " + previous_best_hypervol+"";
+                    text = text + "\n\nAt 5,000,000 advance calls:\nHypervolume: " + previous_hypervol+"";
 
                     five_million = false;
                 }
@@ -844,10 +739,14 @@ public class Agent extends AbstractPlayer {
         sd5mill += scores5mill.sd();
 
         // handle printing of "text" to assignment03/exercise02 results folder
-        final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
+        final_text = final_text + "\n\n\nFinal Hypervolumes:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
+<<<<<<< HEAD
         handle_files.write_to_file("results/assignment03/exercise03/BoulderChaseTest", final_text);
+=======
+        handle_files.write_to_file("results/assignment03/exercise03/BomberTest22", final_text);
+>>>>>>> 26814a9c0d0f0a8464a8d1456fe803d2ebb5657f
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
