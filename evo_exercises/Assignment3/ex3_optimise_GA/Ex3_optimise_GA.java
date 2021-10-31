@@ -53,10 +53,6 @@ public class Ex3_optimise_GA {
 				levels[j] = game.replace(gameName, gameName + "_lvl" + j);
 			}
 
-			//
-			// ARCADEMACHINE.JAVA, LINE 537 IS WHERE OUTPUT FILE IS SPECIFIED
-			//
-
 			for(int k = 0; k < L; ++k){
 				// runGames must take levels as an string array- so convert levels[k] into one
 				System.out.println("Lvl_"+k+":");
