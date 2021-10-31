@@ -634,12 +634,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
         ArrayList<individual> pop = new ArrayList<individual>(population);
         
         // For each generation
-        int gen_count = 0;
+        float gen_count = 0;
         for (int i=0; i<numGens; i++)
         {
             // progress update
             gen_count++;
-            float percentage = gen_count/numGens;
+            float percentage = (gen_count/numGens)*100;
             System.out.print( "\rRunning Test... " + gen_count + "/" + numGens + " " + "(" );
             System.out.printf( "%.1f",percentage );
             System.out.print( "%" + ")" );
