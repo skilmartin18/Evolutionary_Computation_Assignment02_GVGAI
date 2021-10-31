@@ -576,11 +576,6 @@ public class Agent extends AbstractPlayer {
             // create population
             ArrayList<individual> new_population = new ArrayList<individual>();
 
-            // var decs
-            double best_score = 0;
-            String best_score_text = "";
-            String best_moves_text = "";
-
             // hypervolume
             double hypervolume = 0;
 
