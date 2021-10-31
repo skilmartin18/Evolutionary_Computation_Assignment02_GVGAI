@@ -29,12 +29,12 @@ public class TestLevelGeneration {
 		String recordLevelFile = generateLevelPath + games[gameIdx] + "_glvl.txt";
 		String game = generateLevelPath + games[gameIdx] + ".txt";
 
-
+		int numtests = 5;
 		// 1. This starts a game, in a generated level created by a specific level generator
-		if(LevelGenMachine.generateOneLevel(game, diyLevelGenerator, recordLevelFile)){
-		    LevelGenMachine.playOneGeneratedLevel(game, recordActionsFile, recordLevelFile, seed);
+		for(int i =0; i<numtests;i++)
+		{
+			LevelGenMachine.generateOneLevel(game, diyLevelGenerator, recordLevelFile);
 		}
-
 
 		// 2. This generates numberOfLevels levels.
 		// String levelGenerator = "tracks.levelGeneration." + args[0] + ".LevelGenerator";

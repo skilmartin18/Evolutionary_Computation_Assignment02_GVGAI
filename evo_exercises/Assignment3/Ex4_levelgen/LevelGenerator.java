@@ -36,8 +36,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
     GameDescription game;
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
-    int pop_size = 12;
-    int numGens = 10;
+    int pop_size = 10;
+    int numGens = 120;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -158,11 +158,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
 
     public void create_walls(individual ind)
     {
-        int maximum_wall_length = 6;
+        // actually maximum wall length -1
+        int maximum_wall_length = 5;
        
     
         // how long is wall?
-        int wall_len = rand.nextInt(maximum_wall_length)+1;
+        int wall_len = rand.nextInt(maximum_wall_length)+2;
 
         // horizontal?
         if ( rand.nextDouble() > 0.5)
@@ -250,7 +251,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     {
         double decider = rand.nextDouble();
 
-        if (decider < 0.65)
+        if (decider < 0.7)
         {
             remove_wall(ind);
 
@@ -634,7 +635,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         ArrayList<individual> pop = new ArrayList<individual>(population);
         
         // For each generation
-        float gen_count = 0;
+        int gen_count = 0;
         for (int i=0; i<numGens; i++)
         {
             // progress update

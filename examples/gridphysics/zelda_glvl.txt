@@ -10,14 +10,14 @@ LevelMapping
 
 LevelDescription
 wwwwwwwwwwwwwwwwww
-w......w...w.....w
-ww......w+.......w
-ww....w..........w
-ww.wA........ww..w
-www.......w......w
-www............w.w
-ww..g.....w..1.w.w
 ww...............w
-w...w.........1..w
+w................w
+wg...............w
+w.........w......w
+w................w
+w...+.3..........w
+w........A....w..w
+w................w
+w......w.....w...w
 w................w
 wwwwwwwwwwwwwwwwww
