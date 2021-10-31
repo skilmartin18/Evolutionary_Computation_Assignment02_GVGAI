@@ -36,8 +36,8 @@ public class LevelGenerator extends AbstractLevelGenerator{
     GameDescription game;
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
-    int pop_size = 18;
-    int numGens = 50;
+    int pop_size = 12;
+    int numGens = 10;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
@@ -409,9 +409,10 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // Modify normalised fitness values
         for (int i=0; i<population.size(); i++)
         {
-            population.get(i).normalisedWallFitness = population.get(i).wallFitness / maxWallFitness;
-            population.get(i).normalisedCoverageFitness = population.get(i).coverageFitness / maxCoverageFitness;
-
+            population.get(i).normalisedWallFitness = (double)population.get(i).wallFitness / (double)maxWallFitness;
+            population.get(i).normalisedCoverageFitness = (double)population.get(i).coverageFitness / (double)maxCoverageFitness;
+            System.out.println(population.get(i).normalisedWallFitness);
+            System.out.println(population.get(i).normalisedCoverageFitness);
         }
     }
 
@@ -419,43 +420,59 @@ public class LevelGenerator extends AbstractLevelGenerator{
     // Calculates the crowding distances for all individuals in a rank
     public void calcCrowdingDistance(ArrayList<individual> rank)
     {
-        // // Deep copy the rank
+        // Deep copy the rank
         // ArrayList<individual> rankCopy = new ArrayList<individual>();
         // System.arraycopy(rank, 0, rankCopy, 0, rank.size()); 
 
-        // Order the rank based on any of the two normalised fitness values
-        Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalisedWallFitness));
+        // Order the rank based on sequence fitness
+        Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalisedCoverageFitness));
 
         // Loop through the rank (the front)
         for (int i=0; i<rank.size(); i++)
         {
-
             // If we are at first or last individual, assign +inf. crowding distance
             if ( i==0 || i==rank.size()-1 )
             {
-                rank.get(i).crowdingDistance = Double.POSITIVE_INFINITY; 
+                rank.get(i).coverage_distance = Double.POSITIVE_INFINITY; 
             }
             // All other cases...
             else
             {
-                // Get references to current, left, and right individuals
-                individual current = rank.get(i);
-                individual left = rank.get(i-1);
-                individual right = rank.get(i+1);
+                // Get references to left and right individuals
+                individual sequence_left = rank.get(i-1);
+                individual sequence_right = rank.get(i+1);
 
-                // Get vector positions of the three individuals, based upon 2 fitness vals
-                Vector2d currentPos = new tools.Vector2d(current.normalisedWallFitness, current.normalisedCoverageFitness); 
-                Vector2d leftPos = new tools.Vector2d(left.normalisedWallFitness, left.normalisedCoverageFitness); 
-                Vector2d rightPos = new tools.Vector2d(right.normalisedWallFitness, right.normalisedCoverageFitness); 
-
-                // Calc distance from current to left and right vecs
-                double leftDistance = currentPos.dist(leftPos); 
-                double rightDistance = currentPos.dist(rightPos); 
-
-                // Crowding distance is the total of these two values
-                rank.get(i).crowdingDistance = leftDistance + rightDistance; 
+                // Get current individual sequence distance
+                rank.get(i).coverage_distance = (sequence_right.normalisedCoverageFitness-sequence_left.normalisedCoverageFitness)/
+                (rank.get(rank.size()-1).normalisedCoverageFitness-rank.get(0).normalisedCoverageFitness);
+                rank.get(i).coverage_distance = java.lang.Math.abs(rank.get(i).coverage_distance);
             }
         }
+
+        Collections.sort(rank, Comparator.comparingDouble(individual :: get_normalisedWallFitness));
+        // Loop through the rank (the front)
+        for (int j=0; j<rank.size(); j++)
+        {
+                // If we are at first or last individual, assign +inf. crowding distance
+            if ( j==0 || j==rank.size()-1 )
+            {
+                rank.get(j).wall_distance= Double.POSITIVE_INFINITY; 
+            }
+            else
+            {
+                // Get references to left and right individuals
+                individual score_left = rank.get(j-1);
+                individual score_right = rank.get(j+1);
+
+                // Get current individual sequence distance
+                rank.get(j).wall_distance = (score_right.normalisedWallFitness-score_left.normalisedWallFitness)/
+                (rank.get(rank.size()-1).normalisedWallFitness-rank.get(0).normalisedWallFitness);
+                rank.get(j).wall_distance = java.lang.Math.abs(rank.get(j).wall_distance);
+            }
+
+            // Calculate crowding distance
+            rank.get(j).crowdingDistance = rank.get(j).coverage_distance + rank.get(j).wall_distance;
+        } 
     }
 
 
@@ -611,11 +628,6 @@ public class LevelGenerator extends AbstractLevelGenerator{
         // For each generation
         for (int i=0; i<numGens; i++)
         {
-            // // Malakia
-            // float percentage = (i+1/numGens)*100;
-            // System.out.print( "\r" + (i+1) + "/" + numGens + " " + "(" );
-            // System.out.printf( "%.1f",percentage );
-            // System.out.print( "%" + ")" );
             
             // Create offspring array              
             ArrayList<individual> offspring = new ArrayList<>(); 
@@ -680,12 +692,12 @@ public class LevelGenerator extends AbstractLevelGenerator{
                 }
             }
 
-            System.out.println("Numranks is: " + numRanks);
+            // System.out.println("Numranks is: " + numRanks);
             
             // Create ordered population list
             ArrayList<individual> orderedPop = new ArrayList<individual>();
 
-            System.out.println("Ordering pop now...");
+            // System.out.println("Ordering pop now...");
             
             // For each rank... 
             for (int j=0; j<numRanks; j++)
@@ -703,7 +715,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
                     }
                 }
 
-                System.out.println("temprank has size: " + tempRank.size());
+                // System.out.println("temprank has size: " + tempRank.size());
 
                 // Now order the temporary list in descending order of crowding distance
                 Collections.sort(tempRank, Comparator.comparingDouble(individual :: get_crowdingDistance));
@@ -714,7 +726,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
                 
             }
 
-            System.out.println("OrderedPOp has size: " + orderedPop.size()); 
+            // System.out.println("OrderedPOp has size: " + orderedPop.size()); 
 
             pop.clear();
 
@@ -735,16 +747,16 @@ public class LevelGenerator extends AbstractLevelGenerator{
                 count++;
             }
 
-            for (int k=0;k<pop.size(); k++)
-            {
-                System.out.println(pop.get(k).toString() + "rank and crowding: " + pop.get(k).rank + ", " + pop.get(k).crowdingDistance);
-            }
+            // for (int k=0;k<pop.size(); k++)
+            // {
+            //     System.out.println(pop.get(k).toString() + "rank and crowding: " + pop.get(k).rank + ", " + pop.get(k).crowdingDistance);
+            // }
             
         }
 
         // Some code for printing final population genotypes to file 
-
         // Return final population
+        
         return pop;
     }
 

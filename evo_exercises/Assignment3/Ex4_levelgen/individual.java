@@ -51,6 +51,8 @@ public class individual {
     int feasible_fitness = 0;
     double normalisedWallFitness = 0;
     double normalisedCoverageFitness = 0; 
+    double coverage_distance = 0;
+    double wall_distance = 0;
 
     // Variables for dominance ranking in biobjective GA
     // ArrayList<individual> dominatedIndividuals; 
@@ -416,13 +418,13 @@ public class individual {
                             score += 0;                           
                             break;
                         case 1: 
-                            score += 15;                           
+                            score += 10;                           
                             break;
                         case 2:           
-                            score += 4;                 
+                            score += 15;                 
                             break;
                         case 3:     
-                            score += 2;                       
+                            score += 4;                       
                             break;
                         case 4:     
                             score += 0;                       
