@@ -27,7 +27,7 @@ public class Agent extends AbstractPlayer {
 
     // var decs 
     public int advance_count = 0 ;
-    public int population_size = 80;
+    public int population_size = 16;
     public int genotype_size = 200;
     public Random rand;
     public individual seed_individual;
@@ -72,36 +72,6 @@ public class Agent extends AbstractPlayer {
             individual ind = new individual(stateObs, genotype_size);
             this.population.add(ind);
         }
-    }
-
-    // finds a cutoff point until the last playable move (before the gamestate is finised)
-    // after this point, moves in sequence are redundant
-    //(May not be needed)
-    public int find_cutoff(StateObservation stateObs, individual _individual)
-    {
-        StateObservation stateObsCopy = stateObs.copy();
-        boolean finished = false;
-        int cutoff = 0;
-
-        // apply moves
-        for( int i = 0; (i < genotype_size && !finished); i++)
-        {
-            stateObsCopy.advance(_individual.genotype.get(i));
-
-            // if game is over, then finished becomes true, which will become NOT(true) within the loop condition
-            finished = stateObsCopy.isGameOver();
-
-            /* if individual_counter == 0 (we are calculating the fitness of the 1st ind in a population), and the game is finished
-            it will keep track of the index of the move that ended the game. This way, when we save the moves of the best individual
-            to a string, it won't print everything single move in its genotype, only the relevant ones*/
-
-            if (finished)
-            {
-                cutoff = i;
-            }
-        }
-
-        return cutoff;
     }
 
     // apply all actions from a genotype into a stateobs and return score
@@ -625,8 +595,6 @@ public class Agent extends AbstractPlayer {
      * @return An action for the current state
      */
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
-        // calculating fitness for first seed population
-        calculate_initial_population_fitness(stateObs, population);
 
         // initialising arrays to keep track of scores
         StatSummary scores200k = new StatSummary();
@@ -646,6 +614,9 @@ public class Agent extends AbstractPlayer {
 
         for (int k = 0; k < 10; k++)
         {
+            // calculating fitness for first seed population
+            calculate_initial_population_fitness(stateObs, population);
+
             // create population
             ArrayList<individual> new_population = new ArrayList<individual>();
 
@@ -685,8 +656,7 @@ public class Agent extends AbstractPlayer {
 
             // evolve while we have time remaining
             while ( advance_count < 200001 )
-            {   
-                int cutoff_two = 0;
+            {
 
                 previous_best_moves = best_moves_text;
                 previous_best_score = best_score_text;
@@ -717,11 +687,11 @@ public class Agent extends AbstractPlayer {
                     new_population.set(i,random_mutate(new_population.get(i),0.5,20));
                 }
 
-                // add children to parent population, will result in a population of double size
-                population.addAll(new_population);
-
                 // calculate fitness
                 calculate_population_fitness(stateObs, new_population);
+
+                // add children to parent population, will result in a population of double size
+                population.addAll(new_population);
 
                 new_population.clear();
 
@@ -733,6 +703,7 @@ public class Agent extends AbstractPlayer {
                 
                 // Calculate dominance ranks and crowding distance for all individuals
                 bi_objective_fitness(population);
+
                 // System.out.println("pop size after bi: " + population.size());
                 // for (int i=0; i<population.size(); i++)
                 // {
@@ -818,7 +789,7 @@ public class Agent extends AbstractPlayer {
 
                 // converting ACTIONS to strings (comment out if you just want to print scores for results)
                 best_moves = population.get(0).genotype;
-                //cutoff_two = find_cutoff(stateObs, population.get(0));
+
                 int temp = (int)(population.get(0).sequence_fitness);
 
                 for (int i = 0; i < temp-1; i++)
@@ -826,7 +797,7 @@ public class Agent extends AbstractPlayer {
                     best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
                 }
 
-                best_moves_text += fromACTIONS(best_moves.get(temp));
+                best_moves_text += fromACTIONS(best_moves.get(temp-1));
 
                 // prints score and genotype of best individual at milestones
                 // not necessary as Assignment only asks for final mean and std dev of scores at milestones. Can comment out if needed
