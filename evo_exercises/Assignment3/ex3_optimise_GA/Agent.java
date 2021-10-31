@@ -582,8 +582,8 @@ public class Agent extends AbstractPlayer {
         Collections.sort(copied_pop, Comparator.comparingDouble(individual :: get_fitness));
 
         // hypervolume variable which is returned
-        double hypervolume = 0.0;
-        double absolute_sequence_fitness = 0.0;
+        double hypervolume = 0;
+        double absolute_sequence_fitness = 0;
         double gen_size = genotype_size;
 
         // calculating hypervolume for given population
@@ -661,6 +661,10 @@ public class Agent extends AbstractPlayer {
             String previous_best_moves = "";
             double previous_best_score_double = 0;
 
+            // hypervolume
+            double hypervolume = 0;
+            double previous_best_hypervol = 0;
+
             // text that is printed at the end of act
             String text = "";
             String index = "";
@@ -687,6 +691,7 @@ public class Agent extends AbstractPlayer {
                 previous_best_moves = best_moves_text;
                 previous_best_score = best_score_text;
                 previous_best_score_double = best_score;
+                previous_best_hypervol = hypervolume;
 
                 best_moves_text = "";
 
@@ -803,7 +808,8 @@ public class Agent extends AbstractPlayer {
                     CODE FOR NSGA ENDS HERE
 
                 */
-
+                
+                hypervolume = hypervolume_population(population);
 
                 // gets score from best individual and converts to string
                 best_score = population.get(0).fitness;
@@ -826,7 +832,7 @@ public class Agent extends AbstractPlayer {
                 if (two_hundred_thou){
                     scores200k.add(previous_best_score_double);
 
-                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nHypervolume: " + previous_best_hypervol+"";
 
                     two_hundred_thou = false;
                 }
@@ -834,7 +840,7 @@ public class Agent extends AbstractPlayer {
                 if (one_million) {
                     scores1mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nHypervolume: " + previous_best_hypervol+"";
 
                     one_million = false;
                 }
@@ -842,7 +848,7 @@ public class Agent extends AbstractPlayer {
                 if (five_million){
                     scores5mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nHypervolume: " + previous_best_hypervol+"";
 
                     five_million = false;
                 }
