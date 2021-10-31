@@ -75,6 +75,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
         final_population = bi_Objective_GA(population, numGens);
         
         // calculate hypervolume
+        double hypervolume = hypervolume_population(final_population);
 
         // print genotypes
         
@@ -269,6 +270,34 @@ public class LevelGenerator extends AbstractLevelGenerator{
         }
 
         return result;
+    }
+
+    // CALCULATING HYPERVOLUME FOR A POPULATION
+    public double hypervolume_population(ArrayList<individual> population)
+    {
+        // initialising variables to sort copied version of population based on x axis variable
+        ArrayList<individual> copied_pop = new ArrayList<individual>(population);
+        Collections.sort(copied_pop, Comparator.comparingDouble(individual :: get_coverage_fitness));
+
+        // hypervolume variable which is returned
+        double hypervolume = 0;
+
+        // calculating hypervolume for given population
+        for ( int i = 0; i < pop_size; i++ )
+        {
+            // first index does not have previous data point
+            if ( i == 0 )
+            {
+                hypervolume = hypervolume + ( copied_pop.get(i).coverageFitness*copied_pop.get(i).wallFitness );
+
+            // every other data point has a previous data point
+            }else
+            {
+                hypervolume = hypervolume + ( (copied_pop.get(i).coverageFitness - copied_pop.get(i-1).coverageFitness)*copied_pop.get(i).wallFitness );
+            }
+        }
+
+        return hypervolume;
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -625,8 +654,6 @@ public class LevelGenerator extends AbstractLevelGenerator{
             }
             
         }
-
-        // Some code for caculating hypervolume of the final population
 
         // Some code for printing final population genotypes to file 
 
