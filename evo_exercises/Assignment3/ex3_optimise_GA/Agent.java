@@ -684,7 +684,7 @@ public class Agent extends AbstractPlayer {
             }
 
             // evolve while we have time remaining
-            while ( advance_count < 5000001 )
+            while ( advance_count < 200001 )
             {   
                 int cutoff_two = 0;
 
@@ -818,21 +818,22 @@ public class Agent extends AbstractPlayer {
 
                 // converting ACTIONS to strings (comment out if you just want to print scores for results)
                 best_moves = population.get(0).genotype;
-                cutoff_two = find_cutoff(stateObs, population.get(0));
+                //cutoff_two = find_cutoff(stateObs, population.get(0));
+                int temp = (int)(population.get(0).sequence_fitness);
 
-                for (int i = 0; i < cutoff_two; i++)
+                for (int i = 0; i < temp-1; i++)
                 {
                     best_moves_text = best_moves_text + fromACTIONS(best_moves.get(i)) + ", ";
                 }
 
-                best_moves_text += fromACTIONS(best_moves.get(cutoff_two));
+                best_moves_text += fromACTIONS(best_moves.get(temp));
 
                 // prints score and genotype of best individual at milestones
                 // not necessary as Assignment only asks for final mean and std dev of scores at milestones. Can comment out if needed
                 if (two_hundred_thou){
                     scores200k.add(previous_best_score_double);
 
-                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nHypervolume: " + previous_best_hypervol+"";
+                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nGenotype Length: " + population.get(0).sequence_fitness + "\nHypervolume: " + previous_best_hypervol+"";
 
                     two_hundred_thou = false;
                 }
@@ -840,7 +841,7 @@ public class Agent extends AbstractPlayer {
                 if (one_million) {
                     scores1mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nHypervolume: " + previous_best_hypervol+"";
+                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nGenotype Length: " + population.get(0).sequence_fitness + "\nHypervolume: " + previous_best_hypervol+"";
 
                     one_million = false;
                 }
@@ -848,7 +849,7 @@ public class Agent extends AbstractPlayer {
                 if (five_million){
                     scores5mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nHypervolume: " + previous_best_hypervol+"";
+                    text = text + "\n\nAt 5,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves + "\nGenotype Length: " + population.get(0).sequence_fitness + "\nHypervolume: " + previous_best_hypervol+"";
 
                     five_million = false;
                 }
@@ -875,7 +876,7 @@ public class Agent extends AbstractPlayer {
         final_text = final_text + "\n\n\nFinal Scores:\n200k Mean: " + mean200k + " SD: " + sd200k + "\n1 Mill Mean: " 
         + mean1mill + " SD: " + sd1mill + "\n5 Mill Mean: " + mean5mill + " SD: " + sd5mill;
 
-        handle_files.write_to_file("results/assignment03/exercise03/BomberTest", final_text);
+        handle_files.write_to_file("results/assignment03/exercise03/BomberTest2", final_text);
 
         /* it doesn't matter what act() returns, as it is guaranteed to time-out anyway
         (which is fine as we only care about calls to advance) */
