@@ -85,11 +85,11 @@ public class LevelGenerator extends AbstractLevelGenerator{
             coveragefitness = final_population.get(i).coverageFitness+"";
             rank = final_population.get(i).rank+"";
 
-            handle_files.write_to_file("results/assignment03/ex4/test1",final_population.get(i).toString()+":\n"+ "WAL_FIT: "+wallfitness+"\n");
-            handle_files.write_to_file("results/assignment03/ex4/test1", "COVER_FIT: "+coveragefitness+"\n");
-            handle_files.write_to_file("results/assignment03/ex4/test1", "RANK: "+rank+"\n");
-            handle_files.write_to_file("results/assignment03/ex4/test1", "\n"+convert_genotype_to_map(final_population.get(i)));
-            handle_files.write_to_file("results/assignment03/ex4/test1", "\n\n\n\n\n");
+            handle_files.write_to_file("results/assignment03/ex4/",final_population.get(i).toString()+":\n"+ "WAL_FIT: "+wallfitness+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/", "COVER_FIT: "+coveragefitness+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/", "RANK: "+rank+"\n");
+            handle_files.write_to_file("results/assignment03/ex4/", "\n"+convert_genotype_to_map(final_population.get(i)));
+            handle_files.write_to_file("results/assignment03/ex4/", "\n\n\n\n\n");
         }
         
         result = convert_genotype_to_map(final_population.get(0));
