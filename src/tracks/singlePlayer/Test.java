@@ -50,11 +50,11 @@ public class Test {
 						// executed. null if not to save.
 
 		// 1. This starts a game, in a level, played by a human.
-		//ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
+		ArcadeMachine.playOneGame(game, level1, recordActionsFile, seed);
 
 		// 2. This plays a game in a level by the controller.
 		//ArcadeMachine.runOneGame(game, level1, visuals, gamercool, recordActionsFile, seed, 0);
-		ArcadeMachine.runOneGame(game, level1, visuals, "NovelTS.Agent", recordActionsFile, seed, 0);
+		//ArcadeMachine.runOneGame(game, level1, visuals, "NovelTS.Agent", recordActionsFile, seed, 0);
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);
 		// ArcadeMachine.runOneGame(game, level1, visuals, diyGA, recordActionsFile, seed, 0);

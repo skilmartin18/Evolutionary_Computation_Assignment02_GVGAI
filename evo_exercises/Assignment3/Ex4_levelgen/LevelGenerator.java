@@ -37,7 +37,7 @@ public class LevelGenerator extends AbstractLevelGenerator{
     AbstractPlayer automatedAgent;
     HashMap<Character, ArrayList<String>> lmap;
     int pop_size = 10;
-    int numGens = 120;
+    int numGens = 100;
     /*   
         MAIN REQUIRED GENERATION FUNCTIONS
                                              */
