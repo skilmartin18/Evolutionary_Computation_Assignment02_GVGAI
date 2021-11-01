@@ -1,12 +1,8 @@
 package evo_exercises.Assignment3.Ex2_controller;
 
-import tracks.singlePlayer.tools.Heuristics.SimplestHeuristic;
-import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
-import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import tools.ElapsedCpuTimer;
-import tools.Utils;
 import ontology.*;
 import ontology.Types.ACTIONS;
 import java.util.ArrayList;
@@ -233,7 +229,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 20;
+        int crossover_spacing = 20;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -253,9 +249,9 @@ public class Agent extends AbstractPlayer {
                     // if acceptable remains false, then crossover point will be stored in list as it is acceptable
                     for(int k = 0; k < crossover_points.size(); k ++){
 
-                        // testing if the newly generated crossover point is at least 4 spaces away from existing points
+                        // testing if the newly generated crossover point is at least 'crossover_spacing' spaces away from existing points
                         int diff = Math.abs(crossover_point - crossover_points.get(k));
-                        if ( diff < acceptable_action_amount ){
+                        if ( diff < crossover_spacing ){
                             acceptable = true;
                         }
                     }
@@ -527,7 +523,7 @@ public class Agent extends AbstractPlayer {
                 if (two_hundred_thou){
                     scores200k.add(previous_best_score_double);
 
-                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = "Test " + index + ":\n" + "At 200,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
 
                     two_hundred_thou = false;
                 }
@@ -535,7 +531,7 @@ public class Agent extends AbstractPlayer {
                 if (one_million) {
                     scores1mill.add(previous_best_score_double);
 
-                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score; // + "\nBest Ind Genotype: " + previous_best_moves;
+                    text = text + "\n\nAt 1,000,000 advance calls:\nBest Ind Score: " + previous_best_score + "\nBest Ind Genotype: " + previous_best_moves;
 
                     one_million = false;
                 }

@@ -1,12 +1,8 @@
 package evo_exercises.Assignment3.ex3_optimise_GA;
 
-import tracks.singlePlayer.tools.Heuristics.SimplestHeuristic;
-import tracks.singlePlayer.tools.Heuristics.SimpleStateHeuristic;
-import tracks.singlePlayer.tools.Heuristics.WinScoreHeuristic;
 import core.game.StateObservation;
 import core.player.AbstractPlayer;
 import tools.ElapsedCpuTimer;
-import tools.Utils;
 import ontology.*;
 import ontology.Types.ACTIONS;
 import java.util.ArrayList;
@@ -14,7 +10,6 @@ import java.util.*;
 import handle_files.handle_files;
 
 import tools.StatSummary;
-import tools.Vector2d;
 
 /**
  * Created with IntelliJ IDEA.
@@ -244,7 +239,7 @@ public class Agent extends AbstractPlayer {
         // generating the actual crossover points
         ArrayList<Integer> crossover_points = new ArrayList<Integer>();
         boolean acceptable = false;
-        int acceptable_action_amount = 20;
+        int crossover_spacing = 7;
 
         // determining the crossover points
         for (int j = 0; j < num; j++){
@@ -264,9 +259,9 @@ public class Agent extends AbstractPlayer {
                     // if acceptable remains false, then crossover point will be stored in list as it is acceptable
                     for(int k = 0; k < crossover_points.size(); k ++){
 
-                        // testing if the newly generated crossover point is at least 4 spaces away from existing points
+                        // testing if the newly generated crossover point is at least 'crossover_spacing' spaces away from existing points
                         int diff = Math.abs(crossover_point - crossover_points.get(k));
-                        if ( diff < acceptable_action_amount ){
+                        if ( diff < crossover_spacing ){
                             acceptable = true;
                         }
                     }
@@ -623,7 +618,7 @@ public class Agent extends AbstractPlayer {
                     int fatherIndex = rand.nextInt(population_size);
                     int motherIndex = rand.nextInt(population_size);
 
-                    ArrayList<individual> temp2 = n_point_crossover(population.get(fatherIndex), population.get(motherIndex), 8);
+                    ArrayList<individual> temp2 = n_point_crossover(population.get(fatherIndex), population.get(motherIndex), 7);
                     new_population.add(temp2.get(0));
                     new_population.add(temp2.get(1));
                 }
@@ -632,7 +627,7 @@ public class Agent extends AbstractPlayer {
                 for ( int i = 0; i < new_population.size(); i++ )
                 {
                     // mutation is done once (can change to multiple times if need be)
-                    new_population.set(i,random_mutate(new_population.get(i),0.5,40));
+                    new_population.set(i,random_mutate(new_population.get(i),0.5,20));
                 }
 
                 // calculate fitness

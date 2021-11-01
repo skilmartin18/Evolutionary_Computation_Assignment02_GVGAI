@@ -23,6 +23,7 @@ public class Ex2_run_controller {
 		String sampleRHEAController = "tracks.singlePlayer.advanced.sampleRHEA.Agent";
 		String diyGA = "evo_exercises.Ex4_diy_GA.Agent";
 		String assignment03ex02 = "evo_exercises.Assignment3.Ex2_controller.Agent";
+		String assignment03ex03 = "evo_exercises.Assignment3.ex3_optimise_GA.Agent";
 	
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
@@ -43,7 +44,6 @@ public class Ex2_run_controller {
 
 		for(int i = 0; i < games_played.length; ++i)
 		{
-			
 			// get game and name
 			String game = games[ games_played[i] ][ 0 ];
 			String gameName = games[ games_played[i] ][1];
@@ -53,17 +53,9 @@ public class Ex2_run_controller {
 				levels[j] = game.replace(gameName, gameName + "_lvl" + j);
 			}
 
-			//
-			// ARCADEMACHINE.JAVA, LINE 537 IS WHERE OUTPUT FILE IS SPECIFIED
-			//
-
 			for(int k = 0; k < L; ++k){
 				// runGames must take levels as an string array- so convert levels[k] into one
 				System.out.println("Lvl_"+k+":");
-				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, sampleRandomController, null);
-				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, multiStepLookAgent, null);
-				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, diyGA, null);
-				//ArcadeMachine.runGames(game, new String[]{levels[k]}, M, diyGA, null);
 				ArcadeMachine.runOneGame(game, levels[k], visuals, assignment03ex02, recordActionsFile, seed, 0);
 			}
 			
