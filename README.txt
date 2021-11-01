@@ -48,10 +48,10 @@ To change the name of the file where results will be printed, go to: handle_file
 
 // Results
 For Exercise 2:
-Will print the Test number e.g. Test 0:, Test 1:... etc (from tests 0-9). By default, it will print the best individual's score and genotype (not including redundant moves) at each milestone (200k, 1 mill, 5 mill) for each test. Will also print the total number of generations iterated after 5 million calls to advance. After 10 tests have been run and printed, it will print the mean and standard deviation of scores at each milestone.
+Will print the Test number e.g. Test 0:, Test 1:... etc (from tests 0-9). By default, it will print the best individual's score and genotype (not including redundant moves) at each milestone (200k, 1 mill, 5 mill) for each test. Will also print the total number of generations iterated after 5 million calls to advance. After 10 tests have been run and printed, it will print the mean and standard deviation of scores at each milestone. Result files will be saved to results/assignment03/exercise02.
 
 For Exercise 3:
-Will print the Test number e.g. Test 0:, Test 1:... etc (from tests 0-9). By default, it will print population's hypervolume at each milestone. Will also print the total number of generations iterated after 5 million calls to advance. After 10 tests have been run and printed, it will print the mean and standard deviation of hypervolumes at each milestone
+Will print the Test number e.g. Test 0:, Test 1:... etc (from tests 0-9). By default, it will print population's hypervolume at each milestone. Will also print the total number of generations iterated after 5 million calls to advance. After 10 tests have been run and printed, it will print the mean and standard deviation of hypervolumes at each milestone. Result files will be saved to results/assignment03/exercise03.
 
 **PLEASE NOTE FOR EXERCISE 2 AND 3:**
 Due to the way the act() method within an Agent was implemented, it is impossible to know which game or level you are in inside of act(). Because of this, the result files may be difficult to read, especially after automating 4 games for 5 levels, there will be 20 sets of tests within a single text file. We were able to keep track of which tests corresponded to a certain game and level as the run controllers ran games and levels in order (from level 0-4, in the order of games within the int[] array). Sorry for any inconvenience.
